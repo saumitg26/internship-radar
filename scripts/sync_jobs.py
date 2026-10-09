@@ -15,7 +15,9 @@ SITE=ROOT/"site"
 RX_ROLE=re.compile(r"\b(intern(ship)?|co[- ]?op|fellow(ship)?|apprentice(ship)?)\b", re.I)
 RX_TECH=re.compile(r"software|developer|engineering|backend|front.?end|cloud|platform|devops|data engineer|cyber|machine learning|artificial intelligence",re.I)
 RX_EXCLUDE=re.compile(r"\b(sales|marketing|accounting|recruiting|human resources|business development|graphic design|legal)\b",re.I)
-RX_FOREIGN=re.compile(r"\b(london|india|singapore|australia|germany|united kingdom|canada|france|netherlands|poland|japan|dublin|ireland|spain|brazil)\b",re.I)
+RX_FOREIGN=re.compile(r"\b(london|india|singapore|australia|germany|united kingdom|canada|france|netherlands|poland|japan|dublin|ireland|spain|brazil|toronto|vancouver|montreal|berlin|munich|amsterdam|paris|sydney|melbourne|hyderabad|bengaluru)\b",re.I)
+RX_DMV=re.compile(r"\b(washington\s*,?\s*d\.?c\.?|district of columbia|northern virginia|dmv|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville)\b",re.I)
+RX_REGION=re.compile(r"\b(virginia|maryland|va|md)\b",re.I)
 SKILLS=("Java","Python","React","TypeScript","AWS","SQL","PostgreSQL","API","Cloud")
 def clean(s):
     return re.sub(r"\s+"," ",html.unescape(re.sub(r"<[^>]+>"," ",str(s or "")))).strip()
@@ -48,14 +50,18 @@ def normalize(x):
     score+=14 if "backend" in t or "full.stack" in t else 0
     score+=18 if "2027" in t else 0
     score+=9 if "summer" in t else 0
-    score+=16 if re.search(r"fairfax|reston|mclean|herndon|arlington|washington,? d.?c.?|virginia|maryland",location,re.I) else 0
+    dmv=bool(RX_DMV.search(location))
+    regional=bool(RX_REGION.search(location))
+    score+=30 if dmv else (10 if regional else 0)
     score+=5 if "remote" in location.lower() else 0
     matches=[k for k in SKILLS if re.search(r"\b"+re.escape(k)+r"\b",desc,re.I)]
     score+=min(18,len(matches)*3)
     x["id"]=hashlib.sha256(url.encode()).hexdigest()[:18]
     x["description"]=desc[:420]
     x["location"]=location
+    x["_rank"]=score  # preserve meaningful ranking when displayed score reaches 99
     x["score"]=min(99,score)
+    x["dmv_priority"]=dmv
     x["matched_skills"]=matches
     x["eligibility_notes"]=(["Verify graduation eligibility"] if re.search(r"graduat.{0,30}2027|2027.{0,30}graduat",desc,re.I) and "2028" not in desc else [])
     return x
@@ -74,7 +80,9 @@ def main():
             except Exception as error:
                 working-=1
                 errors.append(f'{b["company"]}: {str(error)[:100]}')
-    matches=sorted(jobs.values(),key=lambda j:(-j["score"],j["company"],j["title"]))
+    matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j["company"],j["title"]))
+    for job in matches:
+        job.pop("_rank",None)
     # Never silently preserve a stale snapshot as if it were newly refreshed.
     data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"jobs":matches,"count":len(matches),"errors":errors[:30],"note":"Verify each employer's requirements and whether posting is still open."}
     SITE.mkdir(exist_ok=True)
