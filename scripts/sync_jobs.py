@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BOARD_FILE=ROOT/"scripts"/"boards.json"
 SITE=ROOT/"site"
 RX_ROLE=re.compile(r"\b(intern(ship)?|co[- ]?op|fellow(ship)?|apprentice(ship)?)\b", re.I)
-RX_TECH=re.compile(r"software|developer|engineering|backend|front.?end|cloud|platform|devops|data engineer|cyber|machine learning|artificial intelligence",re.I)
+RX_TECH=re.compile(r"software|developer|engineering|computer science|backend|front.?end|cloud|platform|devops|data engineer|cyber|machine learning|artificial intelligence|\bai\b|\bml\b",re.I)
 RX_EXCLUDE=re.compile(r"\b(sales|marketing|accounting|recruiting|human resources|business development|graphic design|legal)\b",re.I)
 RX_FOREIGN=re.compile(r"\b(london|india|singapore|australia|germany|united kingdom|canada|france|netherlands|poland|japan|dublin|ireland|spain|brazil|toronto|vancouver|montreal|berlin|munich|amsterdam|paris|sydney|melbourne|hyderabad|bengaluru)\b",re.I)
 RX_DMV=re.compile(r"\b(washington\s*,?\s*d\.?c\.?|district of columbia|northern virginia|dmv|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville)\b",re.I)
@@ -39,7 +39,8 @@ def scan(board):
     raise ValueError("Unsupported ATS")
 def normalize(x):
     title=str(x["title"]);location=str(x["location"] or "Location unspecified");desc=x["description"]
-    if not RX_ROLE.search(title) or not RX_TECH.search(title) or RX_EXCLUDE.search(title):return
+    curated_generic=x.get("company") in ("GRVTY","Dark Wolf Solutions") and bool(RX_TECH.search(desc))
+    if not RX_ROLE.search(title) or not (RX_TECH.search(title) or curated_generic) or RX_EXCLUDE.search(title):return
     if re.search(r"\b(2025|2026|2028|2029)\b",title):return
     if RX_FOREIGN.search(location) and not re.search(r"\bUS\b|USA|United States",location,re.I):return
     url=x["url"]
@@ -88,5 +89,6 @@ def main():
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
-    print(f"Collected {len(matches)} engineering internships from {working}/{len(boards)} boards")
+    virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
+    print(f"Collected {len(matches)} engineering internships ({virginia_count} in Virginia) from {working}/{len(boards)} boards")
 if __name__=="__main__":main()
