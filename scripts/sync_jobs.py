@@ -7,6 +7,7 @@ import json
 import re
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit, parse_qsl, urlencode, urlunsplit
 from urllib.request import Request, urlopen
 from community_jobs import gather as gather_community
 
@@ -15,7 +16,7 @@ BOARD_FILE=ROOT/"scripts"/"boards.json"
 SITE=ROOT/"site"
 RX_ROLE=re.compile(r"\b(intern(ship)?|co[- ]?op|fellow(ship)?|apprentice(ship)?)\b", re.I)
 RX_TECH=re.compile(r"software|developer|engineering|computer science|backend|front.?end|cloud|platform|devops|data engineer|data science|cyber|machine learning|artificial intelligence|information technology|\bit\s+intern\b|\bai\b|\bml\b",re.I)
-RX_EXCLUDE=re.compile(r"\b(sales|marketing|accounting|recruiting|human resources|business development|graphic design|legal)\b",re.I)
+RX_EXCLUDE=re.compile(r"\b(sales|marketing|accounting|recruiting|human resources|business development|graphic design|legal|mechanical|manufacturing|civil engineering|electrical engineering|chemical engineering|industrial engineering|aerospace engineering|materials engineering)\b",re.I)
 RX_FOREIGN=re.compile(r"\b(london|india|singapore|australia|germany|united kingdom|canada|france|netherlands|poland|japan|dublin|ireland|spain|brazil|toronto|vancouver|montreal|berlin|munich|amsterdam|paris|sydney|melbourne|hyderabad|bengaluru)\b",re.I)
 RX_DMV=re.compile(r"\b(washington\s*,?\s*d\.?c\.?|district of columbia|northern virginia|dmv|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville)\b",re.I)
 RX_REGION=re.compile(r"\b(virginia|maryland|va|md)\b",re.I)
@@ -57,6 +58,7 @@ def normalize(x):
     score+=30 if dmv else (10 if regional else 0)
     score+=5 if "remote" in location.lower() else 0
     matches=[k for k in SKILLS if re.search(r"\b"+re.escape(k)+r"\b",desc,re.I)]
+    matches=list(dict.fromkeys(matches + [k for k in x.get("matched_skills",[]) if isinstance(k,str) and k in SKILLS]))
     score+=min(18,len(matches)*3)
     x["id"]=hashlib.sha256(url.encode()).hexdigest()[:18]
     x["description"]=desc[:420]
@@ -91,22 +93,34 @@ def main():
         return (re.sub(r"\W+","",job["company"].lower()),
                 re.sub(r"\W+","",job["title"].lower()),
                 re.sub(r"\W+","",job["location"].lower()))
+    def canonical_url(url):
+        # Strip referral analytics only, preserving IDs needed on real employer pages.
+        parts=urlsplit(url)
+        query=urlencode([(k,v) for k,v in parse_qsl(parts.query,keep_blank_values=True)
+            if not k.lower().startswith("utm_") and k.lower() not in ("ref","source","referrer","gh_src","lever-source")])
+        return urlunsplit((parts.scheme.lower(),parts.netloc.lower(),parts.path.rstrip("/"),query,""))
     seen={semantic_key(job) for job in jobs.values()}
+    urls={canonical_url(job["url"]) for job in jobs.values()}
     for raw in community:
         job=normalize(raw)
         if not job: continue
         key=semantic_key(job)
-        if key in seen or job["id"] in jobs: continue
+        url=canonical_url(job["url"])
+        if key in seen or url in urls or job["id"] in jobs:continue
         seen.add(key)
+        urls.add(url)
         jobs[job["id"]]=job
-    matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j.get("community",False),j["company"],j["title"]))[:1800]
+    # Keep every distinct, relevant listing our sources return. Front-end pagination
+    # renders only a small slice, rather than dropping lower-ranked companies.
+    matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j.get("community",False),j["company"],j["title"]))
     for job in matches:
         job.pop("_rank",None)
     # Never silently preserve a stale snapshot as if it were newly refreshed.
-    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"jobs":matches,"count":len(matches),"errors":errors[:30],"note":"Community listings can be outdated. Check the employer site before applying."}
+    companies=sorted({job["company"] for job in matches if job["company"].strip() and job["company"]!="Unknown employer"},key=str.casefold)
+    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"errors":errors[:30],"note":"Community listings may be outdated. Check the employer site before applying."}
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
-    print(f"Collected {len(matches)} engineering candidates ({virginia_count} in Virginia) from {working}/{len(boards)} boards + {len(community_ok)}/2 community feeds; community rows: {community_counts}")
+    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/4 community feeds; counts: {community_counts}")
 if __name__=="__main__":main()
