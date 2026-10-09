@@ -10,6 +10,7 @@ from pathlib import Path
 from urllib.parse import urlsplit, parse_qsl, urlencode, urlunsplit
 from urllib.request import Request, urlopen
 from community_jobs import gather as gather_community
+from extra_jobs import gather as gather_extra
 
 ROOT=Path(__file__).resolve().parents[1]
 BOARD_FILE=ROOT/"scripts"/"boards.json"
@@ -88,7 +89,11 @@ def main():
                 errors.append(f'{b["company"]}: {str(error)[:100]}')
     # Blend direct employer boards with the broader community sources
     community,community_ok,community_errors,community_counts=gather_community(get)
-    errors.extend(community_errors)
+    other,other_ok,other_errors,other_counts=gather_extra(get)
+    community.extend(other)
+    community_ok.extend(other_ok)
+    community_counts.update(other_counts)
+    errors.extend(community_errors+other_errors)
     def semantic_key(job):
         return (re.sub(r"\W+","",job["company"].lower()),
                 re.sub(r"\W+","",job["title"].lower()),
@@ -122,5 +127,5 @@ def main():
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
-    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/4 community feeds; counts: {community_counts}")
+    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/7 discovery feeds; counts: {community_counts}")
 if __name__=="__main__":main()
