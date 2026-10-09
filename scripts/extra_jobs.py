@@ -6,6 +6,7 @@ not turn relative 'age' values into a fabricated posted date.
 """
 import html
 import re
+from urllib.request import Request, urlopen
 
 SOURCES={
     "SpeedyApply SWE":"https://raw.githubusercontent.com/speedyapply/2027-SWE-College-Jobs/main/README.md",
@@ -89,7 +90,12 @@ def recent_scan(data):
             "community":True,
         }
 
-def gather(get_json,get_text):
+def get_text(url):
+    req=Request(url,headers={"User-Agent":"InternshipRadar/1.0", "Accept":"text/plain"})
+    with urlopen(req,timeout=22) as response:
+        return response.read(4500000).decode("utf-8",errors="replace")
+
+def gather(get_json):
     leads=[];healthy=[];errors=[];counts={}
     for name,url in SOURCES.items():
         try:
