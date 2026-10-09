@@ -1,0 +1,1 @@
+window.INTERNSHIP_RADAR_FEED = {"generated_at":null,"scanned_boards":0,"responsive_boards":0,"count":0,"jobs":[],"errors":[],"note":"Deploy using GitHub Pages to enable daily automated refresh. Not yet connected to live job listings."};
