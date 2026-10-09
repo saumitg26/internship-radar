@@ -8,12 +8,13 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
+from community_jobs import gather as gather_community
 
 ROOT=Path(__file__).resolve().parents[1]
 BOARD_FILE=ROOT/"scripts"/"boards.json"
 SITE=ROOT/"site"
 RX_ROLE=re.compile(r"\b(intern(ship)?|co[- ]?op|fellow(ship)?|apprentice(ship)?)\b", re.I)
-RX_TECH=re.compile(r"software|developer|engineering|computer science|backend|front.?end|cloud|platform|devops|data engineer|cyber|machine learning|artificial intelligence|\bai\b|\bml\b",re.I)
+RX_TECH=re.compile(r"software|developer|engineering|computer science|backend|front.?end|cloud|platform|devops|data engineer|data science|cyber|machine learning|artificial intelligence|information technology|\bit\s+intern\b|\bai\b|\bml\b",re.I)
 RX_EXCLUDE=re.compile(r"\b(sales|marketing|accounting|recruiting|human resources|business development|graphic design|legal)\b",re.I)
 RX_FOREIGN=re.compile(r"\b(london|india|singapore|australia|germany|united kingdom|canada|france|netherlands|poland|japan|dublin|ireland|spain|brazil|toronto|vancouver|montreal|berlin|munich|amsterdam|paris|sydney|melbourne|hyderabad|bengaluru)\b",re.I)
 RX_DMV=re.compile(r"\b(washington\s*,?\s*d\.?c\.?|district of columbia|northern virginia|dmv|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville)\b",re.I)
@@ -59,6 +60,8 @@ def normalize(x):
     score+=min(18,len(matches)*3)
     x["id"]=hashlib.sha256(url.encode()).hexdigest()[:18]
     x["description"]=desc[:420]
+    x["posted"]=str(x.get("posted") or "")[:10]
+    x["community"]=bool(x.get("community",False))
     x["location"]=location
     x["_rank"]=score  # preserve meaningful ranking when displayed score reaches 99
     x["score"]=min(99,score)
@@ -81,14 +84,29 @@ def main():
             except Exception as error:
                 working-=1
                 errors.append(f'{b["company"]}: {str(error)[:100]}')
-    matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j["company"],j["title"]))
+    # Blend direct employer boards with the broader community sources
+    community,community_ok,community_errors,community_counts=gather_community(get)
+    errors.extend(community_errors)
+    def semantic_key(job):
+        return (re.sub(r"\W+","",job["company"].lower()),
+                re.sub(r"\W+","",job["title"].lower()),
+                re.sub(r"\W+","",job["location"].lower()))
+    seen={semantic_key(job) for job in jobs.values()}
+    for raw in community:
+        job=normalize(raw)
+        if not job: continue
+        key=semantic_key(job)
+        if key in seen or job["id"] in jobs: continue
+        seen.add(key)
+        jobs[job["id"]]=job
+    matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j.get("community",False),j["company"],j["title"]))[:1800]
     for job in matches:
         job.pop("_rank",None)
     # Never silently preserve a stale snapshot as if it were newly refreshed.
-    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"jobs":matches,"count":len(matches),"errors":errors[:30],"note":"Verify each employer's requirements and whether posting is still open."}
+    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"jobs":matches,"count":len(matches),"errors":errors[:30],"note":"Community listings can be outdated. Check the employer site before applying."}
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
-    print(f"Collected {len(matches)} engineering internships ({virginia_count} in Virginia) from {working}/{len(boards)} boards")
+    print(f"Collected {len(matches)} engineering candidates ({virginia_count} in Virginia) from {working}/{len(boards)} boards + {len(community_ok)}/2 community feeds; community rows: {community_counts}")
 if __name__=="__main__":main()
