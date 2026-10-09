@@ -15,7 +15,8 @@
 <aside class="sidebar">
  <div class="brand"><div class="logo">IR↗</div><div>Internship Radar</div></div>
  <div><p class="sublabel">WORKSPACE</p><nav class="nav" aria-label="Main navigation">
- <button data-page="discover" class="active"><span class="ico">◇</span> Explore internships</button>
+ <button data-page="discover" class="active"><span class="ico">◇</span> Today's top 10</button>
+ <button data-page="explore"><span class="ico">⌕</span> Explore internships</button>
  <button data-page="pipeline"><span class="ico">▤</span> My pipeline</button>
  <button data-page="programs"><span class="ico">☆</span> Programs</button>
  <button data-page="plan"><span class="ico">▦</span> Weekly plan</button>
@@ -26,10 +27,26 @@
 <section id="discover" class="view active">
  <header class="intro"><div class="eyebrow">SUMMER 2027 · SOFTWARE ENGINEERING</div><h1>Find your next <span>opportunity.</span></h1><p>Open to roles across the United States. DC, Northern Virginia, and nearby Maryland are prioritized, not required. Real employer links, clear progress, and no fake guarantees.</p></header>
  <div class="hero"><div><small>YOUR INTERNSHIP COMMAND CENTER</small><h2>One application at a time.</h2><p>Review the fit, verify graduation requirements, apply at the employer's site, then track the outcome here.</p></div><button class="btn btn-primary" id="jumpJobs">See today's matches ↗</button></div>
- <div class="metrics"><div class="metric"><small>Matching roles</small><strong id="jobCount">0</strong><span class="hint">From monitored boards</span></div><div class="metric"><small>Applied today</small><strong id="appliedToday">0</strong><span class="hint">Your daily goal: <span id="dailyGoal">10</span></span></div><div class="metric"><small>Applications total</small><strong id="appliedTotal">0</strong><span class="hint">Tracked in this browser</span></div><div class="metric"><small>Feed updated</small><strong id="feedDate" style="font-size:17px;margin-top:13px">Not yet</strong><span id="feedSource" class="hint">Awaiting first sync</span></div></div>
- <div id="jobsAnchor"><div class="section-bar"><div><small>NATIONWIDE SEARCH · DMV PRIORITY</small><h2>Today's top matches</h2></div><button class="btn" id="showMore">Show all</button></div>
+ <div class="metrics"><div class="metric"><small>Internship leads</small><strong id="jobCount">0</strong><span class="hint">Employer and community feeds</span></div><div class="metric"><small>Applied today</small><strong id="appliedToday">0</strong><span class="hint">Your daily goal: <span id="dailyGoal">10</span></span></div><div class="metric"><small>Applications total</small><strong id="appliedTotal">0</strong><span class="hint">Tracked in this browser</span></div><div class="metric"><small>Feed updated</small><strong id="feedDate" style="font-size:17px;margin-top:13px">Not yet</strong><span id="feedSource" class="hint">Awaiting first sync</span></div></div>
+ <div id="jobsAnchor"><div class="section-bar"><div><small>NATIONWIDE SEARCH · DMV PRIORITY</small><h2>Today's top 10 matches</h2></div><button class="btn" id="showMore">Explore all internships</button></div>
  <div class="filters"><input id="search" placeholder="Search roles, companies, skills…" aria-label="Search jobs"><select id="location"><option value="all">Nationwide — DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro (VA, DC, MD)</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="role"><option value="all">All engineering roles</option><option value="swe">Software engineering</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
- <p id="filterFeedback" class="muted" role="status" aria-live="polite" style="font-size:12px;margin:5px 0 13px"></p><div id="jobList" class="jobs"></div></div><div class="panel" style="margin-top:19px"><strong>Explore more Virginia opportunities</strong><p>Official employer boards; their job availability may change.</p><div class="actions"><a class="btn" href="https://job-boards.greenhouse.io/appian" target="_blank" rel="noopener noreferrer">Appian ↗</a><a class="btn" href="https://job-boards.greenhouse.io/devtechnology" target="_blank" rel="noopener noreferrer">Dev Technology ↗</a><a class="btn" href="https://job-boards.greenhouse.io/darkwolfsolutions" target="_blank" rel="noopener noreferrer">Dark Wolf ↗</a><a class="btn" href="https://jobs.lever.co/anavationllc" target="_blank" rel="noopener noreferrer">AnaVation ↗</a></div></div><p class="muted" style="font-size:12px">DMV is a ranking preference, not a relocation restriction. Matches can be anywhere in the United States. Scores are keyword-based, not hiring probabilities; verify location, work authorization, graduation dates, and availability.</p>
+ <p id="filterFeedback" class="muted" role="status" aria-live="polite" style="font-size:12px;margin:5px 0 13px"></p><div id="jobList" class="jobs"></div></div><div class="panel" style="margin-top:19px"><strong>Explore more Virginia opportunities</strong><p>Official employer boards; their job availability may change.</p><div class="actions"><a class="btn" href="https://job-boards.greenhouse.io/appian" target="_blank" rel="noopener noreferrer">Appian ↗</a><a class="btn" href="https://job-boards.greenhouse.io/devtechnology" target="_blank" rel="noopener noreferrer">Dev Technology ↗</a><a class="btn" href="https://job-boards.greenhouse.io/darkwolfsolutions" target="_blank" rel="noopener noreferrer">Dark Wolf ↗</a><a class="btn" href="https://jobs.lever.co/anavationllc" target="_blank" rel="noopener noreferrer">AnaVation ↗</a></div></div><p class="muted" style="font-size:12px">Your daily 10 is a shortlist. Open Explore internships to browse the larger nationwide catalog. Scores are keyword-based, not hiring probabilities; verify employer requirements.</p>
+</section>
+<section id="explore" class="view">
+<header class="intro"><div class="eyebrow">SUMMER 2027 · BROAD DISCOVERY</div><h1>Explore <span>internships.</span></h1><p>Browse the wider nationwide catalog from both community-maintained 2027 lists and direct employer job boards. DMV opportunities are prioritized, but relocation anywhere in the US is welcome.</p></header>
+<div class="metrics">
+ <div class="metric"><small>Internship leads</small><strong id="exploreTotal">0</strong><span class="hint">All monitored sources</span></div>
+ <div class="metric"><small>Virginia leads</small><strong id="exploreVA">0</strong><span class="hint">Virginia-only</span></div>
+ <div class="metric"><small>DC metro leads</small><strong id="exploreDMV">0</strong><span class="hint">DMV priority</span></div>
+ <div class="metric"><small>Matching your filters</small><strong id="exploreMatches">0</strong><span class="hint">Browse 25 at a time</span></div>
+</div>
+<div class="section-bar"><h2>Browse all internship leads</h2><small id="exploreSourceHealth">Checking sources</small></div>
+<div class="filters"><input id="exploreSearch" placeholder="Search role, company, location…" aria-label="Search internships"><select id="exploreLocation"><option value="all">Nationwide · DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="exploreRole"><option value="all">All technical roles</option><option value="swe">Software development</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
+<div class="filters" style="grid-template-columns:1fr 1fr"><select id="exploreAge" aria-label="Filter by listing date"><option value="all">Any listing date</option><option value="7">Added in last 7 days</option><option value="30">Added in last 30 days</option></select><select id="exploreStatus" aria-label="Filter by application status"><option value="all">All statuses</option><option value="new">Not yet applied</option><option value="saved">Saved only</option><option value="applied">Applied / later</option></select></div>
+<p id="exploreLabel" class="muted" role="status" aria-live="polite" style="font-size:12px;margin:0 0 15px"></p>
+<div id="exploreJobList" class="jobs"></div>
+<div class="section-bar"><small id="exploreShowing"></small><button class="btn btn-primary" id="exploreLoadMore" type="button">Load 25 more ↗</button></div>
+<p class="muted" style="font-size:12px">Employer feeds are direct listings; community feeds are job leads that may have expired or incomplete details. Always verify eligibility, closing dates, and availability with the company. The site refresh date is not the posting date.</p>
 </section>
 <section id="pipeline" class="view"><header class="intro"><div class="eyebrow">YOUR APPLICATION HISTORY</div><h1>Keep every application <span>organized.</span></h1><p>Save interesting jobs and track actual submissions through assessments, interviews, offers, and rejections.</p></header>
  <div class="metrics"><div class="metric"><small>Applied / later</small><strong id="pApplied">0</strong></div><div class="metric"><small>Saved</small><strong id="pSaved">0</strong></div><div class="metric"><small>Assessments</small><strong id="pOa">0</strong></div><div class="metric"><small>Interviews</small><strong id="pInterview">0</strong></div></div>
@@ -61,7 +78,7 @@ var $=function(id){return document.getElementById(id);};
 var KEY="internship-radar-tracker-v2", SETTINGS="internship-radar-options-v2";
 var feed=window.INTERNSHIP_RADAR_FEED||{jobs:[],generated_at:null,scanned_boards:0,responsive_boards:0,errors:[]};
 var jobs=Array.isArray(feed.jobs)?feed.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";}):[];
-var records={}, goal=10, showAll=false, view="discover";
+var records={}, goal=10, view="discover", exploreLimit=25;
 try{var loaded=JSON.parse(localStorage.getItem(KEY)||"{}");if(loaded&&typeof loaded==="object"&&!Array.isArray(loaded))records=loaded;}catch(e){}
 try{var g=Number(JSON.parse(localStorage.getItem(SETTINGS)||"{}").dailyGoal);if(g>=1&&g<=30)goal=g;}catch(e){}
 function text(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -69,7 +86,7 @@ function link(url){try{var u=new URL(String(url));return u.protocol==="https:"?u
 function today(d){var a=d?new Date(d):new Date();if(isNaN(a.getTime()))return "";var local=new Date(a.getTime()-a.getTimezoneOffset()*60000);return local.toISOString().slice(0,10);}
 function notify(msg){var n=$("toast");n.textContent=msg;n.classList.add("show");setTimeout(function(){n.classList.remove("show");},3000);}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){notify("Unable to save. Export your records as a backup.");}}
-function setPage(v){view=v;document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});document.querySelectorAll("[data-page]").forEach(function(x){x.classList.toggle("active",x.dataset.page===v);});$("crumb").textContent=v==="discover"?"EXPLORE INTERNSHIPS":v.toUpperCase();render();window.scrollTo(0,0);}
+function setPage(v){view=v;document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});document.querySelectorAll("[data-page]").forEach(function(x){x.classList.toggle("active",x.dataset.page===v);});$("crumb").textContent=v==="discover"?"TODAY'S TOP 10":v==="explore"?"EXPLORE INTERNSHIPS":v.toUpperCase();render();window.scrollTo(0,0);}
 document.querySelectorAll("[data-page]").forEach(function(b){b.addEventListener("click",function(){setPage(b.dataset.page);});});
 $("jumpJobs").onclick=function(){$("jobsAnchor").scrollIntoView({behavior:"smooth"});};
 var validStatuses=["saved","applied","oa","interview","offer","rejected","skipped"];
@@ -83,12 +100,49 @@ function maryland(j){return /\b(maryland|MD|bethesda|rockville|silver spring|gai
 function visible(){var q=$("search").value.toLowerCase().trim(),loc=$("location").value,role=$("role").value;
 return jobs.filter(function(j){var t=j.title.toLowerCase();if(records[j.id]&&["skipped","applied","oa","interview","offer","rejected"].indexOf(records[j.id].status)>=0)return false;if(q&&(j.company+" "+j.title+" "+j.location+" "+(j.matched_skills||[]).join(" ")).toLowerCase().indexOf(q)<0)return false;if(loc==="dmv"&&!local(j))return false;if(loc==="virginia"&&!virginia(j))return false;if(loc==="maryland"&&!maryland(j))return false;if(loc==="outside"&&local(j))return false;if(loc==="remote"&&!/remote/i.test(j.location))return false;if(role==="swe"&&!/software|developer|front.?end|back.?end|full.?stack/.test(t))return false;if(role==="cloud"&&!/cloud|platform|devops|infrastructure|sre/.test(t))return false;if(role==="ai"&&!/data|ai\b|machine learning|artificial intelligence/.test(t))return false;return true;});}
 function jobMarkup(j){var r=records[j.id]||{},href=link(j.url),tags=(j.matched_skills||[]).slice(0,5).map(function(x){return '<span class="tag">'+text(x)+'</span>';}).join(""),warnings=(j.eligibility_notes||[]).map(function(x){return '<span class="tag warn">'+text(x)+'</span>';}).join("");
-return '<article class="job"><div class="job-head"><div><h3>'+text(j.title)+'</h3><div class="company">'+text(j.company)+' · '+text(j.location||"Location unspecified")+' · '+text(j.source||"Employer")+'</div></div><span class="score">'+(Number(j.score)||0)+' match</span></div><p class="desc">'+text(j.description||"Open the job posting for requirements and details.")+'</p><div class="tags">'+(local(j)?'<span class="tag">DMV priority</span>':'')+tags+warnings+'</div><div class="actions">'+(href?'<a class="btn btn-primary" href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Employer posting ↗</a>':"")+'<button class="btn" data-job="'+text(j.id)+'" data-action="saved">'+(r.status==="saved"?"★ Saved":"☆ Save")+'</button><button class="btn" data-job="'+text(j.id)+'" data-action="applied">✓ I applied</button><button class="btn" data-job="'+text(j.id)+'" data-action="skipped">Skip</button></div></article>';}
-function renderDiscover(){var sorted=visible();var selected=showAll?sorted:sorted.slice(0,10);$("showMore").textContent=showAll?"Show top 10":"Show all ("+sorted.length+")";$("filterFeedback").textContent=sorted.length+" matching unreviewed roles · "+$("location").options[$("location").selectedIndex].textContent+" · "+(feed.responsive_boards||0)+" monitored boards responding. Filters only cover monitored boards.";if(!feed.generated_at){$("jobList").innerHTML='<div class="empty"><h3>Waiting for first job refresh</h3><p>The daily GitHub Actions workflow must run successfully to populate this feed. You can still track earlier applications under My pipeline.</p></div>';return;}
+return '<article class="job"><div class="job-head"><div><h3>'+text(j.title)+'</h3><div class="company">'+text(j.company)+' · '+text(j.location||"Location unspecified")+' · '+text(j.source||"Employer")+(j.posted?' · Listed '+text(j.posted):'')+'</div></div><span class="score">'+(Number(j.score)||0)+' match</span></div><p class="desc">'+text(j.description||"Open the job posting for requirements and details.")+'</p><div class="tags">'+(local(j)?'<span class="tag">DMV priority</span>':'')+(j.community?'<span class="tag warn">Community lead · verify open</span>':'')+tags+warnings+'</div><div class="actions">'+(href?'<a class="btn btn-primary" href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Employer posting ↗</a>':"")+'<button class="btn" data-job="'+text(j.id)+'" data-action="saved">'+(r.status==="saved"?"★ Saved":"☆ Save")+'</button><button class="btn" data-job="'+text(j.id)+'" data-action="applied">✓ I applied</button><button class="btn" data-job="'+text(j.id)+'" data-action="skipped">Skip</button></div></article>';}
+function renderDiscover(){var sorted=visible();var selected=sorted.slice(0,10);$("showMore").textContent="Explore all ("+jobs.length+")";$("filterFeedback").textContent=sorted.length+" matching unreviewed roles · "+$("location").options[$("location").selectedIndex].textContent+" · "+(feed.responsive_boards||0)+" monitored boards responding. Filters only cover monitored boards.";if(!feed.generated_at){$("jobList").innerHTML='<div class="empty"><h3>Waiting for first job refresh</h3><p>The daily GitHub Actions workflow must run successfully to populate this feed. You can still track earlier applications under My pipeline.</p></div>';return;}
 $("jobList").innerHTML=selected.length?selected.map(jobMarkup).join(""):'<div class="empty"><h3>No matching internships in this feed</h3><p>This does not mean Virginia has no openings. Clear the search and role filters or explore the employer boards below.</p></div>';}
-$("jobList").onclick=function(e){var b=e.target.closest("button[data-job]");if(b)update(b.dataset.job,b.dataset.action);};
-$("showMore").onclick=function(){showAll=!showAll;renderDiscover();};
+["jobList","exploreJobList"].forEach(function(id){$(id).onclick=function(e){var b=e.target.closest("button[data-job]");if(b)update(b.dataset.job,b.dataset.action);};});
+$("showMore").onclick=function(){setPage("explore");};
 ["search","location","role"].forEach(function(id){$(id).addEventListener(id==="search"?"input":"change",function(){showAll=false;renderDiscover();});});
+function exploreVisible(){
+ var q=$("exploreSearch").value.trim().toLowerCase(),loc=$("exploreLocation").value,role=$("exploreRole").value,age=$("exploreAge").value,status=$("exploreStatus").value;
+ var cutoff=age==="all"?0:Date.now()-Number(age)*86400000;
+ return jobs.filter(function(j){
+  var t=j.title.toLowerCase(),rec=records[j.id]||{},st=rec.status||"new";
+  if(q&&(j.company+" "+j.title+" "+j.location+" "+(j.matched_skills||[]).join(" ")).toLowerCase().indexOf(q)<0)return false;
+  if(loc==="virginia"&&!virginia(j))return false;
+  if(loc==="dmv"&&!local(j))return false;
+  if(loc==="maryland"&&!maryland(j))return false;
+  if(loc==="outside"&&local(j))return false;
+  if(loc==="remote"&&!/remote/i.test(j.location||""))return false;
+  if(role==="swe"&&!/software|developer|front.?end|back.?end|full.?stack|application engineer|programmer/.test(t))return false;
+  if(role==="cloud"&&!/cloud|platform|devops|infrastructure|sre/.test(t))return false;
+  if(role==="ai"&&!/data|ai\b|machine learning|artificial intelligence|analytics/.test(t))return false;
+  if(cutoff&&(!j.posted||!Number.isFinite(Date.parse(j.posted))||Date.parse(j.posted)<cutoff))return false;
+  if(status==="new"&&["applied","oa","interview","offer","rejected","skipped"].indexOf(st)>=0)return false;
+  if(status==="saved"&&st!=="saved")return false;
+  if(status==="applied"&&["applied","oa","interview","offer","rejected"].indexOf(st)<0)return false;
+  return true;
+ });
+}
+function renderExplore(){
+ var matches=exploreVisible();
+ $("exploreTotal").textContent=jobs.length;
+ $("exploreVA").textContent=jobs.filter(virginia).length;
+ $("exploreDMV").textContent=jobs.filter(local).length;
+ $("exploreMatches").textContent=matches.length;
+ $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/2 community feeds";
+ $("exploreLabel").textContent=matches.length+" matching leads · DMV locations prioritized, nationwide relocation accepted.";
+ $("exploreShowing").textContent="Showing "+Math.min(exploreLimit,matches.length)+" of "+matches.length;
+ $("exploreLoadMore").style.display=matches.length>exploreLimit?"inline-block":"none";
+ $("exploreJobList").innerHTML=matches.length?matches.slice(0,exploreLimit).map(jobMarkup).join(""):'<div class="empty"><h3>No matches with those filters</h3><p>Try another location, role, or posting age. A missing listing does not mean no internships exist there.</p></div>';
+}
+["exploreSearch","exploreLocation","exploreRole","exploreAge","exploreStatus"].forEach(function(id){
+ $(id).addEventListener(id==="exploreSearch"?"input":"change",function(){exploreLimit=25;renderExplore();});
+});
+$("exploreLoadMore").onclick=function(){exploreLimit+=25;renderExplore();};
 function renderPipeline(){var list=Object.keys(records).filter(function(id){return records[id]&&records[id].job&&records[id].status!=="skipped";}).sort(function(a,b){return String(records[b].changed_at||"").localeCompare(String(records[a].changed_at||""));});
 var names={saved:"Saved",applied:"Applied",oa:"Online assessment",interview:"Interview",offer:"Offer",rejected:"Rejected",skipped:"Remove"};
 $("pipelineList").innerHTML=list.length?list.map(function(id){var r=records[id],j=r.job;var href=link(j.url);return '<div class="panel-row"><div><strong>'+text(j.company)+' — '+text(j.title)+'</strong><small>'+text(j.location||"")+(r.applied_at?" · Applied "+text(today(r.applied_at)):"")+(href?' · <a href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Job link ↗</a>':"")+'</small></div><select data-record="'+text(id)+'" aria-label="Application status">'+Object.keys(names).map(function(s){return '<option value="'+s+'"'+(r.status===s?" selected":"")+'>'+names[s]+'</option>';}).join("")+'</select></div>';}).join(""):'<div class="empty"><h3>Your pipeline is empty</h3><p>Save roles or add your existing applications above.</p></div>';
@@ -103,7 +157,7 @@ function render(){var applied=Object.values(records).filter(function(r){return r
 $("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" boards responding";
 $("liveStatus").textContent=feed.generated_at?"● Public feed available":"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
 $("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Jobs collected: "+jobs.length+". Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
-renderDiscover();renderPipeline();}
+renderDiscover();renderExplore();renderPipeline();}
 $("saveGoal").onclick=function(){var n=Number($("goalInput").value);if(!Number.isInteger(n)||n<1||n>30){notify("Choose a goal between 1 and 30.");return;}goal=n;try{localStorage.setItem(SETTINGS,JSON.stringify({dailyGoal:goal}));}catch(e){}render();notify("Goal saved.");};
 function download(content,name,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}
 function csv(v){var s=String(v==null?"":v);if(/^[=+@\- \t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
