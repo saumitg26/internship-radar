@@ -150,7 +150,7 @@ function renderExplore(){
  $("exploreVA").textContent=jobs.filter(virginia).length;
  $("exploreDMV").textContent=jobs.filter(local).length;
  $("exploreMatches").textContent=matches.length;
- $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/4 community feeds";
+ $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/7 discovery feeds";
  $("exploreCompanyClear").style.display=exploreCompany?"inline-block":"none";
  $("exploreLabel").textContent=(exploreCompany?"Selected company: "+exploreCompany+" · ":"")+matches.length+" matching leads · DMV locations prioritized, nationwide relocation accepted.";
  $("exploreShowing").textContent="Showing "+Math.min(exploreLimit,matches.length)+" of "+matches.length;
@@ -227,7 +227,7 @@ $("pApplied").textContent=values.filter(function(r){return ["applied","oa","inte
 $("pipelineList").onchange=function(e){if(e.target.matches("select[data-record]"))update(e.target.dataset.record,e.target.value);};
 $("manual").onsubmit=function(e){e.preventDefault();var company=$("company").value.trim(),title=$("title").value.trim(),url=$("url").value.trim();if(!company||!title)return;if(url&&!link(url)){notify("Only HTTPS job links are supported.");return;}var id="manual-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);records[id]={status:"applied",changed_at:new Date().toISOString(),applied_at:new Date().toISOString(),job:{id:id,company:company,title:title,location:"",url:link(url)}};save();$("manual").reset();render();notify("Existing application added.");};
 function render(){var applied=Object.values(records).filter(function(r){return r&&r.applied_at;});$("jobCount").textContent=jobs.length;$("appliedTotal").textContent=applied.length;$("appliedToday").textContent=applied.filter(function(r){return today(r.applied_at)===today();}).length;$("dailyGoal").textContent=goal;
-$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/4 public lists";
+$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/7 discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Public feed available":"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
 $("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/4. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
 renderDiscover();renderExplore();renderCompanies();renderPipeline();}
