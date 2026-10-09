@@ -1,42 +1,227 @@
 [
-{"company":"Stripe","ats":"greenhouse","slug":"stripe"},
-{"company":"Datadog","ats":"greenhouse","slug":"datadog"},
-{"company":"Figma","ats":"greenhouse","slug":"figma"},
-{"company":"Duolingo","ats":"greenhouse","slug":"duolingo"},
-{"company":"Discord","ats":"greenhouse","slug":"discord"},
-{"company":"MongoDB","ats":"greenhouse","slug":"mongodb"},
-{"company":"Reddit","ats":"greenhouse","slug":"reddit"},
-{"company":"Robinhood","ats":"greenhouse","slug":"robinhood"},
-{"company":"Cloudflare","ats":"greenhouse","slug":"cloudflare"},
-{"company":"Samsara","ats":"greenhouse","slug":"samsara"},
-{"company":"Asana","ats":"greenhouse","slug":"asana"},
-{"company":"Coinbase","ats":"greenhouse","slug":"coinbase"},
-{"company":"Plaid","ats":"greenhouse","slug":"plaid"},
-{"company":"Twilio","ats":"greenhouse","slug":"twilio"},
-{"company":"HubSpot","ats":"greenhouse","slug":"hubspot"},
-{"company":"Instacart","ats":"greenhouse","slug":"instacart"},
-{"company":"Coursera","ats":"greenhouse","slug":"coursera"},
-{"company":"Snowflake","ats":"greenhouse","slug":"snowflake"},
-{"company":"Lyft","ats":"greenhouse","slug":"lyft"},
-{"company":"Roblox","ats":"greenhouse","slug":"roblox"},
-{"company":"Benchling","ats":"greenhouse","slug":"benchling"},
-{"company":"Palantir","ats":"greenhouse","slug":"palantir"},
-{"company":"Ramp","ats":"ashby","slug":"ramp"},
-{"company":"Linear","ats":"ashby","slug":"linear"},
-{"company":"Notion","ats":"ashby","slug":"notion"},
-{"company":"Retool","ats":"ashby","slug":"retool"},
-{"company":"Vercel","ats":"ashby","slug":"vercel"},
-{"company":"Replit","ats":"ashby","slug":"replit"},
-{"company":"Anthropic","ats":"ashby","slug":"anthropic"},
-{"company":"OpenAI","ats":"ashby","slug":"openai"},
-{"company":"Mercury","ats":"ashby","slug":"mercury"},
-{"company":"Perplexity","ats":"ashby","slug":"perplexity"},
-{"company":"Hightouch","ats":"ashby","slug":"hightouch"},
-{"company":"Clerk","ats":"ashby","slug":"clerk"},
-{"company":"Modal","ats":"ashby","slug":"modal"},
-{"company":"Baseten","ats":"ashby","slug":"baseten"},
-{"company":"Anduril","ats":"lever","slug":"anduril"},
-{"company":"Waymo","ats":"lever","slug":"waymo"},
-{"company":"Netflix","ats":"lever","slug":"netflix"},
-{"company":"Spotify","ats":"lever","slug":"spotify"}
+  {
+    "company": "Stripe",
+    "ats": "greenhouse",
+    "slug": "stripe"
+  },
+  {
+    "company": "Datadog",
+    "ats": "greenhouse",
+    "slug": "datadog"
+  },
+  {
+    "company": "Figma",
+    "ats": "greenhouse",
+    "slug": "figma"
+  },
+  {
+    "company": "Duolingo",
+    "ats": "greenhouse",
+    "slug": "duolingo"
+  },
+  {
+    "company": "Discord",
+    "ats": "greenhouse",
+    "slug": "discord"
+  },
+  {
+    "company": "MongoDB",
+    "ats": "greenhouse",
+    "slug": "mongodb"
+  },
+  {
+    "company": "Reddit",
+    "ats": "greenhouse",
+    "slug": "reddit"
+  },
+  {
+    "company": "Robinhood",
+    "ats": "greenhouse",
+    "slug": "robinhood"
+  },
+  {
+    "company": "Cloudflare",
+    "ats": "greenhouse",
+    "slug": "cloudflare"
+  },
+  {
+    "company": "Samsara",
+    "ats": "greenhouse",
+    "slug": "samsara"
+  },
+  {
+    "company": "Asana",
+    "ats": "greenhouse",
+    "slug": "asana"
+  },
+  {
+    "company": "Coinbase",
+    "ats": "greenhouse",
+    "slug": "coinbase"
+  },
+  {
+    "company": "Plaid",
+    "ats": "greenhouse",
+    "slug": "plaid"
+  },
+  {
+    "company": "Twilio",
+    "ats": "greenhouse",
+    "slug": "twilio"
+  },
+  {
+    "company": "HubSpot",
+    "ats": "greenhouse",
+    "slug": "hubspot"
+  },
+  {
+    "company": "Instacart",
+    "ats": "greenhouse",
+    "slug": "instacart"
+  },
+  {
+    "company": "Coursera",
+    "ats": "greenhouse",
+    "slug": "coursera"
+  },
+  {
+    "company": "Snowflake",
+    "ats": "greenhouse",
+    "slug": "snowflake"
+  },
+  {
+    "company": "Lyft",
+    "ats": "greenhouse",
+    "slug": "lyft"
+  },
+  {
+    "company": "Roblox",
+    "ats": "greenhouse",
+    "slug": "roblox"
+  },
+  {
+    "company": "Benchling",
+    "ats": "greenhouse",
+    "slug": "benchling"
+  },
+  {
+    "company": "Palantir",
+    "ats": "greenhouse",
+    "slug": "palantir"
+  },
+  {
+    "company": "Ramp",
+    "ats": "ashby",
+    "slug": "ramp"
+  },
+  {
+    "company": "Linear",
+    "ats": "ashby",
+    "slug": "linear"
+  },
+  {
+    "company": "Notion",
+    "ats": "ashby",
+    "slug": "notion"
+  },
+  {
+    "company": "Retool",
+    "ats": "ashby",
+    "slug": "retool"
+  },
+  {
+    "company": "Vercel",
+    "ats": "ashby",
+    "slug": "vercel"
+  },
+  {
+    "company": "Replit",
+    "ats": "ashby",
+    "slug": "replit"
+  },
+  {
+    "company": "Anthropic",
+    "ats": "ashby",
+    "slug": "anthropic"
+  },
+  {
+    "company": "OpenAI",
+    "ats": "ashby",
+    "slug": "openai"
+  },
+  {
+    "company": "Mercury",
+    "ats": "ashby",
+    "slug": "mercury"
+  },
+  {
+    "company": "Perplexity",
+    "ats": "ashby",
+    "slug": "perplexity"
+  },
+  {
+    "company": "Hightouch",
+    "ats": "ashby",
+    "slug": "hightouch"
+  },
+  {
+    "company": "Clerk",
+    "ats": "ashby",
+    "slug": "clerk"
+  },
+  {
+    "company": "Modal",
+    "ats": "ashby",
+    "slug": "modal"
+  },
+  {
+    "company": "Baseten",
+    "ats": "ashby",
+    "slug": "baseten"
+  },
+  {
+    "company": "Anduril",
+    "ats": "lever",
+    "slug": "anduril"
+  },
+  {
+    "company": "Waymo",
+    "ats": "lever",
+    "slug": "waymo"
+  },
+  {
+    "company": "Netflix",
+    "ats": "lever",
+    "slug": "netflix"
+  },
+  {
+    "company": "Spotify",
+    "ats": "lever",
+    "slug": "spotify"
+  },
+  {
+    "company": "Appian",
+    "ats": "greenhouse",
+    "slug": "appian"
+  },
+  {
+    "company": "Dev Technology",
+    "ats": "greenhouse",
+    "slug": "devtechnology"
+  },
+  {
+    "company": "GRVTY",
+    "ats": "greenhouse",
+    "slug": "grvty"
+  },
+  {
+    "company": "Dark Wolf Solutions",
+    "ats": "greenhouse",
+    "slug": "darkwolfsolutions"
+  },
+  {
+    "company": "AnaVation",
+    "ats": "lever",
+    "slug": "anavationllc"
+  }
 ]
