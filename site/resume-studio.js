@@ -54,9 +54,9 @@ function renderMaster(){
 function setupJob(){
  if(!job){$('jobSubtitle').textContent='Choose a posting or paste any job description to tailor your saved resume.';$('jobSource').textContent='Manual description';$('jobStatus').textContent='Paste a job description to begin.';return}
  $('jobSubtitle').textContent='Tailoring for '+job.company+' · '+job.title+' · '+(job.location||'Location not listed');
- $('jobDescription').value=job.description||'';
+ $('jobDescription').value=job.job_description||job.description||'';
  $('jobSource').textContent='From job feed · editable';
- $('jobStatus').textContent=(job.description||'').length<200?'The feed has a short excerpt. Paste the full posting for better analysis.':'Description imported from feed; verify against the employer posting.';
+ $('jobStatus').textContent=(job.job_description||job.description||'').length<400?'The feed has a short excerpt. Paste the full posting for better analysis.':'Description imported from feed; verify against the employer posting.';
  try{const u=new URL(job.url);if(u.protocol==='https:'){$('jobLink').href=u.href;$('jobLink').textContent='Employer posting ↗';$('jobLink').target='_blank';$('jobLink').rel='noopener noreferrer'}}catch{}
 }
 async function readPDF(bytes){
@@ -208,7 +208,7 @@ function renderText(){
 async function persistDraft(){if(!db||!master)return;await dbOp('drafts','put',{id:jobId+'|'+master.id,edits:draft,jobDescription:$('jobDescription').value})}
 async function loadDraft(){
  draft={};if(!master)return;
- try{const r=await dbOp('drafts','get',jobId+'|'+master.id);if(r){draft=r.edits||{};if(r.jobDescription&&job)$('jobDescription').value=r.jobDescription}}catch{}
+ try{const r=await dbOp('drafts','get',jobId+'|'+master.id);if(r){draft=r.edits||{};if(r.jobDescription)$('jobDescription').value=r.jobDescription}}catch{}
  currentJD=normalize($('jobDescription').value);
 }
 function renderSuggestions(){
@@ -310,7 +310,7 @@ function wire(){
  };
  $('editMaster').onclick=()=>{if(!master)return;$('masterText').value=master.text;$('masterEditor').hidden=false;$('masterText').focus()};
  $('cancelEdit').onclick=()=>$('masterEditor').hidden=true;
- $('saveMaster').onclick=async()=>{try{await storeMaster($('masterText').value,master?.filename||'Pasted_Resume.txt',null,'text/plain');$('masterEditor').hidden=true}catch(e){notify(e.message)}};
+ $('saveMaster').onclick=async()=>{try{await storeMaster($('masterText').value,(master?.filename||'Pasted_Resume.txt').replace(/\.(pdf|docx)$/i,'.txt'),null,'text/plain');$('masterEditor').hidden=true}catch(e){notify(e.message)}};
  $('versionHistory').onclick=()=>{$('historyPanel').hidden=!$('historyPanel').hidden};
  $('historyItems').onclick=async e=>{const b=e.target.closest('button[data-restore]');if(b){try{await restoreMaster(Number(b.dataset.restore))}catch(e){notify(e.message)}}};
  $('suggestions').onclick=async e=>{
