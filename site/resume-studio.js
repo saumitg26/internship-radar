@@ -62,7 +62,7 @@ function setupJob(){
 async function readPDF(bytes){
  if(!window.pdfjsLib)throw Error('PDF parser did not load. Try TXT or DOCX, or paste resume text.');
  pdfjsLib.GlobalWorkerOptions.workerSrc='./vendor/pdf.worker.min.js';
- const doc=await pdfjsLib.getDocument({data:new Uint8Array(bytes.slice(0))}).promise;
+ const doc=await pdfjsLib.getDocument({data:new Uint8Array(bytes.slice(0)),isEvalSupported:false}).promise;
  if(doc.numPages>5)throw Error('This tool supports resumes up to five pages.');
  const lines=[];
  for(let p=1;p<=doc.numPages;p++){
