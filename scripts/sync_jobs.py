@@ -62,6 +62,10 @@ def normalize(x):
     matches=list(dict.fromkeys(matches + [k for k in x.get("matched_skills",[]) if isinstance(k,str) and k in SKILLS]))
     score+=min(18,len(matches)*3)
     x["id"]=hashlib.sha256(url.encode()).hexdigest()[:18]
+    # Keep full available employer-ATS descriptions for private, in-browser resume comparison.
+    # Community listings often have excerpts only; do not pretend they were scraped in full.
+    if not x.get("community",False) and len(desc)>420:
+        x["job_description"]=desc[:6500]
     x["description"]=desc[:420]
     x["posted"]=str(x.get("posted") or "")[:10]
     x["community"]=bool(x.get("community",False))
