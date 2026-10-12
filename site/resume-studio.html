@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'self'; worker-src 'self' blob:; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Resume Studio — Internship Radar</title>
+<link rel="stylesheet" href="./resume-studio.css">
+<script defer src="./jobs.js"></script>
+<script defer src="./vendor/pdf.min.js"></script>
+<script defer src="./vendor/jspdf.umd.min.js"></script>
+<script defer src="./resume-studio.js"></script>
+</head>
+<body>
+<div class="app">
+<aside class="rail">
+ <a class="logo" href="./index.html"><span class="logo-mark">IR↗</span><strong>Internship Radar</strong></a>
+ <div class="eyebrow">WORKSPACE</div>
+ <nav aria-label="App navigation">
+  <a href="./index.html">⌂ <span>Today’s top 10</span></a>
+  <a href="./index.html#explore">⌕ <span>Explore internships</span></a>
+  <a href="./index.html#pipeline">▤ <span>My pipeline</span></a>
+  <a class="selected" href="./resume-studio.html">✦ <span>Resume Studio</span></a>
+ </nav>
+ <div class="rail-note"><b>Private by design</b><p>Resumes and tailored drafts are stored on this device, not in your public GitHub repository.</p></div>
+</aside>
+<main class="main">
+<header class="topbar"><span>WORKSPACE / <strong>RESUME STUDIO</strong></span><span class="private-dot">● Saved on this device</span></header>
+<div class="head">
+  <div><div class="eyebrow teal">TAILOR YOUR RESUME</div><h1>A better fit. <em>Still you.</em></h1>
+  <p id="jobSubtitle">Choose an internship and tailor your experience to its requirements.</p></div>
+  <a id="jobLink" class="btn btn-quiet" href="./index.html#explore">← Explore jobs</a>
+</div>
+<div class="intro"><div><strong>Make your experience stand out—without making anything up.</strong><p>Review the role, get grounded keyword suggestions, and decide exactly what makes it into your job-specific resume.</p></div><span class="intro-tag">You stay in control</span></div>
+<section class="match" aria-label="Resume and job match rating">
+ <div class="ring" id="ring" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Keyword alignment score"><div class="ring-center"><b id="score">—</b><small>/ 100</small></div></div>
+ <div class="match-info"><div class="eyebrow teal">EXPLAINABLE MATCH</div><h2>Resume ↔ job alignment <span class="subpill" id="ratingLabel">Add a resume</span></h2><p id="scoreInfo">Upload your resume and enter a complete job description to compare relevant keywords.</p><div class="chips" id="matchChips"></div></div>
+ <div class="match-side"><div><b id="matchedCount">0</b><span>skills covered</span></div><div><b id="missingCount">0</b><span>not found</span></div><small>Keyword coverage only—not an official ATS score or hiring prediction.</small></div>
+</section>
+<div class="steps"><span><b>1</b> Job description</span><i></i><span><b>2</b> Saved resume</span><i></i><span><b>3</b> Review edits</span><i></i><span><b>4</b> Download</span></div>
+<div class="cols">
+ <div class="editor">
+  <section class="section">
+   <header class="section-title"><div><div class="eyebrow teal">STEP 01</div><h2>Job description</h2><p>We use the description included with the posting. Paste the full listing for a more complete comparison.</p></div><span class="softpill" id="jobSource">Editable</span></header>
+   <div class="field"><label for="jobDescription">Requirements and responsibilities</label><textarea id="jobDescription" rows="7" placeholder="Paste the job description here, including required skills, responsibilities, and qualifications."></textarea></div>
+   <div class="field-inline"><button class="btn btn-quiet" id="analyze" type="button">↻ Analyze description</button><span id="jobStatus" class="hint">No description supplied yet.</span></div>
+  </section>
+  <section class="section">
+   <header class="section-title"><div><div class="eyebrow teal">STEP 02</div><h2>Saved master resume</h2><p>Upload once, then update it whenever you add experience. A job-specific copy never changes your original.</p></div><span class="softpill" id="versionPill">Not saved</span></header>
+   <div class="master">
+    <div class="file-icon">▤</div>
+    <div class="file-meta"><b id="masterName">No resume saved yet</b><small id="masterDetail">PDF, DOCX, or TXT · stays in your browser</small></div>
+    <div class="file-buttons">
+      <label class="btn btn-primary upload">↥ <span id="uploadLabel">Upload resume</span><input id="resumeFile" type="file" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden></label>
+      <button class="btn btn-quiet" id="editMaster" type="button">Edit text</button>
+      <button class="btn btn-quiet" id="versionHistory" type="button">History</button>
+    </div>
+   </div>
+   <p class="hint">No accounts or server uploads. Clearing browser data can erase local versions, so keep your original resume as a backup.</p>
+   <div id="masterEditor" class="fold" hidden><label for="masterText">Master resume text</label><textarea id="masterText" rows="12" placeholder="Paste your resume text here."></textarea><div class="btnrow"><button class="btn btn-primary" id="saveMaster" type="button">Save as new version</button><button class="btn btn-quiet" id="cancelEdit" type="button">Cancel</button></div></div>
+   <div id="historyPanel" class="fold" hidden><h3>Master resume versions</h3><div id="historyItems"></div></div>
+  </section>
+  <section class="section recommendations">
+    <header class="section-title"><div><div class="eyebrow teal">STEP 03</div><h2>Suggested improvements</h2><p>Simple, human-sounding rewrites drawn from your actual experience—not fabricated projects or achievements.</p></div><span class="softpill" id="reviewCount">0 accepted</span></header>
+    <div class="field-inline"><span class="hint" id="suggestionStatus">Add a resume and job description to start.</span><button class="btn btn-quiet" id="resetSuggestions" type="button">↶ Reset edits</button></div>
+    <div id="suggestions"><div class="empty">Once you add your resume, relevant bullet-point suggestions will appear here.</div></div>
+  </section>
+ </div>
+ <aside class="preview-col">
+   <section class="preview">
+    <div class="preview-head"><div><h2>Your tailored resume</h2><p>Original-style typography · changes you approve</p></div><span class="softpill" id="previewStatus">Not started</span></div>
+    <div class="preview-frame"><div class="paper" id="paper"><div class="paper-empty">Upload your master resume to see a live, one-page document preview.</div></div></div>
+    <div class="preview-note" id="pageWarning">Aims to match your original serif layout. Exact PDF positioning can vary without an editable source file.</div>
+    <div class="export"><h3>Ready to download?</h3><p>The copy is tailored to this role. Your master stays unchanged.</p>
+      <button class="btn btn-primary wide" id="downloadPdf" type="button" disabled>↓ Download tailored PDF</button>
+      <div class="btnrow"><button class="btn btn-quiet" id="downloadDocx" type="button" disabled>↓ Editable DOCX</button><button class="btn btn-quiet" id="downloadOriginal" type="button" disabled>↓ Original file</button></div>
+      <small>Only accepted edits are exported. PDF is rebuilt locally in a layout modeled on your original; verify spacing before applying.</small>
+    </div>
+   </section>
+ </aside>
+</div>
+<footer>Resume Studio · All resume processing happens in your browser · No AI-generated claims or fabricated keywords.</footer>
+</main>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body></html>
