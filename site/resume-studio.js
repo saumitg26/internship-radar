@@ -228,7 +228,7 @@ function renderPaper(){
   if(i===0)return '<div class="paper-name">'+esc(line)+'</div>';
   if(i===1)return '<div class="paper-contact">'+esc(line)+'</div>';
   if(HEADERS.has(line.toUpperCase()))return '<div class="paper-section">'+esc(line)+'</div>';
-  return '<div class="paper-line '+(/^[•●▪*-]\s/.test(line)?'bullet':'')+'">'+esc(line)+'</div>';
+  return '<div class="paper-line '+(/^[•●▪*-]\s/.test(line)?'bullet':/ - | \| /.test(line)?'role-line':'')+'">'+esc(line)+'</div>';
  }).join('');
  $('previewStatus').textContent=draftCount()+' accepted · master v'+master.id;
  let warn=lines.length>72?'This document may exceed one page. Download and verify page count, or shorten your bullets.':'Serif font, section rules and spacing modeled on your original layout. PDF/DOCX conversions may not be pixel-identical.';
@@ -259,7 +259,7 @@ function pdfExport(){
   const bullet=/^[•●▪*-]\s/.test(line);
   // Use same black-and-white serif typography, indentation, and section dividers.
   if(bullet){const text='• '+line.replace(/^[•●▪*-]\s*/,'');lineOut(text,8.75,'normal',6,9.7)}
-  else{lineOut(line,8.85,'normal',0,10)}
+  else{lineOut(line,8.85,/ - | \| /.test(line)?'bold':'normal',0,10)}
   y+=2;
  });
  doc.save(fileStem()+'.pdf');
@@ -271,7 +271,7 @@ function docxXml(){
   const header=HEADERS.has(line.toUpperCase());
   const bullet=/^[•●▪*-]\s/.test(line);
   const content=xmlEsc(line);
-  const run='<w:r><w:rPr><w:rFonts w:ascii="Liberation Serif" w:hAnsi="Liberation Serif"/>'+(header||i===0?'<w:b/>':'')+'<w:sz w:val="'+(i===0?'27':i===1?'17':header?'19':'18')+'"/></w:rPr><w:t xml:space="preserve">'+content+'</w:t></w:r>';
+  const run='<w:r><w:rPr><w:rFonts w:ascii="Liberation Serif" w:hAnsi="Liberation Serif"/>'+(header||i===0||(!bullet&&/ - | \| /.test(line))?'<w:b/>':'')+'<w:sz w:val="'+(i===0?'27':i===1?'17':header?'19':'18')+'"/></w:rPr><w:t xml:space="preserve">'+content+'</w:t></w:r>';
   const borders=header?'<w:pBdr><w:bottom w:val="single" w:sz="5" w:space="2" w:color="000000"/></w:pBdr>':'';
   const props='<w:pPr>'+(i<2?'<w:jc w:val="center"/>':'')+borders+'<w:spacing w:before="'+(header?'120':'12')+'" w:after="0" w:line="218" w:lineRule="auto"/>'+(bullet?'<w:ind w:left="200" w:hanging="175"/>':'')+'</w:pPr>';
   return '<w:p>'+props+run+'</w:p>';
