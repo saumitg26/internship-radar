@@ -13,7 +13,7 @@ tag=datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
 for filename in ("index.html","resume-studio.html"):
     path=SITE/filename
     html=path.read_text(encoding="utf-8")
-    for asset in ("jobs.js","resume-layout.js","resume-studio.js","resume-studio.css"):
+    for asset in ("jobs.js","resume-edits.js","resume-layout.js","resume-studio.js","resume-studio.css"):
         # Strictly limit replacement to our relative first-party file references.
         rule=r'((?:src|href)="(?:\./)?'+re.escape(asset)+r')(?:\?v=[0-9]+)?(")'
         html=re.sub(rule,lambda match:match.group(1)+"?v="+tag+match.group(2),html)
