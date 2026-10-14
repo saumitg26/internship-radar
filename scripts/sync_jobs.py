@@ -106,6 +106,19 @@ def ats_job_description(job):
         if not re.fullmatch(r"[a-zA-Z0-9_-]+",slug) or not re.fullmatch(r"[a-zA-Z0-9-]+",jid):return ""
         response=get("https://api.lever.co/v0/postings/"+slug+"/"+jid)
         return clean(response.get("descriptionPlain") or response.get("description") or "")
+    # Public Workday job detail JSON (many employers, including GDIT).
+    # Uses only documented-looking public job page structure; no sign-in/cookies.
+    if re.fullmatch(r"[a-z0-9-]+\.wd\d+\.myworkdayjobs\.com",host) and len(path)>=4 and path[1]=="job":
+        tenant=host.split(".")[0]
+        board=path[0]
+        if not re.fullmatch(r"[A-Za-z0-9_-]+",tenant) or not re.fullmatch(r"[A-Za-z0-9_-]+",board):return ""
+        if not all(re.fullmatch(r"[A-Za-z0-9._-]+",piece) for piece in path[2:]):return ""
+        endpoint="https://"+host+"/wday/cxs/"+tenant+"/"+board+"/job/"+"/".join(path[2:])
+        response=get(endpoint)
+        info=response.get("jobPostingInfo") or {}
+        desc=clean(info.get("jobDescription") or "")
+        if len(desc)>180:return desc
+        return ""
     if host=="ats.rippling.com" and len(path)>=3 and path[1]=="jobs":
         request=Request(job["url"],headers={"User-Agent":"Mozilla/5.0 (compatible; InternshipRadar/1.0)","Accept":"text/html"})
         with urlopen(request,timeout=12) as response:
@@ -137,8 +150,8 @@ def ats_job_description(job):
 def enrich_selected_descriptions(matches):
     """Prefill additional employer JDs for high-priority public community listings."""
     targets=[j for j in matches if j.get("community") and not j.get("job_description") and
-        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url","") or "ats.rippling.com" in j.get("url",""))]
-    targets.sort(key=lambda j:(-int(bool(j.get('discovered_on'))),-int(bool(j.get('dmv_priority'))),-int(bool(RX_REGION.search(j.get('location','')))),-j.get('score',0)))
+        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url","") or "ats.rippling.com" in j.get("url","") or "myworkdayjobs.com" in j.get("url",""))]
+    targets.sort(key=lambda j:(-int("General Dynamics Information Technology" in j.get("company","")),-int("myworkdayjobs.com" in j.get("url","")),-int(bool(j.get('discovered_on'))),-int(bool(j.get('dmv_priority'))),-int(bool(RX_REGION.search(j.get('location','')))),-j.get('score',0)))
     def fill(j):
         try:
             desc=ats_job_description(j)
@@ -151,6 +164,8 @@ def enrich_selected_descriptions(matches):
             if desc:
                 j["job_description"]=desc
                 hits+=1
+    gdit=[j for j in matches if "General Dynamics Information Technology" in j.get("company","") and "Summer 2027 Software Development Internship" in j.get("title","")]
+    print("GDIT Summer 2027 Software Development description coverage: "+str([(j.get("url","").split("/")[-1],len(j.get("job_description",""))) for j in gdit]))
     print("Additional full descriptions: "+str(hits)+" fetched from "+str(min(400,len(targets)))+" public ATS roles.")
 
 def main():
