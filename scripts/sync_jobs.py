@@ -134,9 +134,9 @@ def ats_job_description(job):
     # SmartRecruiters' public Posting API provides employer-authored job details.
     if host in ("jobs.smartrecruiters.com","www.smartrecruiters.com") and len(path)>=2:
         company=path[0]
-        posting=re.match(r"([A-Za-z0-9-]+)",path[1])
+        posting=re.match(r"^(\d+)(?:-|$)|^([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})(?:-|$)",path[1])
         if not re.fullmatch(r"[A-Za-z0-9_-]+",company) or not posting:return ""
-        posting_id=posting.group(1)
+        posting_id=posting.group(1) or posting.group(2)
         response=get("https://api.smartrecruiters.com/v1/companies/"+company+"/postings/"+posting_id)
         sections=(response.get("jobAd") or {}).get("sections") or {}
         result=[]
