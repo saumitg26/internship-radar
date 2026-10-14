@@ -85,7 +85,7 @@
 <div class="section-bar"><h2>All matching internships</h2><small id="exploreSourceHealth">Checking sources</small></div>
 <div class="row" style="margin-bottom:12px"><button class="btn" id="exploreCompanyClear" type="button" style="display:none">Clear company filter ×</button></div>
 <div class="filters"><input id="exploreSearch" placeholder="Search role, company, location…" aria-label="Search internships"><select id="exploreLocation"><option value="all">Nationwide · DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="exploreRole"><option value="all">All technical roles</option><option value="swe">Software development</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
-<div class="filters" style="grid-template-columns:1fr 1fr"><select id="exploreAge" aria-label="Filter by listing date"><option value="all">Any listing date</option><option value="today">First seen today</option><option value="3">First seen in last 3 days</option><option value="7">First seen in last 7 days</option><option value="30">First seen in last 30 days</option></select><select id="exploreStatus" aria-label="Filter by application status"><option value="all">All statuses</option><option value="new">Not yet applied</option><option value="saved">Saved only</option><option value="applied">Applied / later</option></select></div>
+<div class="filters" style="grid-template-columns:1fr 1fr"><select id="exploreAge" aria-label="Filter by listing date"><option value="all">Any listing date</option><option value="today">First seen today</option><option value="3">First seen in last 3 days</option><option value="7">First seen in last 7 days</option><option value="30">First seen in last 30 days</option></select><select id="exploreStatus" aria-label="Filter by application status"><option value="new">Not yet applied</option><option value="all">All statuses (including applied)</option><option value="saved">Saved only</option><option value="applied">Applied / later</option></select></div>
 <div class="filter-extra">
 <input id="exploreCity" placeholder="Specific city or location (optional)" aria-label="Specific city or location">
 <input id="exploreKeywords" placeholder="Role keywords, e.g. Java, backend…" aria-label="Specific role keywords">
@@ -166,7 +166,7 @@ $("homeLatest").onclick=function(){setPage("recent");};
 var validStatuses=["saved","applied","oa","interview","offer","rejected","skipped"];
 function getJob(id){return jobs.find(function(j){return j.id===id;})||(records[id]&&records[id].job)||null;}
 function update(id,status){if(validStatuses.indexOf(status)<0)return;var j=getJob(id);if(!j)return;var old=records[id]||{};
-if(old.status===status&&status==="saved"){delete records[id];notify("Removed from saved.");}else{records[id]={status:status,changed_at:new Date().toISOString(),applied_at:old.applied_at||(status!=="saved"&&status!=="skipped"?new Date().toISOString():null),job:{id:id,title:j.title,company:j.company,location:j.location||"",url:link(j.url)}};notify(status==="applied"?"Recorded as applied. Make sure you submitted at the employer's site.":"Tracking updated.");}
+if(old.status===status&&status==="saved"){delete records[id];notify("Removed from saved.");}else{records[id]={status:status,changed_at:new Date().toISOString(),applied_at:old.applied_at||(status!=="saved"&&status!=="skipped"?new Date().toISOString():null),job:{id:id,title:j.title,company:j.company,location:j.location||"",url:link(j.url)}};notify(status==="applied"?"Added to My Pipeline as Applied. This posting is now hidden from unapplied jobs.":"Tracking updated.");}
 save();render();}
 function local(j){return j.dmv_priority===true||/\b(washington\s*,?\s*d\.?c\.?|district of columbia|northern virginia|dmv|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville)\b/i.test(j.location||"");}
 function virginia(j){return /\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|richmond|norfolk|fredericksburg)\b/i.test(j.location||"");}
@@ -177,10 +177,17 @@ function jobMarkup(j){var r=records[j.id]||{},href=link(j.url),tags=(j.matched_s
 return '<article class="job"><div class="job-head"><div><h3>'+text(j.title)+'</h3><div class="company">'+text(j.company)+' · '+text(j.location||"Location unspecified")+' · '+text(j.source||"Employer")+(j.posted?' · Reported '+text(j.posted):'')+'</div></div><span class="score">'+(Number(j.score)||0)+' match</span></div><p class="desc">'+text(j.description||"Open the job posting for requirements and details.")+'</p><div class="tags">'+(local(j)?'<span class="tag">DMV priority</span>':'')+(j.discovered_on===today()?'<span class="tag fresh-tag">NEW TODAY · discovered</span>':j.discovered_on?'<span class="tag fresh-tag">Discovered '+text(j.discovered_on)+'</span>':'')+(j.job_description&&j.job_description.length>300?'<span class="tag">Full job description ready</span>':'')+(j.community?'<span class="tag warn">Community lead · verify open</span>':'')+tags+warnings+'</div><div class="actions">'+(href?'<a class="btn btn-primary" href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Employer posting ↗</a>':"")+'<a class="btn" data-enhance="'+text(j.id)+'" href="./resume-studio.html?job='+encodeURIComponent(j.id)+'">✦ Enhance resume</a><button class="btn" data-job="'+text(j.id)+'" data-action="saved">'+(r.status==="saved"?"★ Saved":"☆ Save")+'</button><button class="btn" data-job="'+text(j.id)+'" data-action="applied">✓ I applied</button><button class="btn" data-job="'+text(j.id)+'" data-action="skipped">Skip</button></div></article>';}
 function renderDiscover(){var sorted=visible();var selected=sorted.slice(0,10);$("showMore").textContent="Explore all ("+jobs.length+")";$("filterFeedback").textContent=sorted.length+" matching unreviewed roles · "+$("location").options[$("location").selectedIndex].textContent+" · "+(feed.responsive_boards||0)+" monitored boards responding. Filters only cover monitored boards.";if(!feed.generated_at){$("jobList").innerHTML='<div class="empty"><h3>Waiting for first job refresh</h3><p>The daily GitHub Actions workflow must run successfully to populate this feed. You can still track earlier applications under My pipeline.</p></div>';return;}
 $("jobList").innerHTML=selected.length?selected.map(jobMarkup).join(""):'<div class="empty"><h3>No matching internships in this feed</h3><p>This does not mean Virginia has no openings. Clear the search and role filters or explore the employer boards below.</p></div>';}
-["jobList","exploreJobList"].forEach(function(id){$(id).onclick=function(e){var b=e.target.closest("button[data-job]");if(b)update(b.dataset.job,b.dataset.action);};});
+// The same job card appears in Top 10, Explore, recent discoveries and
+// the homepage preview. One delegated listener covers every card, including
+// cards rendered after a filter or a feed refresh.
+document.addEventListener("click",function(e){
+ var b=e.target.closest("button[data-job][data-action]");
+ if(!b)return;
+ update(b.dataset.job,b.dataset.action);
+});
 $("showMore").onclick=function(){setPage("explore");};
 $("showLatest").onclick=function(){setPage("recent");};
-["search","location","role"].forEach(function(id){$(id).addEventListener(id==="search"?"input":"change",function(){showAll=false;renderDiscover();});});
+["search","location","role"].forEach(function(id){$(id).addEventListener(id==="search"?"input":"change",function(){renderDiscover();});});
 const DISCOVERY_PREFS="internship-radar-discovery-v1";
 function freshnessDate(j){return String(j.discovered_on||"").slice(0,10);}
 function ageDays(date){
@@ -288,6 +295,9 @@ function recentDate(j){
 function recentMatches(maxAge,loc,role,city){
  const cityTerm=String(city||"").trim().toLowerCase().split(",")[0];
  return jobs.filter(j=>{
+  // This is a discovery view, not application history. Applied, skipped
+  // and progressed opportunities are always visible in My Pipeline instead.
+  if(records[j.id]&&["applied","oa","interview","offer","rejected","skipped"].includes(records[j.id].status))return false;
   const when=recentDate(j);
   const diff=ageDays(when.date);
   if(!when.date||diff<0||diff>=Number(maxAge))return false;
