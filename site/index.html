@@ -155,9 +155,10 @@ function link(url){try{var u=new URL(String(url));return u.protocol==="https:"?u
 function today(d){var a=d?new Date(d):new Date();if(isNaN(a.getTime()))return "";var local=new Date(a.getTime()-a.getTimezoneOffset()*60000);return local.toISOString().slice(0,10);}
 function notify(msg){var n=$("toast");n.textContent=msg;n.classList.add("show");setTimeout(function(){n.classList.remove("show");},3000);}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){notify("Unable to save. Export your records as a backup.");}}
-function setPage(v){view=v;document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});document.querySelectorAll("[data-page]").forEach(function(x){x.classList.toggle("active",x.dataset.page===v);});$("crumb").textContent=v==="discover"?"TOP 10 MATCHES":v==="explore"?"EXPLORE INTERNSHIPS":v==="companies"?"COMPANIES":v.toUpperCase();render();window.scrollTo(0,0);}
+function setPage(v){view=v;document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});document.querySelectorAll("[data-page]").forEach(function(x){x.classList.toggle("active",x.dataset.page===v);});$("crumb").textContent=v==="discover"?"TOP 10 MATCHES":v==="recent"?"LATEST JOBS":v==="explore"?"EXPLORE INTERNSHIPS":v==="companies"?"COMPANIES":v.toUpperCase();render();window.scrollTo(0,0);}
 document.querySelectorAll("[data-page]").forEach(function(b){b.addEventListener("click",function(){setPage(b.dataset.page);});});
 $("jumpJobs").onclick=function(){$("jobsAnchor").scrollIntoView({behavior:"smooth"});};
+$("jumpLatest").onclick=function(){setPage("recent");};
 var validStatuses=["saved","applied","oa","interview","offer","rejected","skipped"];
 function getJob(id){return jobs.find(function(j){return j.id===id;})||(records[id]&&records[id].job)||null;}
 function update(id,status){if(validStatuses.indexOf(status)<0)return;var j=getJob(id);if(!j)return;var old=records[id]||{};
@@ -169,21 +170,21 @@ function maryland(j){return /\b(maryland|MD|bethesda|rockville|silver spring|gai
 function visible(){var q=$("search").value.toLowerCase().trim(),loc=$("location").value,role=$("role").value;
 return jobs.filter(function(j){var t=j.title.toLowerCase();if(records[j.id]&&["skipped","applied","oa","interview","offer","rejected"].indexOf(records[j.id].status)>=0)return false;if(q&&(j.company+" "+j.title+" "+j.location+" "+(j.matched_skills||[]).join(" ")).toLowerCase().indexOf(q)<0)return false;if(loc==="dmv"&&!local(j))return false;if(loc==="virginia"&&!virginia(j))return false;if(loc==="maryland"&&!maryland(j))return false;if(loc==="outside"&&local(j))return false;if(loc==="remote"&&!/remote/i.test(j.location))return false;if(role==="swe"&&!/software|developer|front.?end|back.?end|full.?stack/.test(t))return false;if(role==="cloud"&&!/cloud|platform|devops|infrastructure|sre/.test(t))return false;if(role==="ai"&&!/data|ai\b|machine learning|artificial intelligence/.test(t))return false;return true;});}
 function jobMarkup(j){var r=records[j.id]||{},href=link(j.url),tags=(j.matched_skills||[]).slice(0,5).map(function(x){return '<span class="tag">'+text(x)+'</span>';}).join(""),warnings=(j.eligibility_notes||[]).map(function(x){return '<span class="tag warn">'+text(x)+'</span>';}).join("");
-return '<article class="job"><div class="job-head"><div><h3>'+text(j.title)+'</h3><div class="company">'+text(j.company)+' · '+text(j.location||"Location unspecified")+' · '+text(j.source||"Employer")+(j.posted?' · Reported '+text(j.posted):'')+'</div></div><span class="score">'+(Number(j.score)||0)+' match</span></div><p class="desc">'+text(j.description||"Open the job posting for requirements and details.")+'</p><div class="tags">'+(local(j)?'<span class="tag">DMV priority</span>':'')+(j.first_seen===today()?'<span class="tag">NEW TODAY · first seen</span>':j.first_seen?'<span class="tag">First seen '+text(j.first_seen)+'</span>':'')+(j.community?'<span class="tag warn">Community lead · verify open</span>':'')+tags+warnings+'</div><div class="actions">'+(href?'<a class="btn btn-primary" href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Employer posting ↗</a>':"")+'<a class="btn" data-enhance="'+text(j.id)+'" href="./resume-studio.html?job='+encodeURIComponent(j.id)+'">✦ Enhance resume</a><button class="btn" data-job="'+text(j.id)+'" data-action="saved">'+(r.status==="saved"?"★ Saved":"☆ Save")+'</button><button class="btn" data-job="'+text(j.id)+'" data-action="applied">✓ I applied</button><button class="btn" data-job="'+text(j.id)+'" data-action="skipped">Skip</button></div></article>';}
+return '<article class="job"><div class="job-head"><div><h3>'+text(j.title)+'</h3><div class="company">'+text(j.company)+' · '+text(j.location||"Location unspecified")+' · '+text(j.source||"Employer")+(j.posted?' · Reported '+text(j.posted):'')+'</div></div><span class="score">'+(Number(j.score)||0)+' match</span></div><p class="desc">'+text(j.description||"Open the job posting for requirements and details.")+'</p><div class="tags">'+(local(j)?'<span class="tag">DMV priority</span>':'')+(j.discovered_on===today()?'<span class="tag fresh-tag">NEW TODAY · discovered</span>':j.discovered_on?'<span class="tag fresh-tag">Discovered '+text(j.discovered_on)+'</span>':'')+(j.community?'<span class="tag warn">Community lead · verify open</span>':'')+tags+warnings+'</div><div class="actions">'+(href?'<a class="btn btn-primary" href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Employer posting ↗</a>':"")+'<a class="btn" data-enhance="'+text(j.id)+'" href="./resume-studio.html?job='+encodeURIComponent(j.id)+'">✦ Enhance resume</a><button class="btn" data-job="'+text(j.id)+'" data-action="saved">'+(r.status==="saved"?"★ Saved":"☆ Save")+'</button><button class="btn" data-job="'+text(j.id)+'" data-action="applied">✓ I applied</button><button class="btn" data-job="'+text(j.id)+'" data-action="skipped">Skip</button></div></article>';}
 function renderDiscover(){var sorted=visible();var selected=sorted.slice(0,10);$("showMore").textContent="Explore all ("+jobs.length+")";$("filterFeedback").textContent=sorted.length+" matching unreviewed roles · "+$("location").options[$("location").selectedIndex].textContent+" · "+(feed.responsive_boards||0)+" monitored boards responding. Filters only cover monitored boards.";if(!feed.generated_at){$("jobList").innerHTML='<div class="empty"><h3>Waiting for first job refresh</h3><p>The daily GitHub Actions workflow must run successfully to populate this feed. You can still track earlier applications under My pipeline.</p></div>';return;}
 $("jobList").innerHTML=selected.length?selected.map(jobMarkup).join(""):'<div class="empty"><h3>No matching internships in this feed</h3><p>This does not mean Virginia has no openings. Clear the search and role filters or explore the employer boards below.</p></div>';}
 ["jobList","exploreJobList"].forEach(function(id){$(id).onclick=function(e){var b=e.target.closest("button[data-job]");if(b)update(b.dataset.job,b.dataset.action);};});
 $("showMore").onclick=function(){setPage("explore");};
 ["search","location","role"].forEach(function(id){$(id).addEventListener(id==="search"?"input":"change",function(){showAll=false;renderDiscover();});});
 const DISCOVERY_PREFS="internship-radar-discovery-v1";
-function freshnessDate(j){return String(j.first_seen||"").slice(0,10);}
+function freshnessDate(j){return String(j.discovered_on||"").slice(0,10);}
 function ageDays(date){
  if(!/^\d{4}-\d\d-\d\d$/.test(date||""))return Infinity;
  return Math.round((Date.parse(today())-Date.parse(date))/86400000);
 }
 function sortJobDates(a,b){
- const da=String(a.first_seen||a.posted||"");
- const db=String(b.first_seen||b.posted||"");
+ const da=String(a.discovered_on||a.posted||"");
+ const db=String(b.discovered_on||b.posted||"");
  return db.localeCompare(da)||String(b.posted||"").localeCompare(String(a.posted||""))||(Number(b.dmv_priority)-Number(a.dmv_priority))||(b.score||0)-(a.score||0);
 }
 function saveExplorePreferences(){
@@ -266,6 +267,82 @@ document.addEventListener("click",function(e){
   job_description:selected.job_description||"",source:selected.source||""
  }));}catch(err){}
 });
+
+const RECENT_PREFS="internship-radar-latest-v1";
+let recentLimit=20;
+function validRecentDate(d){
+ return /^\d{4}-\d{2}-\d{2}$/.test(String(d||"")) && Number.isFinite(Date.parse(d)) && ageDays(d)>=0;
+}
+function recentDate(j){
+ const discovered=String(j.discovered_on||"").slice(0,10);
+ const reported=String(j.posted||"").slice(0,10);
+ const d1=validRecentDate(discovered)?discovered:"";
+ const d2=validRecentDate(reported)?reported:"";
+ return d1>=d2?{date:d1,kind:"discovered"}:{date:d2,kind:"reported"};
+}
+function recentMatches(maxAge,loc,role,city){
+ const cityTerm=String(city||"").trim().toLowerCase().split(",")[0];
+ return jobs.filter(j=>{
+  const when=recentDate(j);
+  const diff=ageDays(when.date);
+  if(!when.date||diff<0||diff>=Number(maxAge))return false;
+  if(loc==="dmv"&&!local(j))return false;
+  if(loc==="virginia"&&!virginia(j))return false;
+  if(loc==="maryland"&&!maryland(j))return false;
+  if(loc==="remote"&&!/remote/i.test(j.location||""))return false;
+  if(cityTerm&&!String(j.location||"").toLowerCase().includes(cityTerm))return false;
+  const title=(j.title||"").toLowerCase();
+  if(role==="swe"&&!/software|developer|full.?stack|front.?end|back.?end|application engineer|programmer|web engineer/.test(title))return false;
+  if(role==="cloud"&&!/cloud|platform|devops|infrastructure|site reliability|systems engineer/.test(title))return false;
+  if(role==="ai"&&!/data|machine learning|artificial intelligence|ai\b|analytics|research engineer/.test(title))return false;
+  return true;
+ }).sort((a,b)=>{
+  const aa=recentDate(a),bb=recentDate(b);
+  return bb.date.localeCompare(aa.date)||(bb.kind==="discovered"?1:0)-(aa.kind==="discovered"?1:0)||(b.score||0)-(a.score||0);
+ });
+}
+function storeRecentPrefs(){
+ try{localStorage.setItem(RECENT_PREFS,JSON.stringify({
+  location:$("recentLocation").value,role:$("recentRole").value,days:$("recentDays").value,city:$("recentCity").value.slice(0,100)
+ }))}catch(e){}
+}
+try{
+ const p=JSON.parse(localStorage.getItem(RECENT_PREFS)||"null");
+ if(p&&typeof p==="object"){
+  for(const [field,id] of [["location","recentLocation"],["role","recentRole"],["days","recentDays"]]){
+   if(typeof p[field]==="string"&&Array.from($(id).options).some(o=>o.value===p[field]))$(id).value=p[field];
+  }
+  if(typeof p.city==="string")$("recentCity").value=p.city.slice(0,100);
+ }else{
+  $("recentLocation").value=$("exploreLocation").value==="all"?"dmv":$("exploreLocation").value;
+  $("recentRole").value=$("exploreRole").value==="all"?"swe":$("exploreRole").value;
+  $("recentCity").value=$("exploreCity").value;
+ }
+}catch(e){}
+function renderRecent(){
+ const loc=$("recentLocation").value,role=$("recentRole").value,days=$("recentDays").value,city=$("recentCity").value;
+ const matches=recentMatches(days,loc,role,city);
+ const todayCount=matches.filter(j=>recentDate(j).date===today()).length;
+ const locName=city.trim()||$("recentLocation").options[$("recentLocation").selectedIndex].textContent;
+ const roleName=$("recentRole").options[$("recentRole").selectedIndex].textContent;
+ $("latestCount").textContent=matches.length;
+ $("latestSummary").textContent=matches.length+" recent "+roleName.toLowerCase()+" "+(matches.length===1?"opening":"openings");
+ $("latestExplain").textContent=locName+" · "+todayCount+" dated today · "+$("recentDays").options[$("recentDays").selectedIndex].textContent+" · last sync "+($("feedDate").textContent||"pending");
+ $("recentNavCount").textContent=String(recentMatches(7,$("recentLocation").value,$("recentRole").value,$("recentCity").value).length)+" RECENT";
+ $("recentShowing").textContent="Showing "+Math.min(recentLimit,matches.length)+" of "+matches.length;
+ $("recentLoadMore").style.display=recentLimit<matches.length?"inline-block":"none";
+ $("recentJobList").innerHTML=matches.length?matches.slice(0,recentLimit).map(jobMarkup).join(""):
+  '<div class="empty"><h3>No recently dated matches yet</h3><p>Choose a longer time range or wider location. We only label jobs recent when the source provides a date or the app has a verified discovery date.</p></div>';
+ $("recentNote").textContent=matches.length?"From 9 public feeds and employer boards · Dates reflect the original source or first discovery":"Try Last 30 days for more options";
+}
+["recentLocation","recentRole","recentDays","recentCity"].forEach(id=>{
+ $(id).addEventListener(id==="recentCity"?"input":"change",()=>{recentLimit=20;storeRecentPrefs();renderRecent();});
+});
+$("recentLoadMore").onclick=()=>{recentLimit+=20;renderRecent();};
+$("recentReset").onclick=()=>{
+ $("recentLocation").value="dmv";$("recentRole").value="swe";$("recentDays").value="7";$("recentCity").value="";
+ recentLimit=20;storeRecentPrefs();renderRecent();
+};
 // A browser-local company directory derived from the daily public listings.
 var companyMap=new Map();
 jobs.forEach(function(j){
@@ -330,7 +407,7 @@ $("pInterview").textContent=values.filter(function(r){return r.status==="intervi
 $("pApplied").textContent=values.filter(function(r){return ["applied","oa","interview","offer","rejected"].indexOf(r.status)>=0;}).length;}
 $("pipelineList").onchange=function(e){if(e.target.matches("select[data-record]"))update(e.target.dataset.record,e.target.value);};
 $("manual").onsubmit=function(e){e.preventDefault();var company=$("company").value.trim(),title=$("title").value.trim(),url=$("url").value.trim();if(!company||!title)return;if(url&&!link(url)){notify("Only HTTPS job links are supported.");return;}var id="manual-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);records[id]={status:"applied",changed_at:new Date().toISOString(),applied_at:new Date().toISOString(),job:{id:id,company:company,title:title,location:"",url:link(url)}};save();$("manual").reset();render();notify("Existing application added.");};
-function render(){var applied=Object.values(records).filter(function(r){return r&&r.applied_at;});$("jobCount").textContent=jobs.length;$("appliedTotal").textContent=applied.length;$("appliedToday").textContent=applied.filter(function(r){return today(r.applied_at)===today();}).length;$("dailyGoal").textContent=goal;
+function render(){renderRecent();var applied=Object.values(records).filter(function(r){return r&&r.applied_at;});$("jobCount").textContent=jobs.length;$("appliedTotal").textContent=applied.length;$("appliedToday").textContent=applied.filter(function(r){return today(r.applied_at)===today();}).length;$("dailyGoal").textContent=goal;
 $("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/9 discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Feed refreshed "+$("feedDate").textContent:"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
 $("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/9. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
@@ -345,6 +422,8 @@ var checked={};Object.entries(x.records).slice(0,3000).forEach(function(entry){v
 if(!confirm("Replace your current browser-local application history with "+Object.keys(checked).length+" imported records?"))return;records=checked;save();render();notify("Backup imported.");}catch(err){notify("Unable to import this backup.");}finally{e.target.value="";}};
 $("clear").onclick=function(){if(confirm("Permanently clear this browser's application history? Export a backup first.")){records={};save();render();notify("Local history cleared.");}};
 render();
+const opened=(location.hash||"").slice(1);
+if(["recent","explore","companies","pipeline"].includes(opened))setPage(opened);
 })();
 </script>
 </body></html>
