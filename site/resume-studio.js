@@ -28,7 +28,12 @@ const handoff=(()=>{
   return value&&value.id===jobId&&typeof value.title==='string'&&typeof value.company==='string'?value:null;
  }catch(e){return null}
 })();
-const job=(Array.isArray(feed.jobs)?feed.jobs:[]).find(j=>j.id===jobId)||handoff||null;
+const feedJob=(Array.isArray(feed.jobs)?feed.jobs:[]).find(j=>j.id===jobId)||null;
+const job=feedJob&&handoff
+ ?{...handoff,...feedJob,
+   job_description:(String(feedJob.job_description||'').length>=String(handoff.job_description||'').length?feedJob.job_description:handoff.job_description),
+   description:(String(feedJob.description||'').length>=String(handoff.description||'').length?feedJob.description:handoff.description)}
+ :(feedJob||handoff||null);
 let db=null,master=null,versions=[],suggestions=[],draft={},scoreStats={requirements:[],covered:[],missing:[]};
 let currentJD='',waitingPdf=false,toastHandle=null;
 function notify(s){const el=$('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastHandle);toastHandle=setTimeout(()=>el.classList.remove('show'),4200)}
@@ -84,6 +89,56 @@ function setupJob(){
    $('jobLink').href=u.href;$('jobLink').textContent='Employer posting ↗';$('jobLink').target='_blank';$('jobLink').rel='noopener noreferrer';
   }
  }catch(e){}
+}
+
+/* Public ATS APIs can provide fuller descriptions if the scheduled feed has only
+   an excerpt. No resume data, account tokens, or credentials are sent. */
+async function autofillOfficialDescription(){
+ if(!job)return;
+ const start=$('jobDescription').value;
+ if((job.job_description||'').trim().length>250){
+  $('jobSource').textContent='Full employer description auto-loaded';
+  return;
+ }
+ let u;
+ try{u=new URL(job.url)}catch(e){return}
+ const path=u.pathname.split('/').filter(Boolean);
+ let api='';
+ if(['job-boards.greenhouse.io','boards.greenhouse.io'].includes(u.hostname)&&path[1]==='jobs'&&/^\d+$/.test(path[2]||'')){
+  api='https://boards-api.greenhouse.io/v1/boards/'+encodeURIComponent(path[0])+'/jobs/'+encodeURIComponent(path[2])+'?content=true';
+ }else if(u.hostname==='jobs.lever.co'&&path.length>=2&&/^[\w-]+$/.test(path[0])&&/^[\w-]+$/.test(path[1])){
+  api='https://api.lever.co/v0/postings/'+encodeURIComponent(path[0])+'/'+encodeURIComponent(path[1]);
+ }else if(u.hostname==='jobs.ashbyhq.com'&&path.length>=2&&/^[\w.-]+$/.test(path[0])){
+  api='https://api.ashbyhq.com/posting-api/job-board/'+encodeURIComponent(path[0]);
+ }else return;
+ try{
+  const response=await fetch(api,{credentials:'omit',cache:'no-store',redirect:'follow'});
+  if(!response.ok)throw new Error('Unavailable');
+  const data=await response.json();
+  let content='';
+  if(u.hostname==='jobs.ashbyhq.com'){
+   const item=(data.jobs||[]).find(x=>{
+    try{const p=new URL(x.jobUrl||'').pathname.split('/').filter(Boolean);return p[1]===path[1];}catch(e){return false}
+   });
+   content=item?.descriptionHtml||item?.descriptionPlain||'';
+  }else content=data.content||data.descriptionPlain||data.description||'';
+  if(typeof content!=='string')return;
+  const parser=new DOMParser();
+  const doc=parser.parseFromString(content.replace(/<br\s*\/?>/gi,'\n').replace(/<\/(?:p|li|div|h[1-6])>/gi,'\n'), 'text/html');
+  doc.querySelectorAll('script,style,iframe').forEach(n=>n.remove());
+  const full=normalize((doc.body?.textContent||'').replace(/\n[ \t]+/g,'\n')).slice(0,12000);
+  if(full.length<250)return;
+  if($('jobDescription').value!==start)return; // never overwrite user edits
+  $('jobDescription').value=full;
+  $('jobSource').textContent='Full employer description automatically loaded';
+  $('jobStatus').textContent='Retrieved from the employer’s public applicant-tracking board. Review before using the match suggestions.';
+  await refresh();
+ }catch(e){
+  // No misleading "full" label; the prefilled feed excerpt remains editable.
+  if($('jobDescription').value===start&&start.length<400){
+   $('jobStatus').textContent='The employer’s full description could not be retrieved automatically. The role summary is prefilled; open the posting if you need the complete text.';
+  }
+ }
 }
 async function readPDF(bytes){
  if(!window.pdfjsLib)throw Error('PDF parser did not load. Try TXT or DOCX, or paste resume text.');
@@ -361,6 +416,7 @@ function wire(){
 async function init(){
  setupJob();wire();
  currentJD=normalize($('jobDescription').value);
+ void autofillOfficialDescription();
  try{
   db=await openDB();versions=await dbOp('masters','getAll');
   const active=await dbOp('kv','get','active');
