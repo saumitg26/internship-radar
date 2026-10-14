@@ -138,46 +138,97 @@ $("jobList").innerHTML=selected.length?selected.map(jobMarkup).join(""):'<div cl
 ["jobList","exploreJobList"].forEach(function(id){$(id).onclick=function(e){var b=e.target.closest("button[data-job]");if(b)update(b.dataset.job,b.dataset.action);};});
 $("showMore").onclick=function(){setPage("explore");};
 ["search","location","role"].forEach(function(id){$(id).addEventListener(id==="search"?"input":"change",function(){showAll=false;renderDiscover();});});
+const DISCOVERY_PREFS="internship-radar-discovery-v1";
+function freshnessDate(j){return String(j.first_seen||"").slice(0,10);}
+function ageDays(date){
+ if(!/^\d{4}-\d\d-\d\d$/.test(date||""))return Infinity;
+ return Math.round((Date.parse(today())-Date.parse(date))/86400000);
+}
+function sortJobDates(a,b){
+ const da=String(a.first_seen||a.posted||"");
+ const db=String(b.first_seen||b.posted||"");
+ return db.localeCompare(da)||String(b.posted||"").localeCompare(String(a.posted||""))||(Number(b.dmv_priority)-Number(a.dmv_priority))||(b.score||0)-(a.score||0);
+}
+function saveExplorePreferences(){
+ try{
+  let selected={};["exploreLocation","exploreRole","exploreCity","exploreKeywords","exploreSort"].forEach(id=>selected[id]=$(id).value.slice(0,100));
+  localStorage.setItem(DISCOVERY_PREFS,JSON.stringify(selected));
+ }catch(e){}
+}
+try{
+ const prefs=JSON.parse(localStorage.getItem(DISCOVERY_PREFS)||"null");
+ if(prefs&&typeof prefs==="object"){
+  ["exploreLocation","exploreRole","exploreCity","exploreKeywords","exploreSort"].forEach(id=>{
+   if(typeof prefs[id]==="string"&&(!$(id).options||Array.from($(id).options).some(o=>o.value===prefs[id])))$(id).value=prefs[id];
+  });
+ }else{$("exploreLocation").value="dmv";$("exploreRole").value="swe";}
+}catch(e){}
 function exploreVisible(){
- var q=$("exploreSearch").value.trim().toLowerCase(),loc=$("exploreLocation").value,role=$("exploreRole").value,age=$("exploreAge").value,status=$("exploreStatus").value;
- var cutoff=age==="all"?0:Date.now()-Number(age)*86400000;
- return jobs.filter(function(j){
-  var t=j.title.toLowerCase(),rec=records[j.id]||{},st=rec.status||"new";
+ const q=$("exploreSearch").value.trim().toLowerCase(),
+       loc=$("exploreLocation").value,role=$("exploreRole").value,
+       city=$("exploreCity").value.trim().toLowerCase().split(",")[0],
+       keyword=$("exploreKeywords").value.trim().toLowerCase().split(/[,\s]+/).filter(Boolean),
+       age=$("exploreAge").value,status=$("exploreStatus").value;
+ const filtered=jobs.filter(function(j){
+  const t=j.title.toLowerCase(),where=String(j.location||"").toLowerCase();
+  const rec=records[j.id]||{},st=rec.status||"new";
   if(exploreCompany&&j.company!==exploreCompany)return false;
-  if(q&&(j.company+" "+j.title+" "+j.location+" "+(j.matched_skills||[]).join(" ")).toLowerCase().indexOf(q)<0)return false;
+  if(q&&!(j.company+" "+j.title+" "+j.location+" "+(j.matched_skills||[]).join(" ")).toLowerCase().includes(q))return false;
   if(loc==="virginia"&&!virginia(j))return false;
   if(loc==="dmv"&&!local(j))return false;
   if(loc==="maryland"&&!maryland(j))return false;
   if(loc==="outside"&&local(j))return false;
-  if(loc==="remote"&&!/remote/i.test(j.location||""))return false;
+  if(loc==="remote"&&!/remote/i.test(where))return false;
+  if(city&&!where.includes(city))return false;
   if(role==="swe"&&!/software|developer|front.?end|back.?end|full.?stack|application engineer|programmer/.test(t))return false;
   if(role==="cloud"&&!/cloud|platform|devops|infrastructure|sre/.test(t))return false;
   if(role==="ai"&&!/data|ai\b|machine learning|artificial intelligence|analytics/.test(t))return false;
-  if(cutoff&&(!j.posted||!Number.isFinite(Date.parse(j.posted))||Date.parse(j.posted)<cutoff))return false;
-  if(status==="new"&&["applied","oa","interview","offer","rejected","skipped"].indexOf(st)>=0)return false;
+  if(keyword.length&&!keyword.every(k=>(j.title+" "+j.description+" "+(j.matched_skills||[]).join(" ")).toLowerCase().includes(k)))return false;
+  if(age!=="all"&&(age==="today"?ageDays(freshnessDate(j))!==0:ageDays(freshnessDate(j))>=Number(age)))return false;
+  if(status==="new"&&["applied","oa","interview","offer","rejected","skipped"].includes(st))return false;
   if(status==="saved"&&st!=="saved")return false;
-  if(status==="applied"&&["applied","oa","interview","offer","rejected"].indexOf(st)<0)return false;
+  if(status==="applied"&&!["applied","oa","interview","offer","rejected"].includes(st))return false;
   return true;
  });
+ return $("exploreSort").value==="newest"?filtered.sort(sortJobDates):filtered;
 }
 function renderExplore(){
- var matches=exploreVisible();
+ const matches=exploreVisible();
+ const newest=matches.filter(j=>freshnessDate(j)===today()).sort(sortJobDates);
  $("exploreTotal").textContent=jobs.length;
  $("exploreVA").textContent=jobs.filter(virginia).length;
  $("exploreDMV").textContent=jobs.filter(local).length;
  $("exploreMatches").textContent=matches.length;
- $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/7 discovery feeds";
+ $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/9 discovery feeds";
  $("exploreCompanyClear").style.display=exploreCompany?"inline-block":"none";
- $("exploreLabel").textContent=(exploreCompany?"Selected company: "+exploreCompany+" · ":"")+matches.length+" matching leads · DMV locations prioritized, nationwide relocation accepted.";
+ $("exploreFreshCount").textContent=newest.length+" today";
+ $("exploreFreshHint").textContent=newest.length
+   ?"First seen in Internship Radar today, "+new Date().toLocaleDateString("en-US",{month:"long",day:"numeric"})+". These are discovery dates, not verified employer posting dates."
+   :"No listings first seen today match this location and role yet. New entries appear after successful refreshes; older matching listings remain below.";
+ $("exploreFreshList").innerHTML=newest.length?newest.slice(0,6).map(jobMarkup).join(""):'';
+ const locLabel=$("exploreCity").value||$("exploreLocation").options[$("exploreLocation").selectedIndex].textContent;
+ $("exploreLabel").textContent=(exploreCompany?"Company: "+exploreCompany+" · ":"")+matches.length+" matching leads · "+locLabel+" · "+$("exploreRole").options[$("exploreRole").selectedIndex].textContent+" · "+($("exploreSort").value==="newest"?"newest first":"ranked by fit")+".";
  $("exploreShowing").textContent="Showing "+Math.min(exploreLimit,matches.length)+" of "+matches.length;
  $("exploreLoadMore").style.display=matches.length>exploreLimit?"inline-block":"none";
- $("exploreJobList").innerHTML=matches.length?matches.slice(0,exploreLimit).map(jobMarkup).join(""):'<div class="empty"><h3>No matches with those filters</h3><p>Try another location, role, or posting age. A missing listing does not mean no internships exist there.</p></div>';
+ $("exploreJobList").innerHTML=matches.length?matches.slice(0,exploreLimit).map(jobMarkup).join(""):'<div class="empty"><h3>No matches with those filters</h3><p>Try another location, role, or first-seen date. A missing listing does not mean no internships exist there.</p></div>';
 }
-["exploreSearch","exploreLocation","exploreRole","exploreAge","exploreStatus"].forEach(function(id){
- $(id).addEventListener(id==="exploreSearch"?"input":"change",function(){exploreLimit=25;renderExplore();});
+["exploreSearch","exploreLocation","exploreRole","exploreAge","exploreStatus","exploreCity","exploreKeywords","exploreSort"].forEach(function(id){
+ $(id).addEventListener(["exploreSearch","exploreCity","exploreKeywords"].includes(id)?"input":"change",function(){
+  exploreLimit=25;renderExplore();saveExplorePreferences();
+ });
 });
 $("exploreLoadMore").onclick=function(){exploreLimit+=25;renderExplore();};
 $("exploreCompanyClear").onclick=function(){exploreCompany="";exploreLimit=25;renderExplore();};
+// Pass this exact posting to the Resume Studio on click (no resume data travels here).
+document.addEventListener("click",function(e){
+ const a=e.target.closest("a[data-enhance]");if(!a)return;
+ const selected=jobs.find(j=>j.id===a.dataset.enhance);if(!selected)return;
+ try{sessionStorage.setItem("internship-radar-job-handoff-v1",JSON.stringify({
+  id:selected.id,company:selected.company,title:selected.title,location:selected.location,
+  url:selected.url,description:selected.description||"",
+  job_description:selected.job_description||"",source:selected.source||""
+ }));}catch(err){}
+});
 // A browser-local company directory derived from the daily public listings.
 var companyMap=new Map();
 jobs.forEach(function(j){
@@ -243,9 +294,9 @@ $("pApplied").textContent=values.filter(function(r){return ["applied","oa","inte
 $("pipelineList").onchange=function(e){if(e.target.matches("select[data-record]"))update(e.target.dataset.record,e.target.value);};
 $("manual").onsubmit=function(e){e.preventDefault();var company=$("company").value.trim(),title=$("title").value.trim(),url=$("url").value.trim();if(!company||!title)return;if(url&&!link(url)){notify("Only HTTPS job links are supported.");return;}var id="manual-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);records[id]={status:"applied",changed_at:new Date().toISOString(),applied_at:new Date().toISOString(),job:{id:id,company:company,title:title,location:"",url:link(url)}};save();$("manual").reset();render();notify("Existing application added.");};
 function render(){var applied=Object.values(records).filter(function(r){return r&&r.applied_at;});$("jobCount").textContent=jobs.length;$("appliedTotal").textContent=applied.length;$("appliedToday").textContent=applied.filter(function(r){return today(r.applied_at)===today();}).length;$("dailyGoal").textContent=goal;
-$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/7 discovery feeds";
+$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/9 discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Public feed available":"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
-$("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/4. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
+$("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/9. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
 renderDiscover();renderExplore();renderCompanies();renderPipeline();}
 $("saveGoal").onclick=function(){var n=Number($("goalInput").value);if(!Number.isInteger(n)||n<1||n>30){notify("Choose a goal between 1 and 30.");return;}goal=n;try{localStorage.setItem(SETTINGS,JSON.stringify({dailyGoal:goal}));}catch(e){}render();notify("Goal saved.");};
 function download(content,name,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}
