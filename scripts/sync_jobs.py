@@ -106,12 +106,20 @@ def ats_job_description(job):
         if not re.fullmatch(r"[a-zA-Z0-9_-]+",slug) or not re.fullmatch(r"[a-zA-Z0-9-]+",jid):return ""
         response=get("https://api.lever.co/v0/postings/"+slug+"/"+jid)
         return clean(response.get("descriptionPlain") or response.get("description") or "")
+    if host=="jobs.ashbyhq.com" and len(path)>=2:
+        slug,jid=path[:2]
+        if not re.fullmatch(r"[A-Za-z0-9._-]+",slug) or not re.fullmatch(r"[A-Za-z0-9-]+",jid):return ""
+        response=get("https://api.ashbyhq.com/posting-api/job-board/"+slug)
+        for item in response.get("jobs",[]):
+            posted=urlsplit(item.get("jobUrl") or "").path.strip("/").split("/")
+            if len(posted)>=2 and posted[1]==jid:
+                return clean(item.get("descriptionHtml") or item.get("descriptionPlain") or "")
     return ""
 
 def enrich_selected_descriptions(matches):
     """Prefill additional employer JDs for high-priority public community listings."""
     targets=[j for j in matches if j.get("community") and not j.get("job_description") and
-        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url",""))]
+        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url",""))]
     targets.sort(key=lambda j:(-int(bool(j.get("dmv_priority"))),-int(bool(RX_REGION.search(j.get("location","")))),-j.get("score",0)))
     def fill(j):
         try:
@@ -185,6 +193,9 @@ def main():
         old=old_jobs.get(job["id"]) or old_by_url.get(canonical_url(job["url"])) or old_by_semantic.get(semantic_key(job))
         if old:
             job["first_seen"]=old.get("first_seen") or old_generated
+            # Cache only previously obtained, public job descriptions for the same job.
+            if old.get("job_description") and not job.get("job_description"):
+                job["job_description"]=str(old["job_description"])[:6500]
         elif prior:
             job["first_seen"]=eastern_today
             new_count+=1
