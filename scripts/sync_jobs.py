@@ -184,8 +184,9 @@ def ats_job_description(job):
 
 def enrich_selected_descriptions(matches):
     """Prefill additional employer JDs for high-priority public community listings."""
+    public_ats=("greenhouse.io","jobs.lever.co","jobs.ashbyhq.com","ats.rippling.com","myworkdayjobs.com","smartrecruiters.com","apply.workable.com")
     targets=[j for j in matches if j.get("community") and not j.get("job_description") and
-        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url","") or "ats.rippling.com" in j.get("url","") or "myworkdayjobs.com" in j.get("url","" or "smartrecruiters.com" in j.get("url","") or "apply.workable.com" in j.get("url",""))]
+             any(host in j.get("url","") for host in public_ats)]
     targets.sort(key=lambda j:(-int("General Dynamics Information Technology" in j.get("company","")),-int("myworkdayjobs.com" in j.get("url","")),-int(bool(j.get('discovered_on'))),-int(bool(j.get('dmv_priority'))),-int(bool(RX_REGION.search(j.get('location','')))),-j.get('score',0)))
     def fill(j):
         try:
