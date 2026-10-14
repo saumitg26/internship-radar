@@ -146,46 +146,73 @@ async function autofillOfficialDescription(){
  }
 }
 async function readPDF(bytes){
- if(!window.pdfjsLib)throw Error('PDF parser did not load. Try TXT or DOCX, or paste resume text.');
+ if(!window.pdfjsLib)throw Error('PDF reader not loaded. Try DOCX or TXT, or paste resume text.');
  pdfjsLib.GlobalWorkerOptions.workerSrc='./vendor/pdf.worker.min.js';
- const doc=await pdfjsLib.getDocument({data:new Uint8Array(bytes.slice(0)),isEvalSupported:false}).promise;
- if(doc.numPages>5)throw Error('This tool supports resumes up to five pages.');
- const lines=[];
- for(let p=1;p<=doc.numPages;p++){
-  const pg=await doc.getPage(p);const {items}=await pg.getTextContent();
+ const pdf=await pdfjsLib.getDocument({data:new Uint8Array(bytes.slice(0)),isEvalSupported:false}).promise;
+ if(pdf.numPages>5)throw Error('Resumes of more than five pages are not supported.');
+ const physical=[];
+ for(let p=1;p<=pdf.numPages;p++){
+  const pg=await pdf.getPage(p);
+  const content=await pg.getTextContent();
   const buckets=[];
-  for(const item of items){
-   const str=String(item.str||'');if(!str.trim())continue;
-   const y=item.transform[5],x=item.transform[4],w=item.width||0;
-   let line=buckets.find(g=>Math.abs(g.y-y)<2);
-   if(!line){line={y,items:[]};buckets.push(line)}
-   line.items.push({x,w,str});
+  for(const item of content.items){
+   if(!String(item.str||'').trim())continue;
+   const x=Number(item.transform?.[4]||0),y=Number(item.transform?.[5]||0);
+   const width=Number(item.width||0);
+   let row=buckets.find(r=>Math.abs(r.y-y)<=1.35);
+   if(!row){row={y,items:[]};buckets.push(row)}
+   const style=content.styles?.[item.fontName]||{};
+   row.items.push({x,width,text:item.str,bold:/bold/i.test(String(style.fontFamily||'')+' '+String(item.fontName||''))});
   }
   buckets.sort((a,b)=>b.y-a.y);
   for(const row of buckets){
    row.items.sort((a,b)=>a.x-b.x);
-   let str='',prev=null;
-   for(const itm of row.items){
-    const gap=prev?itm.x-(prev.x+prev.w):0;
-    if(str&&!/\s$/.test(str)&&!/^\s/.test(itm.str)&&gap>1.0)str+=' ';
-    str+=itm.str;prev=itm;
+   let text='',previous=null;
+   for(const part of row.items){
+    const distance=previous?part.x-(previous.x+previous.width):0;
+    if(text&&!/\s$/.test(text)&&!/^\s/.test(part.text)&&distance>1.1)text+=' ';
+    text+=part.text;
+    previous=part;
    }
-   if(str.trim())lines.push(str.trim());
+   text=text.replace(/\s+/g,' ').trim();
+   if(text)physical.push({text,x:row.items[0]?.x||0,bold:row.items.some(x=>x.bold)});
   }
  }
- return normalizePdfLines(lines);
+ return normalizePdfLines(physical);
 }
-function normalizePdfLines(lines){
- const out=[];
- for(let line of lines){
-  line=normalize(line);if(!line)continue;
-  const prev=out.length?out[out.length-1]:'';
-  // Merge continuation lines for PDF bullets, but never merge a new bullet, heading, or job/degree label.
-  const isNew=/^(?:[•●▪*-]\s|EDUCATION$|TECHNICAL SKILLS$|PROFESSIONAL EXPERIENCE$|PROJECTS$|LEADERSHIP$|AWARDS|CERTIFICATIONS$)/i.test(line);
-  if(prev.startsWith('• ')&&!isNew&&!/\b(Intern|Instructor|Lead|Treasurer|University)\b.*\b20\d\d\b/i.test(line)){out[out.length-1]+=' '+line}
-  else out.push(line);
+function normalizePdfLines(physical){
+ const output=[];let section='',last=null;
+ const sections=new Set(['EDUCATION','TECHNICAL SKILLS','PROFESSIONAL EXPERIENCE','EXPERIENCE','PROJECTS','LEADERSHIP','AWARDS & CERTIFICATIONS','CERTIFICATIONS','ACTIVITIES','RESEARCH','SKILLS','AWARDS']);
+ for(const raw of physical){
+  let line=normalize(raw.text);
+  if(!line)continue;
+  const isHeader=sections.has(line.toUpperCase());
+  const bullet=/^[•●▪]\s?/.test(line);
+  if(bullet){line='• '+line.replace(/^[•●▪]\s*/, '');}
+  if(isHeader){
+   section=line.toUpperCase();last={kind:'section',x:raw.x,value:line};
+   output.push(last);continue;
+  }
+  // The original PDF's continuation lines are indented about 5 points farther
+  // than their bullet start. Respect geometry instead of guessing from words.
+  if(last&&last.kind==='bullet'&&!bullet&&raw.x>=last.x+2.5){
+   last.value+=' '+line;continue;
+  }
+  if(last&&last.kind==='project'&&section==='PROJECTS'&&!bullet&&
+     (/[|,]$/.test(last.value)||!raw.bold&&raw.x>last.x+3)){
+   last.value+=' '+line;continue;
+  }
+  if(last&&last.kind==='text'&&!bullet&&!isHeader&&
+     (/[,:]$/.test(last.value)||/^[a-z(]/.test(line))&&
+     (section==='EDUCATION'||section==='TECHNICAL SKILLS'||section==='SKILLS')){
+   last.value+=' '+line;continue;
+  }
+  // Job names, education rows and project titles always remain independent,
+  // even when they directly follow a wrapped bullet in the original PDF.
+  const kind=bullet?'bullet':section==='PROJECTS'?'project':'text';
+  last={kind,x:raw.x,value:line};output.push(last);
  }
- return out.join('\n');
+ return output.map(row=>row.value).join('\n');
 }
 async function readDOCX(bytes){
  const a=new Uint8Array(bytes),v=new DataView(bytes),decoder=new TextDecoder();
@@ -325,31 +352,15 @@ async function refresh(){currentJD=normalize($('jobDescription').value);generate
 function pdfExport(){
  if(!master)return;
  const maker=window.jspdf?.jsPDF;
- if(!maker){notify('PDF export library unavailable. Try again after reloading.');return}
- const doc=new maker({unit:'pt',format:'letter',compress:true});
- const lines=parseLines(renderText());let y=33,overflow=false;
- const width=532,x=40;doc.setTextColor(19,26,31);
- function lineOut(str,size=9,style='normal',indent=0,gap=10){
-  doc.setFont('times',style);doc.setFontSize(size);
-  let parts=doc.splitTextToSize(str,width-indent);
-  for(const fragment of parts){if(y>758){doc.addPage();y=37;overflow=true}
-   doc.text(fragment,x+indent,y);y+=gap;}
- }
- lines.forEach((line,i)=>{
-  if(i===0){doc.setFont('times','bold');doc.setFontSize(14.2);doc.text(line,306,y,{align:'center'});y+=15;return}
-  if(i===1){doc.setFont('times','normal');doc.setFontSize(8.5);const p=doc.splitTextToSize(line,550);for(const a of p){doc.text(a,306,y,{align:'center'});y+=9.5}y+=4;return}
-  if(HEADERS.has(line.toUpperCase())){
-   y+=5;if(y>757){doc.addPage();y=37;overflow=true}
-   doc.setFont('times','bold');doc.setFontSize(9);doc.text(line.toUpperCase(),40,y);doc.setLineWidth(.55);doc.line(40,y+2.7,572,y+2.7);y+=13;return
-  }
-  const bullet=/^[•●▪*-]\s/.test(line);
-  // Use same black-and-white serif typography, indentation, and section dividers.
-  if(bullet){const text='• '+line.replace(/^[•●▪*-]\s*/,'');lineOut(text,8.75,'normal',6,9.7)}
-  else{lineOut(line,8.85,/ - | \| /.test(line)?'bold':'normal',0,10)}
-  y+=2;
- });
- doc.save(fileStem()+'.pdf');
- if(overflow)notify('Downloaded '+doc.getNumberOfPages()+'-page PDF. Review layout before applying.');else notify('Downloaded tailored PDF. Your master resume was not changed.');
+ const layout=window.InternshipRadarResumeLayout;
+ if(!maker||!layout){notify('PDF layout module is unavailable. Refresh the page and try again.');return}
+ try{
+  const untouched=draftCount()===0 && /\.(pdf)$/i.test(master.filename||'') && master.bytes instanceof ArrayBuffer;
+  const output=layout.exportPDF(maker,renderText(),untouched?master.bytes:null,!untouched,fileStem(),notify);
+  saveBlob(output.blob,fileStem()+'.pdf');
+  if(output.original)notify('Downloaded your exact original PDF — all formatting preserved.');
+  else notify('Downloaded the redesigned PDF with aligned roles, project headings and readable bullets. Check the page count before submitting.');
+ }catch(e){notify('Unable to format this PDF safely: '+e.message)}
 }
 function xmlEsc(s){return esc(s).replace(/&#39;/g,'&apos;').replace(/&quot;/g,'&quot;')}
 function docxXml(){
