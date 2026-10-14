@@ -36,6 +36,7 @@ const jobs=[
 let handler=null;
 const ctx={
  jobs,records,exploreCompany:'',
+ sortJobDates:(a,b)=>(b.score||0)-(a.score||0),
  '$':id=>{assert.ok(elements[id],'Known element '+id);return elements[id]},
  document:{addEventListener:(name,fn)=>{if(name==='click')handler=fn}},
  text:x=>String(x??'').replace(/</g,'&lt;'),
