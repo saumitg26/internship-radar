@@ -176,11 +176,13 @@ def main():
     matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j.get("community",False),j["company"],j["title"]))
     eastern_today=datetime.now(ZoneInfo("America/New_York")).date().isoformat()
     old_jobs={j.get("id"):j for j in prior.get("jobs",[]) if isinstance(j,dict)} if prior else {}
+    old_by_url={canonical_url(j["url"]):j for j in prior.get("jobs",[]) if isinstance(j,dict) and j.get("url")} if prior else {}
+    old_by_semantic={semantic_key(j):j for j in prior.get("jobs",[]) if isinstance(j,dict) and j.get("company") and j.get("title") and j.get("location")} if prior else {}
     old_generated=str(prior.get("generated_at",""))[:10] if prior else ""
     new_count=0
     for job in matches:
         job.pop("_rank",None)
-        old=old_jobs.get(job["id"])
+        old=old_jobs.get(job["id"]) or old_by_url.get(canonical_url(job["url"])) or old_by_semantic.get(semantic_key(job))
         if old:
             job["first_seen"]=old.get("first_seen") or old_generated
         elif prior:
@@ -196,5 +198,6 @@ def main():
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
+    print(f"Freshness tracking: {new_count} newly discovered roles; baseline available: {bool(prior)}")
     print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/9 discovery feeds; counts: {community_counts}")
 if __name__=="__main__":main()
