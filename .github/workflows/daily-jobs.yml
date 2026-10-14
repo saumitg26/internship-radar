@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '17 12,17,21 * * *' # Approx. 8:17 AM, 1:17 PM, 5:17 PM EDT (UTC schedule); GitHub can delay runs.
+    - cron: '23 */4 * * *' # Every 4 hours in UTC; GitHub may delay scheduled executions.
   workflow_dispatch:
 permissions:
   contents: read
