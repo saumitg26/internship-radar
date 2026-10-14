@@ -12,6 +12,8 @@ SOURCES={
     "SpeedyApply SWE":"https://raw.githubusercontent.com/speedyapply/2027-SWE-College-Jobs/main/README.md",
     "SpeedyApply AI":"https://raw.githubusercontent.com/speedyapply/2027-AI-College-Jobs/main/README.md",
     "2027 Internship Scanner":"https://raw.githubusercontent.com/WonOfAKind/New-Grad-And-Internships-2027/main/data/latest_scan.json",
+    "Vansh 2027 Internships":"https://raw.githubusercontent.com/vanshb03/Summer2027-Internships/dev/README.md",
+    "Zapply 2027 Internships":"https://raw.githubusercontent.com/zapplyjobs/Internships-2027/main/README.md",
 }
 FOREIGN=re.compile(r"\b(canada|toronto|montreal|vancouver|ottawa|quebec|ontario|united kingdom|london|india|singapore|germany|ireland|dublin|france|australia|poland|japan|brazil|netherlands|spain|berlin|paris|sydney|bengaluru|hyderabad)\b",re.I)
 TECH=re.compile(r"software|developer|devops|computer science|cloud|data|cyber|security|ai\b|machine learning|web|full.?stack|back.?end|front.?end|platform|IT intern|information technology|infrastructure|systems engineering|firmware|embedded|compiler|robotics|quantitative developer",re.I)
@@ -95,11 +97,45 @@ def get_text(url):
     with urlopen(req,timeout=22) as response:
         return response.read(4500000).decode("utf-8",errors="replace")
 
+def newer_tables(text,source):
+    """Extract public, US-focused tech internships; ignore closed listings and relative ages."""
+    if not isinstance(text,str) or 'Internships' not in text[:4000]:
+        raise ValueError('Unexpected community format')
+    previous_company=''
+    for line in text.splitlines():
+        if not line.startswith('|') or '<a href=' not in line and '](https://' not in line:
+            continue
+        cols=[c.strip() for c in line.strip().strip('|').split('|')]
+        if source=='Vansh 2027 Internships':
+            if len(cols)<5:continue
+            company,title,location,posting=cols[:4]
+        else:
+            if len(cols)<6:continue
+            company,title,location,posting=cols[0],cols[1],cols[2],cols[5]
+        company=clean(company)
+        if company=='↳':company=previous_company
+        else:previous_company=company
+        title=clean(title)
+        location=clean(location).replace('<br>',' / ')
+        if not eligible(title,location) or '🔒' in title or '🔒' in line or 'closed' in posting.lower():
+            continue
+        urls=re.findall(r'(?:href="|\]\()(https://[^"\s)]+)',posting,re.I)
+        if not urls:continue
+        url=html.unescape(urls[0]).strip()
+        # Avoid generating fake original posting dates from relative-age labels.
+        yield {
+          'company':company[:120], 'title':title[:180],
+          'location':location[:220] or 'Location unspecified',
+          'description':'Community listing; check the employer posting for the complete job description.',
+          'url':url, 'source':source+' · community', 'posted':'',
+          'community':True
+        }
+
 def gather(get_json):
     leads=[];healthy=[];errors=[];counts={}
     for name,url in SOURCES.items():
         try:
-            rows=list(recent_scan(get_json(url)) if name=="2027 Internship Scanner" else speedy(get_text(url),name))
+            rows=list(recent_scan(get_json(url)) if name=="2027 Internship Scanner" else newer_tables(get_text(url),name) if name in ('Vansh 2027 Internships','Zapply 2027 Internships') else speedy(get_text(url),name))
             counts[name]=len(rows)
             healthy.append(name)
             leads.extend(rows)
