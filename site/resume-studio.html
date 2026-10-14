@@ -9,6 +9,7 @@
 <script defer src="./jobs.js"></script>
 <script defer src="./vendor/pdf.min.js"></script>
 <script defer src="./vendor/jspdf.umd.min.js"></script>
+<script defer src="./resume-layout.js"></script>
 <script defer src="./resume-studio.js"></script>
 </head>
 <body>
@@ -75,7 +76,7 @@
     <div class="export"><h3>Ready to download?</h3><p>The copy is tailored to this role. Your master stays unchanged.</p>
       <button class="btn btn-primary wide" id="downloadPdf" type="button" disabled>↓ Download tailored PDF</button>
       <div class="btnrow"><button class="btn btn-quiet" id="downloadDocx" type="button" disabled>↓ Editable DOCX</button><button class="btn btn-quiet" id="downloadOriginal" type="button" disabled>↓ Original file</button></div>
-      <small>Only accepted edits are exported. PDF is rebuilt locally in a layout modeled on your original; verify spacing before applying.</small>
+      <small>No accepted edits? Your original PDF downloads unchanged. Accepted edits produce an aligned, searchable PDF modeled on your master resume. Check formatting before applying.</small>
     </div>
    </section>
  </aside>
