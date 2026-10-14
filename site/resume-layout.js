@@ -7,17 +7,33 @@ const BULLET=/^[•●▪*-]\s/;
 const DATE=/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4})\s*[-–]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|Present)\s*$/i;
 const EXPECTED=/\bExpected\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}\s*$/i;
 function normalizeLegacyProjects(src){
- // Prior PDF import could accidentally join a bold project header to the
- // preceding bullet, so split ONLY inside the Projects section.
- return String(src||'').split(/\r?\n/).reduce((acc,line)=>{
-  const now=line.trim();
-  if(SECTION_NAMES.has(now.toUpperCase())){acc.section=now.toUpperCase();acc.lines.push(now);return acc}
-  if(acc.section==='PROJECTS'&&BULLET.test(now)){
-   const m=now.match(/^([\s\S]*[.!?])\s+([A-Z][A-Za-z0-9]{2,24}(?:\s+[A-Z][A-Za-z0-9]{2,24}){0,2}\s+-\s+[^\n]{3,130}\|[^\n]*)$/);
-   if(m){acc.lines.push(m[1],m[2]);return acc}
+ // Older versions imported some PDF project headings as a suffix to the
+ // preceding bullet. Repair both "… trails. TriageAI - Full-Stack | ..."
+ // and wrapped "… trails. TriageAI -\nFull-Stack ..." cases without
+ // altering ordinary prose outside PROJECTS.
+ const acc={section:'',lines:[],pending:false};
+ for(const original of String(src||'').split(/\r?\n/)){
+  const line=original.trim();
+  if(SECTION_NAMES.has(line.toUpperCase())){
+   acc.section=line.toUpperCase();acc.pending=false;acc.lines.push(line);continue
   }
-  acc.lines.push(now);return acc
- },{section:'',lines:[]}).lines.join('\n');
+  if(acc.pending&&line){
+   const last=acc.lines.length-1;
+   acc.lines[last]+=' '+line.replace(/^-\s*/,'');
+   acc.pending=false;continue
+  }
+  if(acc.section==='PROJECTS'&&BULLET.test(line)){
+   const wrapped=line.match(/^([\s\S]*[.!?])\s+([A-Z][A-Za-z0-9]{2,24}(?:\s+[A-Z][A-Za-z0-9]{2,24}){0,2})\s*-\s*$/);
+   if(wrapped){
+    acc.lines.push(wrapped[1],wrapped[2]+' -');
+    acc.pending=true;continue
+   }
+   const full=line.match(/^([\s\S]*[.!?])\s+([A-Z][A-Za-z0-9]{2,24}(?:\s+[A-Z][A-Za-z0-9]{2,24}){0,2}\s+-\s+[^\n]{3,130}\|[^\n]*)$/);
+   if(full){acc.lines.push(full[1],full[2]);continue}
+  }
+  acc.lines.push(line)
+ }
+ return acc.lines.join('\n');
 }
 function blocks(source){
  const clean=normalizeLegacyProjects(source);
