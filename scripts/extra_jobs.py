@@ -14,6 +14,8 @@ SOURCES={
     "2027 Internship Scanner":"https://raw.githubusercontent.com/WonOfAKind/New-Grad-And-Internships-2027/main/data/latest_scan.json",
     "Vansh 2027 Internships":"https://raw.githubusercontent.com/vanshb03/Summer2027-Internships/dev/README.md",
     "Zapply 2027 Internships":"https://raw.githubusercontent.com/zapplyjobs/Internships-2027/main/README.md",
+    "2027 Tracker SWE":"https://raw.githubusercontent.com/SuryaHarikrishnan/2027-internship-tracker/master/listings/software-engineering.md",
+    "2027 Tracker AI":"https://raw.githubusercontent.com/SuryaHarikrishnan/2027-internship-tracker/master/listings/data-science-ai-machine-learning.md",
 }
 FOREIGN=re.compile(r"\b(canada|toronto|montreal|vancouver|ottawa|quebec|ontario|united kingdom|london|india|singapore|germany|ireland|dublin|france|australia|poland|japan|brazil|netherlands|spain|berlin|paris|sydney|bengaluru|hyderabad)\b",re.I)
 TECH=re.compile(r"software|developer|devops|computer science|cloud|data|cyber|security|ai\b|machine learning|web|full.?stack|back.?end|front.?end|platform|IT intern|information technology|infrastructure|systems engineering|firmware|embedded|compiler|robotics|quantitative developer",re.I)
@@ -131,11 +133,57 @@ def newer_tables(text,source):
           'community':True
         }
 
+
+def tracked_2027(text,source):
+    """Public technical Markdown tables; only Summer 2027 or recent unknown-season US roles.
+
+    Posting dates are source-reported, NOT independently employer-verified.
+    """
+    from datetime import date
+    if not isinstance(text,str) or "| Company | Role | Location | Terms |" not in text[:1000]:
+        raise ValueError("Unexpected 2027 tracker table")
+    today=date.today()
+    for line in text.splitlines():
+        if not line.startswith("| ["):continue
+        cols=[c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cols)<7:continue
+        companycell,title,location,term,datecell=cols[:5]
+        m=re.fullmatch(r"\[([^\]]+)\]\((https://[^)]+)\)",companycell)
+        if not m:continue
+        company,url=m.groups()
+        title=clean(title)
+        location=clean(location)
+        term=clean(term)
+        posted=datecell.strip()
+        if not eligible(title,location):continue
+        if re.search(r"\b(2025|2026|2028|2029)\b",term) and "2027" not in term:continue
+        if re.search(r"\b(winter|spring|fall)\s+2027\b",term,re.I) and not re.search(r"summer 2027",term,re.I):continue
+        is_summer=bool(re.search(r"\bsummer\s+2027\b",term+" "+title,re.I))
+        if not is_summer:
+            if term not in ("","N/A","—","-"):continue
+            try:
+                published=date.fromisoformat(posted)
+                if (today-published).days not in range(0,31):continue
+            except ValueError:continue
+        yield {
+          "company":clean(company)[:120],
+          "title":title[:180],
+          "location":location[:220] or "Location unspecified",
+          "description":"Source-reported internship. "+("Summer 2027 indicated by the source." if is_summer else "Season unspecified; verify Summer 2027 with employer."),
+          "url":html.unescape(url),
+          "source":source+" · community",
+          "posted":posted if re.fullmatch(r"\d{4}-\d{2}-\d{2}",posted) else "",
+          "community":True,
+        }
+
 def gather(get_json):
     leads=[];healthy=[];errors=[];counts={}
     for name,url in SOURCES.items():
         try:
-            rows=list(recent_scan(get_json(url)) if name=="2027 Internship Scanner" else newer_tables(get_text(url),name) if name in ('Vansh 2027 Internships','Zapply 2027 Internships') else speedy(get_text(url),name))
+            rows=list(recent_scan(get_json(url)) if name=="2027 Internship Scanner"
+              else tracked_2027(get_text(url),name) if name in ("2027 Tracker SWE","2027 Tracker AI")
+              else newer_tables(get_text(url),name) if name in ('Vansh 2027 Internships','Zapply 2027 Internships')
+              else speedy(get_text(url),name))
             counts[name]=len(rows)
             healthy.append(name)
             leads.extend(rows)
