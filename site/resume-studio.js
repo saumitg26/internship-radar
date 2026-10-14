@@ -62,27 +62,27 @@ function renderMaster(){
  $('masterText').value=master?.text||'';
  $('historyItems').innerHTML=versions.slice().reverse().map(v=>'<div class="history-row"><span>v'+v.id+' · '+esc(v.filename)+' · '+new Date(v.created).toLocaleDateString()+'</span><button type="button" class="btn btn-quiet" data-restore="'+v.id+'">Restore as new</button></div>').join('')||'<div class="hint">No versions saved yet.</div>';
 }
+function genericFeedDescription(t){
+ const value=String(t||'').trim();
+ return !value||/^(Source-reported internship|Public community listing|Community listing|Independent public internship lead|Recently discovered public internship lead|Public internship lead|LISTING SUMMARY|Source-reported job|Public internship|Summer 2027 indicated by the source)/i.test(value);
+}
 function setupJob(){
  if(!job){
-  $('jobSubtitle').textContent='Choose a posting or paste any job description to tailor your saved resume.';
+  $('jobSubtitle').textContent='Choose a posting or paste a full job description.';
   $('jobSource').textContent='Manual description';
-  $('jobStatus').textContent='Paste a job description to begin.';
+  $('jobStatus').textContent='Paste an employer job description to analyze the role.';
   return;
  }
  $('jobSubtitle').textContent='Tailoring for '+job.company+' · '+job.title+' · '+(job.location||'Location not listed');
  const full=String(job.job_description||handoff?.job_description||'').trim();
  const excerpt=String(job.description||handoff?.description||'').trim();
- const generic=!full&&(!excerpt||/^(Public community listing|Community listing|Independent public internship lead|Recently discovered public internship lead|Public internship lead)/i.test(excerpt));
- const summary=generic?
-  'LISTING SUMMARY — not the full employer job description\n'+
-  'Role: '+job.title+'\nEmployer: '+job.company+'\nLocation: '+(job.location||'Not listed')+'\n'+
-  'Please paste the complete employer job description below to improve the match rating and resume suggestions.'
-  :'';
- const available=(full||summary||excerpt).slice(0,12000);
- $('jobDescription').value=available;
- $('jobSource').textContent=full?'Full employer description auto-loaded':generic?'Listing information auto-loaded': 'Available job excerpt auto-loaded';
- $('jobStatus').textContent=full?'Full description was automatically pasted from the public employer feed. Verify against the live posting.':
-  'Only listing information is available for this employer. We filled the field automatically; paste the full job description from the employer for accurate tailoring.';
+ // Never put generic scraper boilerplate or invented requirements into the
+ // job-description textarea. A real description must come from the employer.
+ const available=full.length>220?full:!genericFeedDescription(excerpt)&&excerpt.length>110?excerpt:'';
+ $('jobDescription').value=available.slice(0,12000);
+ $('jobSource').textContent=full.length>220?'Employer description ready':available?'Partial job excerpt':'Looking up employer description';
+ $('jobStatus').textContent=full.length>220?'The public employer description is loaded. Check the official posting for updates.':
+ 'Checking the employer’s public job page for responsibilities, skills and qualifications…';
  try{
   const u=new URL(job.url);
   if(u.protocol==='https:'){
@@ -90,7 +90,6 @@ function setupJob(){
   }
  }catch(e){}
 }
-
 /* Public ATS APIs can provide fuller descriptions if the scheduled feed has only
    an excerpt. No resume data, account tokens, or credentials are sent. */
 async function autofillOfficialDescription(){
@@ -115,7 +114,10 @@ async function autofillOfficialDescription(){
   if(realPath.length<4||realPath[1]!=='job'||!realPath.every(p=>/^[a-zA-Z0-9._-]+$/.test(p)))return;
   const tenant=u.hostname.split('.')[0];
   api='https://'+u.hostname+'/wday/cxs/'+tenant+'/'+realPath[0]+'/'+realPath.slice(1).join('/');
- }else return;
+ }else{
+  if(!start){$('jobSource').textContent='Employer description unavailable';$('jobStatus').textContent='No complete description was supplied by this listing source. Open the employer posting to review requirements.';}
+  return;
+ }
  try{
   const response=await fetch(api,{credentials:'omit',cache:'no-store',redirect:'follow'});
   if(!response.ok)throw new Error('Unavailable');
@@ -141,7 +143,8 @@ async function autofillOfficialDescription(){
  }catch(e){
   // No misleading "full" label; the prefilled feed excerpt remains editable.
   if($('jobDescription').value===start&&start.length<400){
-   $('jobStatus').textContent='The employer’s full description could not be retrieved automatically. The role summary is prefilled; open the posting if you need the complete text.';
+   $('jobSource').textContent='Employer description unavailable';
+   $('jobStatus').textContent='The employer did not provide a readable public description through this connector. Open the employer posting to review qualifications. No requirements have been invented.';
   }
  }
 }
