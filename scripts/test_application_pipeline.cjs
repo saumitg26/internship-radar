@@ -35,7 +35,7 @@ const jobs=[
 ];
 let handler=null;
 const ctx={
- jobs,records,
+ jobs,records,exploreCompany:'',
  '$':id=>{assert.ok(elements[id],'Known element '+id);return elements[id]},
  document:{addEventListener:(name,fn)=>{if(name==='click')handler=fn}},
  text:x=>String(x??'').replace(/</g,'&lt;'),
