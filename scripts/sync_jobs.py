@@ -120,7 +120,7 @@ def enrich_selected_descriptions(matches):
     """Prefill additional employer JDs for high-priority public community listings."""
     targets=[j for j in matches if j.get("community") and not j.get("job_description") and
         ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url",""))]
-    targets.sort(key=lambda j:(-int(bool(j.get("dmv_priority"))),-int(bool(RX_REGION.search(j.get("location","")))),-j.get("score",0)))
+    targets.sort(key=lambda j:(-int(bool(j.get('discovered_on'))),-int(bool(j.get('dmv_priority'))),-int(bool(RX_REGION.search(j.get('location','')))),-j.get('score',0)))
     def fill(j):
         try:
             desc=ats_job_description(j)
@@ -128,12 +128,12 @@ def enrich_selected_descriptions(matches):
         except Exception:pass
         return (j,"")
     hits=0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
-        for j,desc in pool.map(fill,targets[:180]):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as pool:
+        for j,desc in pool.map(fill,targets[:400]):
             if desc:
                 j["job_description"]=desc
                 hits+=1
-    print("Additional full descriptions: "+str(hits)+" fetched from "+str(min(180,len(targets)))+" public ATS roles.")
+    print("Additional full descriptions: "+str(hits)+" fetched from "+str(min(400,len(targets)))+" public ATS roles.")
 
 def main():
     prior=previous_snapshot()
@@ -193,18 +193,23 @@ def main():
         old=old_jobs.get(job["id"]) or old_by_url.get(canonical_url(job["url"])) or old_by_semantic.get(semantic_key(job))
         if old:
             job["first_seen"]=old.get("first_seen") or old_generated
+            # 'discovered_on' is only recorded for genuinely new jobs after tracking began.
+            # Legacy 'first_seen' was migration-baselined for all existing listings.
+            job["discovered_on"]=str(old.get("discovered_on") or "")[:10]
             # Cache only previously obtained, public job descriptions for the same job.
             if old.get("job_description") and not job.get("job_description"):
                 job["job_description"]=str(old["job_description"])[:6500]
         elif prior:
             job["first_seen"]=eastern_today
+            job["discovered_on"]=eastern_today
             new_count+=1
         else:
             job["first_seen"]=""  # no previous snapshot; never mark everything "new"
+            job["discovered_on"]=""
     enrich_selected_descriptions(matches)
     # Never silently preserve a stale snapshot as if it were newly refreshed.
     companies=sorted({job["company"] for job in matches if job["company"].strip() and job["company"]!="Unknown employer"},key=str.casefold)
-    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"errors":errors[:30],"note":"Community listings may be outdated. Check the employer site before applying."}
+    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"note":"Community listings may be outdated. Check the employer site before applying."}
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
