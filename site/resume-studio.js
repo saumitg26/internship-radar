@@ -336,16 +336,25 @@ function renderSuggestions(){
 function renderPaper(){
  const paper=$('paper');
  if(!master){paper.innerHTML='<div class="paper-empty">Upload your master resume to see a live document preview.</div>';return}
- const lines=parseLines(renderText());
- paper.innerHTML=lines.map((line,i)=>{
-  if(i===0)return '<div class="paper-name">'+esc(line)+'</div>';
-  if(i===1)return '<div class="paper-contact">'+esc(line)+'</div>';
-  if(HEADERS.has(line.toUpperCase()))return '<div class="paper-section">'+esc(line)+'</div>';
-  return '<div class="paper-line '+(/^[•●▪*-]\s/.test(line)?'bullet':/ - | \| /.test(line)?'role-line':'')+'">'+esc(line)+'</div>';
+ const layout=window.InternshipRadarResumeLayout;
+ const rows=layout?.blocks(renderText())||parseLines(renderText()).map((x,i)=>({type:i===0?'name':i===1?'contact':HEADERS.has(x.toUpperCase())?'section':'text',text:x}));
+ paper.innerHTML=rows.map(item=>{
+  const t=esc(item.text||'');
+  if(item.type==='name')return '<div class="paper-name">'+t+'</div>';
+  if(item.type==='contact')return '<div class="paper-contact">'+t+'</div>';
+  if(item.type==='section')return '<div class="paper-section">'+t+'</div>';
+  if(item.type==='education'||item.type==='role')return '<div class="paper-role"><span>'+t+'</span><span class="paper-date">'+esc(item.date||'')+'</span></div>';
+  if(item.type==='project')return '<div class="paper-line role-line">'+t+'</div>';
+  if(item.type==='bullet')return '<div class="paper-line bullet">• '+t+'</div>';
+  if(item.type==='keyval')return '<div class="paper-line"><b>'+esc(item.key)+':</b> '+t+'</div>';
+  return '<div class="paper-line">'+t+'</div>';
  }).join('');
  $('previewStatus').textContent=draftCount()+' accepted · master v'+master.id;
- let warn=lines.length>72?'This document may exceed one page. Download and verify page count, or shorten your bullets.':'Serif font, section rules and spacing modeled on your original layout. PDF/DOCX conversions may not be pixel-identical.';
- $('pageWarning').textContent=warn;$('pageWarning').classList.toggle('warning',lines.length>72);
+ const warn=rows.length>85?'This resume may exceed one page. Download and check your page count.':
+  draftCount()?'Edited PDF uses an aligned serif layout modeled on your master. Review the final file before applying.':
+  'No accepted edits: Download PDF preserves your original uploaded PDF exactly. This is a simplified live text preview.';
+ $('pageWarning').textContent=warn;
+ $('pageWarning').classList.toggle('warning',rows.length>85);
 }
 function renderAll(){renderSuggestions();renderPaper();analyze()}
 async function refresh(){currentJD=normalize($('jobDescription').value);generateSuggestions();renderAll();if(master)await persistDraft()}
