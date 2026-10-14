@@ -119,12 +119,13 @@ def ats_job_description(job):
         return clean(response.get("descriptionPlain") or response.get("description") or "")
     # Public Workday job detail JSON (many employers, including GDIT).
     # Uses only documented-looking public job page structure; no sign-in/cookies.
-    if re.fullmatch(r"[a-z0-9-]+\.wd\d+\.myworkdayjobs\.com",host) and len(path)>=4 and path[1]=="job":
+    workday_path=path[1:] if path and re.fullmatch(r"[a-z]{2}-[A-Za-z]{2}",path[0]) else path
+    if re.fullmatch(r"[a-z0-9-]+\.wd\d+\.myworkdayjobs\.com",host) and len(workday_path)>=4 and workday_path[1]=="job":
         tenant=host.split(".")[0]
-        board=path[0]
+        board=workday_path[0]
         if not re.fullmatch(r"[A-Za-z0-9_-]+",tenant) or not re.fullmatch(r"[A-Za-z0-9_-]+",board):return ""
-        if not all(re.fullmatch(r"[A-Za-z0-9._-]+",piece) for piece in path[2:]):return ""
-        endpoint="https://"+host+"/wday/cxs/"+tenant+"/"+board+"/job/"+"/".join(path[2:])
+        if not all(re.fullmatch(r"[A-Za-z0-9._-]+",piece) for piece in workday_path[2:]):return ""
+        endpoint="https://"+host+"/wday/cxs/"+tenant+"/"+board+"/job/"+"/".join(workday_path[2:])
         response=get(endpoint)
         info=response.get("jobPostingInfo") or {}
         desc=readable_description(info.get("jobDescription") or "")
@@ -251,6 +252,15 @@ def main():
             job["first_seen"]=""  # no previous snapshot; never mark everything "new"
             job["discovered_on"]=""
     enrich_selected_descriptions(matches)
+    # Flag explicitly stated degree/standing constraints; do not infer eligibility.
+    for job in matches:
+        description=str(job.get("job_description") or "")
+        flags=job.get("eligibility_notes") or []
+        if re.search(r"currently enrolled senior|must be (?:a )?senior",description,re.I):
+            flags.append("Senior academic standing stated · verify eligibility")
+        if re.search(r"(?:U\.S\.|US) citizenship required",description,re.I):
+            flags.append("U.S. citizenship required")
+        job["eligibility_notes"]=list(dict.fromkeys(flags))
     # Never silently preserve a stale snapshot as if it were newly refreshed.
     companies=sorted({job["company"] for job in matches if job["company"].strip() and job["company"]!="Unknown employer"},key=str.casefold)
     data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"note":"Community listings may be outdated. Check the employer site before applying."}
