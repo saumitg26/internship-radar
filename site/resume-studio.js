@@ -110,9 +110,9 @@ async function autofillOfficialDescription(){
  }else if(u.hostname==='jobs.ashbyhq.com'&&path.length>=2&&/^[\w.-]+$/.test(path[0])){
   api='https://api.ashbyhq.com/posting-api/job-board/'+encodeURIComponent(path[0]);
  }else if(['jobs.smartrecruiters.com','www.smartrecruiters.com'].includes(u.hostname)&&path.length>=2&&/^[A-Za-z0-9_-]+$/.test(path[0])){
-  const id=(path[1]||'').match(/^[A-Za-z0-9-]+/);
+  const id=(path[1]||'').match(/^(\d+)(?:-|$)|^([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(?:-|$)/i);
   if(!id)return;
-  api='https://api.smartrecruiters.com/v1/companies/'+encodeURIComponent(path[0])+'/postings/'+encodeURIComponent(id[0]);
+  api='https://api.smartrecruiters.com/v1/companies/'+encodeURIComponent(path[0])+'/postings/'+encodeURIComponent(id[1]||id[2]);
  }else if(u.hostname==='apply.workable.com'&&path.length>=3&&path[1]==='j'&&/^[\w-]+$/.test(path[0])&&/^[\w-]+$/.test(path[2])){
   api='https://www.workable.com/api/accounts/'+encodeURIComponent(path[0])+'?details=true';
  }else if(/^[a-z0-9-]+\.wd\d+\.myworkdayjobs\.com$/i.test(u.hostname)){
