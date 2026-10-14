@@ -131,6 +131,29 @@ def ats_job_description(job):
         desc=readable_description(info.get("jobDescription") or "")
         if len(desc)>180:return desc
         return ""
+    # SmartRecruiters' public Posting API provides employer-authored job details.
+    if host in ("jobs.smartrecruiters.com","www.smartrecruiters.com") and len(path)>=2:
+        company=path[0]
+        posting=re.match(r"([A-Za-z0-9-]+)",path[1])
+        if not re.fullmatch(r"[A-Za-z0-9_-]+",company) or not posting:return ""
+        posting_id=posting.group(1)
+        response=get("https://api.smartrecruiters.com/v1/companies/"+company+"/postings/"+posting_id)
+        sections=(response.get("jobAd") or {}).get("sections") or {}
+        result=[]
+        for key,name in (("jobDescription","Responsibilities"),("qualifications","Qualifications"),("additionalInformation","Additional details")):
+            section=sections.get(key) or {}
+            content=readable_description(section.get("text") or "")
+            if content:result.append(name+":\n"+content)
+        return "\n\n".join(result)
+    # Workable's public account feed supports descriptions with details=true.
+    if host=="apply.workable.com" and len(path)>=3 and path[1]=="j":
+        account,shortcode=path[0],path[2]
+        if not re.fullmatch(r"[A-Za-z0-9_-]+",account) or not re.fullmatch(r"[A-Za-z0-9_-]+",shortcode):return ""
+        response=get("https://www.workable.com/api/accounts/"+account+"?details=true")
+        for posting in response.get("jobs",[]):
+            if str(posting.get("shortcode") or "").lower()==shortcode.lower():
+                return readable_description(posting.get("description") or "")
+        return ""
     if host=="ats.rippling.com" and len(path)>=3 and path[1]=="jobs":
         request=Request(job["url"],headers={"User-Agent":"Mozilla/5.0 (compatible; InternshipRadar/1.0)","Accept":"text/html"})
         with urlopen(request,timeout=12) as response:
@@ -162,7 +185,7 @@ def ats_job_description(job):
 def enrich_selected_descriptions(matches):
     """Prefill additional employer JDs for high-priority public community listings."""
     targets=[j for j in matches if j.get("community") and not j.get("job_description") and
-        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url","") or "ats.rippling.com" in j.get("url","") or "myworkdayjobs.com" in j.get("url",""))]
+        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url","") or "ats.rippling.com" in j.get("url","") or "myworkdayjobs.com" in j.get("url","" or "smartrecruiters.com" in j.get("url","") or "apply.workable.com" in j.get("url",""))]
     targets.sort(key=lambda j:(-int("General Dynamics Information Technology" in j.get("company","")),-int("myworkdayjobs.com" in j.get("url","")),-int(bool(j.get('discovered_on'))),-int(bool(j.get('dmv_priority'))),-int(bool(RX_REGION.search(j.get('location','')))),-j.get('score',0)))
     def fill(j):
         try:
@@ -252,6 +275,15 @@ def main():
             job["first_seen"]=""  # no previous snapshot; never mark everything "new"
             job["discovered_on"]=""
     enrich_selected_descriptions(matches)
+    # Show real employer details in cards whenever they are available; never
+    # continue displaying a vague third-party-source placeholder beside a full JD.
+    generic_label=re.compile(r"^(Source-reported internship|Public community listing|Community listing|Independent public internship lead|Recently discovered public internship lead|Public internship lead)",re.I)
+    for job in matches:
+        full=str(job.get("job_description") or "").strip()
+        if len(full)>220 and generic_label.search(str(job.get("description") or "")):
+            brief=re.sub(r"\s+"," ",full).strip()
+            job["description"]=brief[:417]+("..." if len(brief)>417 else "")
+            job["description_source"]="public employer detail"
     # Flag explicitly stated degree/standing constraints; do not infer eligibility.
     for job in matches:
         description=str(job.get("job_description") or "")
