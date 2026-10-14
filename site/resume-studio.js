@@ -58,12 +58,32 @@ function renderMaster(){
  $('historyItems').innerHTML=versions.slice().reverse().map(v=>'<div class="history-row"><span>v'+v.id+' · '+esc(v.filename)+' · '+new Date(v.created).toLocaleDateString()+'</span><button type="button" class="btn btn-quiet" data-restore="'+v.id+'">Restore as new</button></div>').join('')||'<div class="hint">No versions saved yet.</div>';
 }
 function setupJob(){
- if(!job){$('jobSubtitle').textContent='Choose a posting or paste any job description to tailor your saved resume.';$('jobSource').textContent='Manual description';$('jobStatus').textContent='Paste a job description to begin.';return}
+ if(!job){
+  $('jobSubtitle').textContent='Choose a posting or paste any job description to tailor your saved resume.';
+  $('jobSource').textContent='Manual description';
+  $('jobStatus').textContent='Paste a job description to begin.';
+  return;
+ }
  $('jobSubtitle').textContent='Tailoring for '+job.company+' · '+job.title+' · '+(job.location||'Location not listed');
- $('jobDescription').value=(job.job_description||handoff?.job_description||job.description||handoff?.description||'').slice(0,12000);
- $('jobSource').textContent=job.job_description?'Full employer description loaded · editable':'Auto-filled from job feed · editable';
- $('jobStatus').textContent=(job.job_description||handoff?.job_description||job.description||'').length<400?'Only a short description is available. It has been pasted automatically; add the full posting for more accurate recommendations.':'Job description automatically pasted from the public feed. Check the employer posting for accuracy.';
- try{const u=new URL(job.url);if(u.protocol==='https:'){$('jobLink').href=u.href;$('jobLink').textContent='Employer posting ↗';$('jobLink').target='_blank';$('jobLink').rel='noopener noreferrer'}}catch{}
+ const full=String(job.job_description||handoff?.job_description||'').trim();
+ const excerpt=String(job.description||handoff?.description||'').trim();
+ const generic=!full&&(!excerpt||/^(Public community listing|Community listing|Independent public internship lead|Recently discovered public internship lead|Public internship lead)/i.test(excerpt));
+ const summary=generic?
+  'LISTING SUMMARY — not the full employer job description\n'+
+  'Role: '+job.title+'\nEmployer: '+job.company+'\nLocation: '+(job.location||'Not listed')+'\n'+
+  'Please paste the complete employer job description below to improve the match rating and resume suggestions.'
+  :'';
+ const available=(full||summary||excerpt).slice(0,12000);
+ $('jobDescription').value=available;
+ $('jobSource').textContent=full?'Full employer description auto-loaded':generic?'Listing information auto-loaded': 'Available job excerpt auto-loaded';
+ $('jobStatus').textContent=full?'Full description was automatically pasted from the public employer feed. Verify against the live posting.':
+  'Only listing information is available for this employer. We filled the field automatically; paste the full job description from the employer for accurate tailoring.';
+ try{
+  const u=new URL(job.url);
+  if(u.protocol==='https:'){
+   $('jobLink').href=u.href;$('jobLink').textContent='Employer posting ↗';$('jobLink').target='_blank';$('jobLink').rel='noopener noreferrer';
+  }
+ }catch(e){}
 }
 async function readPDF(bytes){
  if(!window.pdfjsLib)throw Error('PDF parser did not load. Try TXT or DOCX, or paste resume text.');
