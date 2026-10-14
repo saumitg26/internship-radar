@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'self'; worker-src 'self' blob:; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'self' https://boards-api.greenhouse.io https://api.lever.co https://api.ashbyhq.com; worker-src 'self' blob:; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Resume Studio — Internship Radar</title>
 <link rel="stylesheet" href="./resume-studio.css">
 <script defer src="./jobs.js"></script>
@@ -17,7 +17,8 @@
  <a class="logo" href="./index.html"><span class="logo-mark">IR↗</span><strong>Internship Radar</strong></a>
  <div class="eyebrow">WORKSPACE</div>
  <nav aria-label="App navigation">
-  <a href="./index.html">⌂ <span>Today’s top 10</span></a>
+  <a href="./index.html">⌂ <span>Top 10 matches</span></a>
+  <a href="./index.html#recent">✦ <span>Latest jobs</span></a>
   <a href="./index.html#explore">⌕ <span>Explore internships</span></a>
   <a href="./index.html#pipeline">▤ <span>My pipeline</span></a>
   <a class="selected" href="./resume-studio.html">✦ <span>Resume Studio</span></a>
