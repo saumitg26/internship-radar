@@ -22,7 +22,13 @@ const REQUIREMENTS=[
 const HEADERS=new Set(['EDUCATION','TECHNICAL SKILLS','PROFESSIONAL EXPERIENCE','EXPERIENCE','PROJECTS','LEADERSHIP','AWARDS & CERTIFICATIONS','CERTIFICATIONS','ACTIVITIES','RESEARCH','SKILLS','AWARDS','VOLUNTEER EXPERIENCE']);
 const jobId=(new URLSearchParams(location.search).get('job')||'manual').slice(0,160);
 const feed=window.INTERNSHIP_RADAR_FEED||{jobs:[]};
-const job=(Array.isArray(feed.jobs)?feed.jobs:[]).find(j=>j.id===jobId)||null;
+const handoff=(()=>{
+ try{
+  const value=JSON.parse(sessionStorage.getItem('internship-radar-job-handoff-v1')||'null');
+  return value&&value.id===jobId&&typeof value.title==='string'&&typeof value.company==='string'?value:null;
+ }catch(e){return null}
+})();
+const job=(Array.isArray(feed.jobs)?feed.jobs:[]).find(j=>j.id===jobId)||handoff||null;
 let db=null,master=null,versions=[],suggestions=[],draft={},scoreStats={requirements:[],covered:[],missing:[]};
 let currentJD='',waitingPdf=false,toastHandle=null;
 function notify(s){const el=$('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastHandle);toastHandle=setTimeout(()=>el.classList.remove('show'),4200)}
@@ -54,9 +60,9 @@ function renderMaster(){
 function setupJob(){
  if(!job){$('jobSubtitle').textContent='Choose a posting or paste any job description to tailor your saved resume.';$('jobSource').textContent='Manual description';$('jobStatus').textContent='Paste a job description to begin.';return}
  $('jobSubtitle').textContent='Tailoring for '+job.company+' · '+job.title+' · '+(job.location||'Location not listed');
- $('jobDescription').value=job.job_description||job.description||'';
- $('jobSource').textContent='From job feed · editable';
- $('jobStatus').textContent=(job.job_description||job.description||'').length<400?'The feed has a short excerpt. Paste the full posting for better analysis.':'Description imported from feed; verify against the employer posting.';
+ $('jobDescription').value=(job.job_description||handoff?.job_description||job.description||handoff?.description||'').slice(0,12000);
+ $('jobSource').textContent=job.job_description?'Full employer description loaded · editable':'Auto-filled from job feed · editable';
+ $('jobStatus').textContent=(job.job_description||handoff?.job_description||job.description||'').length<400?'Only a short description is available. It has been pasted automatically; add the full posting for more accurate recommendations.':'Job description automatically pasted from the public feed. Check the employer posting for accuracy.';
  try{const u=new URL(job.url);if(u.protocol==='https:'){$('jobLink').href=u.href;$('jobLink').textContent='Employer posting ↗';$('jobLink').target='_blank';$('jobLink').rel='noopener noreferrer'}}catch{}
 }
 async function readPDF(bytes){
@@ -208,7 +214,7 @@ function renderText(){
 async function persistDraft(){if(!db||!master)return;await dbOp('drafts','put',{id:jobId+'|'+master.id,edits:draft,jobDescription:$('jobDescription').value})}
 async function loadDraft(){
  draft={};if(!master)return;
- try{const r=await dbOp('drafts','get',jobId+'|'+master.id);if(r){draft=r.edits||{};if(r.jobDescription)$('jobDescription').value=r.jobDescription}}catch{}
+ try{const r=await dbOp('drafts','get',jobId+'|'+master.id);if(r){draft=r.edits||{};if(r.jobDescription&&r.jobDescription.length>$('jobDescription').value.length)$('jobDescription').value=r.jobDescription}}catch{}
  currentJD=normalize($('jobDescription').value);
 }
 function renderSuggestions(){
