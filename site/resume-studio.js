@@ -109,6 +109,12 @@ async function autofillOfficialDescription(){
   api='https://api.lever.co/v0/postings/'+encodeURIComponent(path[0])+'/'+encodeURIComponent(path[1]);
  }else if(u.hostname==='jobs.ashbyhq.com'&&path.length>=2&&/^[\w.-]+$/.test(path[0])){
   api='https://api.ashbyhq.com/posting-api/job-board/'+encodeURIComponent(path[0]);
+ }else if(['jobs.smartrecruiters.com','www.smartrecruiters.com'].includes(u.hostname)&&path.length>=2&&/^[A-Za-z0-9_-]+$/.test(path[0])){
+  const id=(path[1]||'').match(/^[A-Za-z0-9-]+/);
+  if(!id)return;
+  api='https://api.smartrecruiters.com/v1/companies/'+encodeURIComponent(path[0])+'/postings/'+encodeURIComponent(id[0]);
+ }else if(u.hostname==='apply.workable.com'&&path.length>=3&&path[1]==='j'&&/^[\w-]+$/.test(path[0])&&/^[\w-]+$/.test(path[2])){
+  api='https://www.workable.com/api/accounts/'+encodeURIComponent(path[0])+'?details=true';
  }else if(/^[a-z0-9-]+\.wd\d+\.myworkdayjobs\.com$/i.test(u.hostname)){
   const realPath=/^[a-z]{2}-[A-Za-z]{2}$/.test(path[0]||'')?path.slice(1):path;
   if(realPath.length<4||realPath[1]!=='job'||!realPath.every(p=>/^[a-zA-Z0-9._-]+$/.test(p)))return;
@@ -128,6 +134,14 @@ async function autofillOfficialDescription(){
     try{const p=new URL(x.jobUrl||'').pathname.split('/').filter(Boolean);return p[1]===path[1];}catch(e){return false}
    });
    content=item?.descriptionHtml||item?.descriptionPlain||'';
+  }else if(['jobs.smartrecruiters.com','www.smartrecruiters.com'].includes(u.hostname)){
+   const sections=data.jobAd?.sections||{};
+   content=['jobDescription','qualifications','additionalInformation'].map(k=>{
+    const t=sections[k]?.text||'';return t?'<h2>'+k.replace(/([A-Z])/g,' $1')+'</h2>'+t:'';
+   }).filter(Boolean).join('\n');
+  }else if(u.hostname==='apply.workable.com'){
+   const p=(data.jobs||[]).find(x=>String(x.shortcode||'').toLowerCase()===String(path[2]).toLowerCase());
+   content=p?.description||'';
   }else content=data.jobPostingInfo?.jobDescription||data.content||data.descriptionPlain||data.description||'';
   if(typeof content!=='string')return;
   const parser=new DOMParser();
