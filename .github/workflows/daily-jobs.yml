@@ -25,6 +25,8 @@ jobs:
           python-version: '3.12'
       - name: Sync public listings (handles unavailable boards gracefully)
         run: python scripts/sync_jobs.py
+      - name: Stamp asset versions to bypass stale browser caches
+        run: python scripts/stamp_assets.py
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static website
