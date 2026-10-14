@@ -19,7 +19,7 @@ def test():
         (
             {"url":"https://gdit.wd5.myworkdayjobs.com/gdit_earlytalent/job/USA-VA-Falls-Church/Summer-2027-Software-Development-Internship_RQ228405-2"},
             "https://gdit.wd5.myworkdayjobs.com/wday/cxs/gdit/gdit_earlytalent/job/USA-VA-Falls-Church/Summer-2027-Software-Development-Internship_RQ228405-2",
-            {"jobPostingInfo":{"jobDescription":"<p>Write reliable Python and Java software, test services, and collaborate with the team.</p>"}},
+            {"jobPostingInfo":{"jobDescription":"<p>Write reliable Python and Java software, test services, and collaborate with the team. Build secure APIs, maintain backend components, participate in code reviews, fix bugs, add unit tests, validate edge cases, improve reliability, and work with other engineering teams on production systems.</p>"}},
             ["Write reliable Python"]
         ),
     ]
