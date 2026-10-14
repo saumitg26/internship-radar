@@ -25,6 +25,17 @@ RX_REGION=re.compile(r"\b(virginia|maryland|va|md)\b",re.I)
 SKILLS=("Java","Python","React","TypeScript","AWS","SQL","PostgreSQL","API","Cloud")
 def clean(s):
     return re.sub(r"\s+"," ",html.unescape(re.sub(r"<[^>]+>"," ",str(s or "")))).strip()
+def readable_description(value):
+    """Preserve job-description paragraphs and bullets for the editing interface."""
+    source=str(value or "")
+    source=re.sub(r"(?i)<li(?:\s[^>]*)?>","\n• ",source)
+    source=re.sub(r"(?i)<br\s*/?>|</(?:p|div|li|h[1-6]|section|ul|ol)>","\n",source)
+    source=re.sub(r"<[^>]+>"," ",source)
+    source=html.unescape(source)
+    source=re.sub(r"[ \t]+"," ",source)
+    source=re.sub(r"\n[ \t]*","\n",source)
+    return re.sub(r"\n{3,}","\n\n",source).strip()
+
 def get(url):
     req=Request(url,headers={"User-Agent":"InternshipRadar/1.0 (personal internship search)","Accept":"application/json"})
     with urlopen(req,timeout=17) as response:
@@ -116,7 +127,7 @@ def ats_job_description(job):
         endpoint="https://"+host+"/wday/cxs/"+tenant+"/"+board+"/job/"+"/".join(path[2:])
         response=get(endpoint)
         info=response.get("jobPostingInfo") or {}
-        desc=clean(info.get("jobDescription") or "")
+        desc=readable_description(info.get("jobDescription") or "")
         if len(desc)>180:return desc
         return ""
     if host=="ats.rippling.com" and len(path)>=3 and path[1]=="jobs":
@@ -248,5 +259,5 @@ def main():
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
     print(f"Freshness tracking: {new_count} newly discovered roles; baseline available: {bool(prior)}")
-    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/9 discovery feeds; counts: {community_counts}")
+    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/11 discovery feeds; counts: {community_counts}")
 if __name__=="__main__":main()
