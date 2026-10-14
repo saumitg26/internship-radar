@@ -35,7 +35,7 @@ const job=feedJob&&handoff
    description:(String(feedJob.description||'').length>=String(handoff.description||'').length?feedJob.description:handoff.description)}
  :(feedJob||handoff||null);
 let db=null,master=null,versions=[],suggestions=[],draft={},scoreStats={requirements:[],covered:[],missing:[]};
-let currentJD='',waitingPdf=false,toastHandle=null;
+let currentJD='',waitingPdf=false,toastHandle=null,jobDescriptionEdited=false;
 function notify(s){const el=$('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastHandle);toastHandle=setTimeout(()=>el.classList.remove('show'),4200)}
 function normalize(s){return String(s??'').replace(/\r\n?/g,'\n').replace(/\u00a0/g,' ').replace(/[ \t]+\n/g,'\n').trim()}
 function hasKey(s,re){return re.test(s)}
@@ -309,25 +309,23 @@ function generateSuggestions(){
  for(const s of suggestions){if(!draft[s.original])draft[s.original]={status:'pending',text:s.proposed}}
  renderSuggestions();
 }
-function draftCount(){return suggestions.filter(s=>draft[s.original]?.status==='accepted').length}
-function renderText(){
- let t=master?.text||'';
- for(const s of suggestions){
-  const d=draft[s.original];
-  if(d?.status==='accepted'&&t.includes(s.original))t=t.replace(s.original,normalize(d.text))
- }
- return t;
+function appliedEdits(){
+ const engine=window.InternshipRadarResumeEdits;
+ if(!engine)return {text:master?.text||'',applied:[]};
+ return engine.editedResume(master?.text||'',draft);
 }
-async function persistDraft(){if(!db||!master)return;await dbOp('drafts','put',{id:jobId+'|'+master.id,edits:draft,jobDescription:$('jobDescription').value})}
+function draftCount(){return appliedEdits().applied.length}
+function renderText(){return appliedEdits().text}
+async function persistDraft(){if(!db||!master)return;await dbOp('drafts','put',{id:jobId+'|'+master.id,edits:draft,jobDescription:$('jobDescription').value,jobDescriptionEdited})}
 async function loadDraft(){
  draft={};if(!master)return;
- try{const r=await dbOp('drafts','get',jobId+'|'+master.id);if(r){draft=r.edits||{};if(r.jobDescription&&r.jobDescription.length>$('jobDescription').value.length)$('jobDescription').value=r.jobDescription}}catch{}
+ try{const r=await dbOp('drafts','get',jobId+'|'+master.id);if(r){draft=r.edits||{};if(r.jobDescriptionEdited&&r.jobDescription){$('jobDescription').value=r.jobDescription;jobDescriptionEdited=true}else if(r.jobDescription&&!$('jobDescription').value.trim()){$('jobDescription').value=r.jobDescription}}}catch{}
  currentJD=normalize($('jobDescription').value);
 }
 function renderSuggestions(){
  const n=draftCount();
- $('reviewCount').textContent=n+' accepted';
- $('suggestionStatus').textContent=!master?'Save your master resume to begin.':!currentJD?'Paste the full job description to see suggestions.':suggestions.length?suggestions.length+' wording suggestions from experience already in your resume.':'No safe automatic rewrites identified. You can still use the match analysis and export your resume.';
+ $('reviewCount').textContent=n+' applied to export';
+ $('suggestionStatus').textContent=!master?'Save your master resume to begin.':!currentJD?'Paste a full job description for grounded suggestions.':suggestions.length?suggestions.length+' grounded wording suggestions. '+n+' accepted edit'+(n===1?'':'s')+' applied in the live preview and downloads.':'No new safe rewrites identified. '+n+' previously accepted edit'+(n===1?'':'s')+' still applied to this job-specific resume.';
  $('suggestions').innerHTML=suggestions.map((s,i)=>{
   const d=draft[s.original],status=d?.status||'pending';
   return '<article class="suggestion"><div class="suggestion-title"><div><h3>'+esc(s.keywords.slice(0,3).join(' · '))+' — sharpen this bullet</h3><small>Existing experience · suggestion '+(i+1)+'</small></div><span class="state '+(status==='accepted'?'accepted':'')+'">'+(status==='accepted'?'✓ Accepted':status==='skipped'?'Skipped':'To review')+'</span></div><div class="beforeafter"><div class="wording"><small>ORIGINAL</small>'+esc(s.original)+'</div><div class="wording after"><small>SUGGESTED · EDIT BEFORE ACCEPTING</small><textarea class="edit-box" data-edit="'+i+'" aria-label="Edit suggestion '+(i+1)+'">'+esc(d?.text||s.proposed)+'</textarea></div></div><div class="suggestion-foot"><div class="why">'+esc(s.why)+'</div><div class="btns">'+(status==='accepted'?'<button type="button" class="btn btn-quiet" data-action="undo" data-index="'+i+'">↶ Undo</button>':'<button type="button" class="btn btn-quiet" data-action="skip" data-index="'+i+'">'+(status==='skipped'?'Restore':'Skip')+'</button><button type="button" class="btn btn-primary" data-action="accept" data-index="'+i+'">✓ Accept</button>')+'</div></div></article>'
@@ -409,6 +407,7 @@ function downloadDOCX(){
 function downloadSource(){if(master?.bytes)saveBlob(new Blob([master.bytes],{type:master.type}),master.filename)}
 function wire(){
  $('analyze').onclick=refresh;
+ $('jobDescription').addEventListener('input',()=>{jobDescriptionEdited=true;});
  $('jobDescription').addEventListener('change',refresh);
  $('resumeFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;
   $('uploadLabel').textContent='Reading…';
@@ -427,7 +426,14 @@ function wire(){
    if(!d.text.trim()){notify('The proposed bullet cannot be empty.');return}
    const additions=comparable(d.text).filter(k=>!comparable(master.text).includes(k));
    if(additions.length&&!confirm('Your edited bullet contains skills not detected in your master resume: '+additions.join(', ')+'. Only accept if you actually have this experience. Continue?'))return;
-   d.status='accepted';notify('Accepted for this job only. Master resume unchanged.');
+   const oldStatus=d.status;
+   d.status='accepted';
+   if(!appliedEdits().applied.some(x=>x.original===s.original)){
+    d.status=oldStatus;
+    notify('This edit did not change the resume. Please revise the wording or update your master resume before accepting.');
+    return;
+   }
+   notify('Change applied to this job-specific preview and PDF/DOCX downloads. Master unchanged.');
   }else if(b.dataset.action==='undo')d.status='pending';
   else if(b.dataset.action==='skip')d.status=d.status==='skipped'?'pending':'skipped';
   await persistDraft();renderAll();
