@@ -12,12 +12,27 @@
 @media(max-width:650px){.hero{align-items:start;flex-direction:column}.filters{grid-template-columns:1fr}.programs,.plan,.settings-grid,.companies-list{grid-template-columns:1fr}.manual{grid-template-columns:1fr}.panel-row{align-items:start;flex-direction:column}.panel-row select{max-width:100%}.job-head{flex-direction:column}.topbar{flex-wrap:wrap}.metrics{gap:8px}.metric{padding:12px}.metric strong{font-size:22px}}
 .filter-extra{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 18px}
 @media(max-width:650px){.filter-extra{grid-template-columns:1fr}}
+/* Lightweight freshness surface, matching the existing dark palette */
+.new-count{margin-left:auto;background:#1c514d;border-radius:999px;color:#9dfff0;font-size:9px;padding:3px 7px;font-weight:850}
+.latest-hero{display:flex;align-items:center;justify-content:space-between;gap:24px;background:linear-gradient(116deg,#193d48,#17293f);border:1px solid #305a5f;border-radius:18px;padding:24px 27px;margin:24px 0}
+.latest-hero h2{font-size:23px;letter-spacing:-.6px;margin:7px 0 5px}.latest-hero p{color:var(--muted);font-size:13px;margin:0}.latest-eyebrow{color:var(--teal);font-size:10px;font-weight:800;letter-spacing:1.3px}
+.latest-stat{text-align:center;flex:none}.latest-stat strong{font-size:37px;color:var(--teal);display:block;line-height:1}.latest-stat small{color:#9fb4c5;font-size:11px}
+.latest-controls{display:grid;grid-template-columns:1.2fr 1fr .7fr 1fr;gap:12px;margin:21px 0 13px}
+.latest-controls label{font-size:11px;color:#a5b5c6;font-weight:700;display:grid;gap:7px}
+.latest-controls select,.latest-controls input{font-size:13px;background:#142339;border-color:#34485b}
+.latest-guide{display:flex;flex-wrap:wrap;align-items:center;gap:15px;color:#a9bacc;font-size:11px;margin-bottom:15px}
+.latest-guide .btn{padding:6px 11px;font-size:11px;margin-left:auto}
+.latest-dot{display:inline-block;background:#58d9bb;border-radius:50%;width:7px;height:7px;margin-right:5px}.latest-dot.subtle{background:#819bd0}
+.job .fresh-tag{background:#163e37;border-color:#367969;color:#99f2dc}
+@media(max-width:1050px){.latest-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.latest-controls{grid-template-columns:1fr}.latest-hero{padding:19px}.latest-hero h2{font-size:19px}}
 </style></head>
 <body><div class="shell">
 <aside class="sidebar">
  <div class="brand"><div class="logo">IR↗</div><div>Internship Radar</div></div>
  <div><p class="sublabel">WORKSPACE</p><nav class="nav" aria-label="Main navigation">
  <button data-page="discover" class="active"><span class="ico">◇</span> Top 10 matches</button>
+ <button data-page="recent"><span class="ico">✦</span> Latest jobs <span id="recentNavCount" class="new-count">NEW</span></button>
  <button data-page="explore"><span class="ico">⌕</span> Explore internships</button>
  <button data-page="companies"><span class="ico">▦</span> Companies</button>
  <button data-page="pipeline"><span class="ico">▤</span> My pipeline</button>
@@ -30,11 +45,31 @@
 <main class="main"><div class="topbar"><div class="crumb">WORKSPACE / <b id="crumb">DISCOVER</b></div><span id="liveStatus" class="status warn">● Checking job feed</span></div>
 <section id="discover" class="view active">
  <header class="intro"><div class="eyebrow">SUMMER 2027 · SOFTWARE ENGINEERING</div><h1>Find your next <span>opportunity.</span></h1><p>Open to roles across the United States. DC, Northern Virginia, and nearby Maryland are prioritized, not required. Real employer links, clear progress, and no fake guarantees.</p></header>
- <div class="hero"><div><small>YOUR INTERNSHIP COMMAND CENTER</small><h2>One application at a time.</h2><p>Review the fit, verify graduation requirements, apply at the employer's site, then track the outcome here.</p></div><button class="btn btn-primary" id="jumpJobs">See top matches ↗</button></div>
+ <div class="hero"><div><small>YOUR INTERNSHIP COMMAND CENTER</small><h2>One application at a time.</h2><p>Review the fit, verify graduation requirements, apply at the employer's site, then track the outcome here.</p></div><button class="btn btn-primary" id="jumpJobs">See top matches ↗</button><button class="btn" id="jumpLatest" type="button">View latest jobs ↗</button></div>
  <div class="metrics"><div class="metric"><small>Internship leads</small><strong id="jobCount">0</strong><span class="hint">Employer and community feeds</span></div><div class="metric"><small>Applied today</small><strong id="appliedToday">0</strong><span class="hint">Your daily goal: <span id="dailyGoal">10</span></span></div><div class="metric"><small>Applications total</small><strong id="appliedTotal">0</strong><span class="hint">Tracked in this browser</span></div><div class="metric"><small>Feed updated</small><strong id="feedDate" style="font-size:17px;margin-top:13px">Not yet</strong><span id="feedSource" class="hint">Awaiting first sync</span></div></div>
  <div id="jobsAnchor"><div class="section-bar"><div><small>NATIONWIDE SEARCH · DMV PRIORITY</small><h2>Top 10 recommended matches</h2></div><button class="btn" id="showMore">Explore all internships</button></div>
  <div class="filters"><input id="search" placeholder="Search roles, companies, skills…" aria-label="Search jobs"><select id="location"><option value="all">Nationwide — DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro (VA, DC, MD)</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="role"><option value="all">All engineering roles</option><option value="swe">Software engineering</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
  <p id="filterFeedback" class="muted" role="status" aria-live="polite" style="font-size:12px;margin:5px 0 13px"></p><div id="jobList" class="jobs"></div></div><div class="panel" style="margin-top:19px"><strong>Explore more Virginia opportunities</strong><p>Official employer boards; their job availability may change.</p><div class="actions"><a class="btn" href="https://job-boards.greenhouse.io/appian" target="_blank" rel="noopener noreferrer">Appian ↗</a><a class="btn" href="https://job-boards.greenhouse.io/devtechnology" target="_blank" rel="noopener noreferrer">Dev Technology ↗</a><a class="btn" href="https://job-boards.greenhouse.io/darkwolfsolutions" target="_blank" rel="noopener noreferrer">Dark Wolf ↗</a><a class="btn" href="https://jobs.lever.co/anavationllc" target="_blank" rel="noopener noreferrer">AnaVation ↗</a></div></div><p class="muted" style="font-size:12px">Your daily 10 is a shortlist. Open Explore internships to browse the larger nationwide catalog. Scores are keyword-based, not hiring probabilities; verify employer requirements.</p>
+</section>
+<section id="recent" class="view">
+ <header class="intro"><div class="eyebrow">FRESH OPPORTUNITIES · UPDATED THROUGHOUT THE DAY</div><h1>Latest <span>internships.</span></h1>
+ <p>Browse newly discovered or recently reported openings for your location and software/AI interests. No digging through the entire catalog.</p></header>
+ <div class="latest-hero">
+  <div><span class="latest-eyebrow">RECENT INTERNSHIPS · YOUR FILTERS</span><h2 id="latestSummary">Checking new openings…</h2>
+  <p id="latestExplain">Listings are labeled by reported posting date or when Internship Radar first discovered them.</p></div>
+  <div class="latest-stat"><strong id="latestCount">0</strong><small>recent matches</small></div>
+ </div>
+ <div class="latest-controls">
+  <label>Location<select id="recentLocation" aria-label="Latest jobs location"><option value="dmv">DC / Northern Virginia / Maryland</option><option value="virginia">Virginia</option><option value="maryland">Maryland</option><option value="all">Anywhere in the US</option><option value="remote">Remote</option></select></label>
+  <label>Role<select id="recentRole" aria-label="Latest jobs role"><option value="swe">Software engineering</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option><option value="all">All tech internships</option></select></label>
+  <label>Recency<select id="recentDays" aria-label="Latest jobs recency"><option value="7">Last 7 days</option><option value="14">Last 14 days</option><option value="30">Last 30 days</option><option value="1">Today only</option></select></label>
+  <label>Specific city (optional)<input id="recentCity" placeholder="e.g. Fairfax, Richmond" aria-label="Latest jobs city"></label>
+ </div>
+ <div class="latest-guide"><span><b class="latest-dot"></b> New discovery = first found in Internship Radar</span><span><b class="latest-dot subtle"></b> Reported date = source-reported posting date</span><button class="btn" id="recentReset" type="button">Reset filters</button></div>
+ <div class="section-bar"><h2>Newest matches</h2><small id="recentShowing">Loading…</small></div>
+ <div id="recentJobList" class="jobs"></div>
+ <div class="section-bar"><small id="recentNote"></small><button class="btn btn-primary" id="recentLoadMore" type="button">Show 20 more ↗</button></div>
+ <p class="muted" style="font-size:12px">New and recently posted are different: employer-reported dates aren't independently verified, and discovery dates only describe when this app found a listing. Verify the employer page before applying.</p>
 </section>
 <section id="explore" class="view">
 <header class="intro"><div class="eyebrow">SUMMER 2027 · BROAD DISCOVERY</div><h1>Explore <span>internships.</span></h1><p>Browse the wider nationwide catalog from both community-maintained 2027 lists and direct employer job boards. DMV opportunities are prioritized, but relocation anywhere in the US is welcome.</p></header>
