@@ -106,6 +106,24 @@ def ats_job_description(job):
         if not re.fullmatch(r"[a-zA-Z0-9_-]+",slug) or not re.fullmatch(r"[a-zA-Z0-9-]+",jid):return ""
         response=get("https://api.lever.co/v0/postings/"+slug+"/"+jid)
         return clean(response.get("descriptionPlain") or response.get("description") or "")
+    if host=="ats.rippling.com" and len(path)>=3 and path[1]=="jobs":
+        request=Request(job["url"],headers={"User-Agent":"Mozilla/5.0 (compatible; InternshipRadar/1.0)","Accept":"text/html"})
+        with urlopen(request,timeout=12) as response:
+            page=response.read(750000).decode("utf-8",errors="replace")
+        # Prefer publicly served JobPosting structured metadata, when available.
+        for block in re.findall(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',page,re.I|re.S):
+            try:
+                meta=json.loads(html.unescape(block))
+                elements=meta if isinstance(meta,list) else meta.get("@graph",[meta]) if isinstance(meta,dict) else []
+                for item in elements:
+                    if isinstance(item,dict) and "JobPosting" in str(item.get("@type","")):
+                        desc=clean(item.get("description") or "")
+                        if len(desc)>250:return desc
+            except (ValueError,TypeError):
+                pass
+        visible=re.sub(r'(?is)<(script|style|noscript|svg)\b[^>]*>.*?</\1>'," ",page)
+        visible=re.sub(r'(?i)<br\b[^>]*>|</(?:p|div|li|h[1-6])>'," \n ",visible)
+        return clean(visible)[:6500]
     if host=="jobs.ashbyhq.com" and len(path)>=2:
         slug,jid=path[:2]
         if not re.fullmatch(r"[A-Za-z0-9._-]+",slug) or not re.fullmatch(r"[A-Za-z0-9-]+",jid):return ""
@@ -119,7 +137,7 @@ def ats_job_description(job):
 def enrich_selected_descriptions(matches):
     """Prefill additional employer JDs for high-priority public community listings."""
     targets=[j for j in matches if j.get("community") and not j.get("job_description") and
-        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url",""))]
+        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url","") or "jobs.ashbyhq.com" in j.get("url","") or "ats.rippling.com" in j.get("url",""))]
     targets.sort(key=lambda j:(-int(bool(j.get('discovered_on'))),-int(bool(j.get('dmv_priority'))),-int(bool(RX_REGION.search(j.get('location','')))),-j.get('score',0)))
     def fill(j):
         try:
