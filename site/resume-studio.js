@@ -110,6 +110,11 @@ async function autofillOfficialDescription(){
   api='https://api.lever.co/v0/postings/'+encodeURIComponent(path[0])+'/'+encodeURIComponent(path[1]);
  }else if(u.hostname==='jobs.ashbyhq.com'&&path.length>=2&&/^[\w.-]+$/.test(path[0])){
   api='https://api.ashbyhq.com/posting-api/job-board/'+encodeURIComponent(path[0]);
+ }else if(/^[a-z0-9-]+\.wd\d+\.myworkdayjobs\.com$/i.test(u.hostname)){
+  const realPath=/^[a-z]{2}-[A-Za-z]{2}$/.test(path[0]||'')?path.slice(1):path;
+  if(realPath.length<4||realPath[1]!=='job'||!realPath.every(p=>/^[a-zA-Z0-9._-]+$/.test(p)))return;
+  const tenant=u.hostname.split('.')[0];
+  api='https://'+u.hostname+'/wday/cxs/'+tenant+'/'+realPath[0]+'/'+realPath.slice(1).join('/');
  }else return;
  try{
   const response=await fetch(api,{credentials:'omit',cache:'no-store',redirect:'follow'});
@@ -121,7 +126,7 @@ async function autofillOfficialDescription(){
     try{const p=new URL(x.jobUrl||'').pathname.split('/').filter(Boolean);return p[1]===path[1];}catch(e){return false}
    });
    content=item?.descriptionHtml||item?.descriptionPlain||'';
-  }else content=data.content||data.descriptionPlain||data.description||'';
+  }else content=data.jobPostingInfo?.jobDescription||data.content||data.descriptionPlain||data.description||'';
   if(typeof content!=='string')return;
   const parser=new DOMParser();
   const doc=parser.parseFromString(content.replace(/<br\s*\/?>/gi,'\n').replace(/<\/(?:p|li|div|h[1-6])>/gi,'\n'), 'text/html');
