@@ -6,6 +6,7 @@ import html
 import json
 import re
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qsl, urlencode, urlunsplit
 from urllib.request import Request, urlopen
@@ -76,7 +77,58 @@ def normalize(x):
     x["matched_skills"]=matches
     x["eligibility_notes"]=(["Verify graduation eligibility"] if re.search(r"graduat.{0,30}2027|2027.{0,30}graduat",desc,re.I) and "2028" not in desc else [])
     return x
+
+def previous_snapshot():
+    """Read the previously published public feed to carry forward first-seen dates."""
+    url="https://saumitg26.github.io/internship-radar/jobs.json?version="+str(int(datetime.now(timezone.utc).timestamp()))
+    try:
+        request=Request(url,headers={"User-Agent":"InternshipRadar/1.0","Cache-Control":"no-cache"})
+        with urlopen(request,timeout=12) as response:
+            data=json.load(response)
+        if isinstance(data,dict) and isinstance(data.get("jobs"),list):
+            return data
+    except Exception as e:
+        print("Prior published feed unavailable; freshness unknown: "+str(e)[:100])
+    return None
+
+def ats_job_description(job):
+    """Read publicly accessible employer ATS details, without accounts or login."""
+    u=urlsplit(job["url"])
+    host=u.netloc.lower()
+    path=[p for p in u.path.strip("/").split("/") if p]
+    if host in ("job-boards.greenhouse.io","boards.greenhouse.io") and len(path)>=3 and path[1]=="jobs":
+        slug,jid=path[0],path[2]
+        if not re.fullmatch(r"[a-zA-Z0-9_-]+",slug) or not re.fullmatch(r"\d+",jid):return ""
+        response=get("https://boards-api.greenhouse.io/v1/boards/"+slug+"/jobs/"+jid+"?content=true")
+        return clean(response.get("content") or "")
+    if host=="jobs.lever.co" and len(path)>=2:
+        slug,jid=path[:2]
+        if not re.fullmatch(r"[a-zA-Z0-9_-]+",slug) or not re.fullmatch(r"[a-zA-Z0-9-]+",jid):return ""
+        response=get("https://api.lever.co/v0/postings/"+slug+"/"+jid)
+        return clean(response.get("descriptionPlain") or response.get("description") or "")
+    return ""
+
+def enrich_selected_descriptions(matches):
+    """Prefill additional employer JDs for high-priority public community listings."""
+    targets=[j for j in matches if j.get("community") and not j.get("job_description") and
+        ("greenhouse.io" in j.get("url","") or "jobs.lever.co" in j.get("url",""))]
+    targets.sort(key=lambda j:(-int(bool(j.get("dmv_priority"))),-int(bool(RX_REGION.search(j.get("location","")))),-j.get("score",0)))
+    def fill(j):
+        try:
+            desc=ats_job_description(j)
+            if len(desc)>220:return (j,desc[:6500])
+        except Exception:pass
+        return (j,"")
+    hits=0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
+        for j,desc in pool.map(fill,targets[:180]):
+            if desc:
+                j["job_description"]=desc
+                hits+=1
+    print("Additional full descriptions: "+str(hits)+" fetched from "+str(min(180,len(targets)))+" public ATS roles.")
+
 def main():
+    prior=previous_snapshot()
     boards=json.loads(BOARD_FILE.read_text())
     jobs={};errors=[];working=0
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
@@ -122,14 +174,27 @@ def main():
     # Keep every distinct, relevant listing our sources return. Front-end pagination
     # renders only a small slice, rather than dropping lower-ranked companies.
     matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j.get("community",False),j["company"],j["title"]))
+    eastern_today=datetime.now(ZoneInfo("America/New_York")).date().isoformat()
+    old_jobs={j.get("id"):j for j in prior.get("jobs",[]) if isinstance(j,dict)} if prior else {}
+    old_generated=str(prior.get("generated_at",""))[:10] if prior else ""
+    new_count=0
     for job in matches:
         job.pop("_rank",None)
+        old=old_jobs.get(job["id"])
+        if old:
+            job["first_seen"]=old.get("first_seen") or old_generated
+        elif prior:
+            job["first_seen"]=eastern_today
+            new_count+=1
+        else:
+            job["first_seen"]=""  # no previous snapshot; never mark everything "new"
+    enrich_selected_descriptions(matches)
     # Never silently preserve a stale snapshot as if it were newly refreshed.
     companies=sorted({job["company"] for job in matches if job["company"].strip() and job["company"]!="Unknown employer"},key=str.casefold)
-    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"errors":errors[:30],"note":"Community listings may be outdated. Check the employer site before applying."}
+    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"errors":errors[:30],"note":"Community listings may be outdated. Check the employer site before applying."}
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
-    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/7 discovery feeds; counts: {community_counts}")
+    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/9 discovery feeds; counts: {community_counts}")
 if __name__=="__main__":main()
