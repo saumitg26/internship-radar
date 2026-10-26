@@ -745,6 +745,7 @@ function renderDaily(){
  var available=Boolean(selected), href=available?link(selected.job.url):"";
  $("dailyEmployer").href=href||"#";$("dailyEmployer").style.display=href?"inline-block":"none";
  $("dailyResume").style.display=available?"inline-block":"none";
+ if(available){$("dailyResume").href="./resume-studio.html?job="+encodeURIComponent(selected.job.id);$("dailyResume").dataset.enhance=selected.job.id;}else{$("dailyResume").removeAttribute("data-enhance");$("dailyResume").href="./resume-studio.html";}
  if(dailyCheckedId!==dailySelectedId){$("dailyConfirm").checked=false;dailyCheckedId=dailySelectedId;}
  $("dailyConfirm").disabled=!available;
  $("dailyApplied").disabled=!available||!$("dailyConfirm").checked;
@@ -764,7 +765,7 @@ $("dailyRefresh").onclick=function(){dailySelectedId="";dailyCheckedId="";render
 $("dailyList").onclick=function(e){
  var b=e.target.closest("[data-daily-job]");if(!b)return;
  dailySelectedId=b.dataset.dailyJob;dailyCheckedId="";renderDaily();
- $("dailyFocusTitle").focus&&$("dailyFocusTitle").setAttribute("tabindex","-1");
+ $("dailyFocusTitle").setAttribute("tabindex","-1");
  $("dailyFocusTitle").focus();
 };
 $("dailyConfirm").onchange=function(){$("dailyApplied").disabled=!this.checked||!dailySelectedId;};
