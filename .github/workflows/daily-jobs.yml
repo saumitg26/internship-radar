@@ -29,6 +29,7 @@ jobs:
           node scripts/test_resume_edits.cjs
           node scripts/test_application_pipeline.cjs
           node scripts/test_daily_progress.cjs
+          node scripts/test_insights.cjs
       - name: Sync public listings (handles unavailable boards gracefully)
         run: python scripts/sync_jobs.py
       - name: Stamp asset versions to bypass stale browser caches
