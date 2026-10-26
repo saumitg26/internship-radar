@@ -103,12 +103,36 @@
 @media(max-width:1050px){.insights-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.insights-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.insights-metrics{gap:8px}.insights-metric{padding:14px}.insights-metric strong{font-size:25px}.insights-bars{gap:2px;height:185px}.insights-bar small{font-size:9px}.insights-stage{grid-template-columns:95px minmax(0,1fr) 25px}.insights-row{align-items:flex-start}}
 @media(max-width:950px) and (min-width:651px){.manual{grid-template-columns:repeat(2,minmax(0,1fr))}.manual button{grid-column:span 2}}
+
+/* Home is deliberately focused: mission first, next steps second, fresh leads last. */
+.home-intro h1{font-size:clamp(29px,3.5vw,42px);letter-spacing:-1.4px}
+.home-intro p{max-width:740px}
+.home-section-heading{margin-top:26px}
+.home-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.home-task{display:grid;align-content:start;gap:11px;min-height:110px;padding:18px;text-align:left;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:14px}
+.home-task:hover,.home-task:focus-visible{border-color:var(--teal);outline:2px solid transparent;background:var(--raised)}
+.home-task-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.home-task-top strong{font-size:14px;font-weight:700}.home-task-top span{color:var(--teal)}
+.home-task>span:last-child{font-size:12px;line-height:1.5;color:var(--muted)}
+.home-lead{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 17px;border:1px solid var(--border);background:var(--surface);border-radius:12px}
+.home-lead h3{margin:0 0 4px;font-size:15px;line-height:1.4}
+.home-lead p{margin:0;font-size:12px;color:var(--muted)}
+.home-lead .actions{flex:none}
+.home-caveat{font-size:12px;color:var(--muted);margin:14px 0 0}
+.momentum-panel{background:var(--surface);border:1px solid var(--border)}
+.momentum-panel .momentum-kicker{letter-spacing:1.2px}
+.momentum-panel h2{font-size:23px}
+.hero{background:var(--surface);border-color:var(--border)}
+.nav button:focus-visible,.btn:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+@media(max-width:1000px){.home-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.home-task:last-child{grid-column:1/-1}}
+@media(max-width:650px){.home-actions{grid-template-columns:1fr}.home-task:last-child{grid-column:auto}.home-lead{align-items:flex-start;flex-direction:column}.home-lead .actions{width:100%}.home-lead .btn{flex:1;text-align:center}.home-section-heading{align-items:flex-start;flex-direction:column}}
 </style></head>
 <body><div class="shell">
 <aside class="sidebar">
  <div class="brand"><div class="logo">IR↗</div><div>Internship Radar</div></div>
  <div><p class="sublabel">WORKSPACE</p><nav class="nav" aria-label="Main navigation">
- <button data-page="discover" class="active"><span class="ico">◇</span> Top 10 matches</button>
+ <button type="button" data-page="home" class="active" aria-current="page"><span class="ico" aria-hidden="true">⌂</span> Home</button>
+ <button type="button" data-page="discover"><span class="ico" aria-hidden="true">◇</span> Top 10 matches</button>
  <button data-page="recent"><span class="ico">✦</span> Latest jobs <span id="recentNavCount" class="new-count">RECENT</span></button>
  <button data-page="explore"><span class="ico">⌕</span> Explore internships</button>
  <button data-page="companies"><span class="ico">▦</span> Companies</button>
@@ -120,10 +144,9 @@
  <button data-page="settings"><span class="ico">⚙</span> Settings</button></nav></div>
  <div class="aside-note"><strong>Your search, your pace.</strong>Free, public job discovery. Applications stay in this browser. No login or automatic submissions. Resume Studio saves documents privately in your browser.</div>
 </aside>
-<main class="main"><div class="topbar"><div class="crumb">WORKSPACE / <b id="crumb">DISCOVER</b></div><span id="liveStatus" class="status warn">● Checking job feed</span></div>
-<section id="discover" class="view active">
- <header class="intro"><div class="eyebrow">SUMMER 2027 · SOFTWARE ENGINEERING</div><h1>Find your next <span>opportunity.</span></h1><p>Open to roles across the United States. DC, Northern Virginia, and nearby Maryland are prioritized, not required. Real employer links, clear progress, and no fake guarantees.</p></header>
- <div class="hero"><div><small>YOUR INTERNSHIP COMMAND CENTER</small><h2>One application at a time.</h2><p>Review the fit, verify graduation requirements, apply at the employer's site, then track the outcome here.</p></div><button class="btn btn-primary" id="jumpJobs">See top matches ↗</button><button class="btn" id="jumpLatest" type="button">View latest jobs ↗</button></div>
+<main class="main"><div class="topbar"><div class="crumb">WORKSPACE / <b id="crumb">HOME</b></div><span id="liveStatus" class="status warn">● Checking job feed</span></div>
+<section id="home" class="view active">
+ <header class="intro home-intro"><div class="eyebrow">YOUR DAILY WORKSPACE</div><h1>One good application <span>at a time.</span></h1><p>See today's progress, choose a relevant opening, and log a submission only after you've applied through the employer's website.</p></header>
  <section class="momentum-panel" id="momentumPanel" aria-labelledby="momentumTitle">
   <div class="momentum-head"><div><div class="momentum-kicker">TODAY'S APPLICATION MISSION</div><h2 id="momentumTitle">Build your momentum.</h2><p id="momentumMessage">Submit a strong application, then log it here.</p></div><div class="momentum-counter"><strong><span id="momentumCount">0</span> <span id="momentumGoal">/ 10</span></strong><small>real submissions today</small></div></div>
   <div class="momentum-track" id="momentumTrack" role="progressbar" aria-label="Daily application goal" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div class="momentum-fill" id="momentumBar"></div></div>
@@ -132,10 +155,21 @@
   <div class="momentum-week-wrap"><div class="momentum-week-head"><b>Your last 7 days</b><span id="momentumWeekSummary">Build a steady rhythm</span></div><div class="momentum-week" id="momentumWeek" aria-label="Applications over the last seven days"></div></div>
   <p class="momentum-note">Only applications you've actually submitted count. Saving, skipping, or opening a job doesn't earn progress. Take your time on the right opportunities.</p>
  </section>
- <div class="metrics"><div class="metric"><small>Internship leads</small><strong id="jobCount">0</strong><span class="hint">Employer and community feeds</span></div><div class="metric"><small>Applied today</small><strong id="appliedToday">0</strong><span class="hint">Your daily goal: <span id="dailyGoal">10</span></span></div><div class="metric"><small>Applications total</small><strong id="appliedTotal">0</strong><span class="hint">Tracked in this browser</span></div><div class="metric"><small>Feed updated</small><strong id="feedDate" style="font-size:17px;margin-top:13px">Not yet</strong><span id="feedSource" class="hint">Awaiting first sync</span></div></div>
+ <div class="section-bar home-section-heading"><div><small>WHAT TO DO NEXT</small><h2>Your next steps</h2></div><button type="button" class="btn" id="homeInsights">View all stats</button></div>
+ <div class="home-actions">
+  <button type="button" class="home-task" data-home-target="discover"><span class="home-task-top"><strong>Browse matches</strong><span aria-hidden="true">↗</span></span><span id="homeMatchCount">Checking monitored opportunities…</span></button>
+  <button type="button" class="home-task" data-home-target="pipeline"><span class="home-task-top"><strong>Continue saved jobs</strong><span aria-hidden="true">↗</span></span><span id="homeSavedCount">Your saved queue appears here.</span></button>
+  <button type="button" class="home-task" data-home-target="pipeline"><span class="home-task-top"><strong>Review your pipeline</strong><span aria-hidden="true">↗</span></span><span id="homeReviewCount">Keep application outcomes current.</span></button>
+ </div>
  <div class="section-bar"><div><small>DATED OR NEWLY DISCOVERED · YOUR SAVED PREFERENCES</small><h2>Fresh openings near you</h2></div><button class="btn btn-primary" id="homeLatest" type="button">See all latest jobs ↗</button></div>
  <p id="homeRecentLabel" class="muted" style="font-size:12px;margin:0 0 12px">Finding the newest dated internships in your preferred locations.</p>
  <div id="homeRecentList" class="jobs"></div>
+ 
+ <p class="home-caveat">Listings are leads, not confirmed openings. Verify employer requirements before applying. Your application history stays in this browser.</p>
+</section>
+<section id="discover" class="view">
+ <header class="intro"><div class="eyebrow">SUMMER 2027 · SOFTWARE ENGINEERING</div><h1>Your top <span>matches.</span></h1><p>Browse the leading internships from monitored sources. Rankings are based on job and location signals—not a prediction of hiring success. Verify each posting on the employer site.</p></header>
+ <div class="metrics"><div class="metric"><small>Internship leads</small><strong id="jobCount">0</strong><span class="hint">Employer and community feeds</span></div><div class="metric"><small>Applied today</small><strong id="appliedToday">0</strong><span class="hint">Your daily goal: <span id="dailyGoal">10</span></span></div><div class="metric"><small>Applications total</small><strong id="appliedTotal">0</strong><span class="hint">Tracked in this browser</span></div><div class="metric"><small>Feed updated</small><strong id="feedDate" style="font-size:17px;margin-top:13px">Not yet</strong><span id="feedSource" class="hint">Awaiting first sync</span></div></div>
  <div id="jobsAnchor"><div class="section-bar"><div><small>NATIONWIDE SEARCH · DMV PRIORITY</small><h2>Top 10 recommended matches</h2></div><div class="actions"><button class="btn btn-primary" id="showLatest" type="button">Latest jobs ↗</button><button class="btn" id="showMore">Explore all internships</button></div></div>
  <div class="filters"><input id="search" placeholder="Search roles, companies, skills…" aria-label="Search jobs"><select id="location"><option value="all">Nationwide — DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro (VA, DC, MD)</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="role"><option value="all">All engineering roles</option><option value="swe">Software engineering</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
  <p id="filterFeedback" class="muted" role="status" aria-live="polite" style="font-size:12px;margin:5px 0 13px"></p><div id="jobList" class="jobs"></div></div><div class="panel" style="margin-top:19px"><strong>Explore more Virginia opportunities</strong><p>Official employer boards; their job availability may change.</p><div class="actions"><a class="btn" href="https://job-boards.greenhouse.io/appian" target="_blank" rel="noopener noreferrer">Appian ↗</a><a class="btn" href="https://job-boards.greenhouse.io/devtechnology" target="_blank" rel="noopener noreferrer">Dev Technology ↗</a><a class="btn" href="https://job-boards.greenhouse.io/darkwolfsolutions" target="_blank" rel="noopener noreferrer">Dark Wolf ↗</a><a class="btn" href="https://jobs.lever.co/anavationllc" target="_blank" rel="noopener noreferrer">AnaVation ↗</a></div></div><p class="muted" style="font-size:12px">Your daily 10 is a shortlist. Open Explore internships to browse the larger nationwide catalog. Scores are keyword-based, not hiring probabilities; verify employer requirements.</p>
@@ -255,7 +289,7 @@ var $=function(id){return document.getElementById(id);};
 var KEY="internship-radar-tracker-v2", SETTINGS="internship-radar-options-v2";
 var feed=window.INTERNSHIP_RADAR_FEED||{jobs:[],generated_at:null,scanned_boards:0,responsive_boards:0,errors:[]};
 var jobs=Array.isArray(feed.jobs)?feed.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";}):[];
-var records={}, goal=10, view="discover", exploreLimit=25, companyLimit=60, exploreCompany="";
+var records={}, goal=10, view="home", exploreLimit=25, companyLimit=60, exploreCompany="";
 try{var loaded=JSON.parse(localStorage.getItem(KEY)||"{}");if(loaded&&typeof loaded==="object"&&!Array.isArray(loaded))records=loaded;}catch(e){}
 try{var g=Number(JSON.parse(localStorage.getItem(SETTINGS)||"{}").dailyGoal);if(g>=1&&g<=30)goal=g;}catch(e){}
 function text(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -263,11 +297,31 @@ function link(url){try{var u=new URL(String(url));return u.protocol==="https:"?u
 function today(d){var a=d?new Date(d):new Date();if(isNaN(a.getTime()))return "";var local=new Date(a.getTime()-a.getTimezoneOffset()*60000);return local.toISOString().slice(0,10);}
 function notify(msg){var n=$("toast");n.textContent=msg;n.classList.add("show");setTimeout(function(){n.classList.remove("show");},3000);}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){notify("Unable to save. Export your records as a backup.");}}
-function setPage(v){view=v;document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});document.querySelectorAll("[data-page]").forEach(function(x){x.classList.toggle("active",x.dataset.page===v);});$("crumb").textContent=v==="discover"?"TOP 10 MATCHES":v==="recent"?"LATEST JOBS":v==="explore"?"EXPLORE INTERNSHIPS":v==="companies"?"COMPANIES":v.toUpperCase();render();window.scrollTo(0,0);}
+function setPage(v,saveHistory){
+ if(!["home","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"].includes(v))v="home";
+ view=v;
+ document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});
+ document.querySelectorAll("[data-page]").forEach(function(x){
+  var active=x.dataset.page===v;
+  x.classList.toggle("active",active);
+  if(active)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");
+ });
+ var titles={home:"HOME",discover:"TOP 10 MATCHES",recent:"LATEST JOBS",explore:"EXPLORE INTERNSHIPS",companies:"COMPANIES",pipeline:"MY PIPELINE",insights:"STATS & INSIGHTS",programs:"PROGRAMS",plan:"WEEKLY PLAN",settings:"SETTINGS"};
+ $("crumb").textContent=titles[v];
+ if(saveHistory!==false&&window.history&&window.location.hash!=="#"+v)window.history.pushState(null,"","#"+v);
+ render();
+ window.scrollTo(0,0);
+}
 document.querySelectorAll("[data-page]").forEach(function(b){b.addEventListener("click",function(){setPage(b.dataset.page);});});
-$("jumpJobs").onclick=function(){$("jobsAnchor").scrollIntoView({behavior:"smooth"});};
-$("jumpLatest").onclick=function(){setPage("recent");};
 $("homeLatest").onclick=function(){setPage("recent");};
+$("homeInsights").onclick=function(){setPage("insights");};
+$("home").addEventListener("click",function(e){
+ var button=e.target.closest("button[data-home-target]");
+ if(button)setPage(button.dataset.homeTarget);
+});
+window.addEventListener("popstate",function(){
+ setPage((window.location.hash||"#home").slice(1),false);
+});
 var validStatuses=["saved","applied","oa","interview","offer","rejected","skipped"];
 function getJob(id){return jobs.find(function(j){return j.id===id;})||(records[id]&&records[id].job)||null;}
 function update(id,status){if(validStatuses.indexOf(status)<0)return;var j=getJob(id);if(!j)return;var old=records[id]||{};
@@ -456,11 +510,26 @@ try{
   $("recentCity").value=$("exploreCity").value;
  }
 }catch(e){}
+function homeLeadMarkup(j){
+ var href=link(j.url),r=records[j.id]||{};
+ return '<article class="home-lead"><div><h3>'+text(j.title)+'</h3><p>'+text(j.company)+' · '+text(j.location||"Location unspecified")+
+  (j.discovered_on?' · Discovered '+text(j.discovered_on):'')+'</p></div><div class="actions">'+
+  (href?'<a class="btn btn-primary" href="'+text(href)+'" target="_blank" rel="noopener noreferrer">View posting ↗</a>':'')+
+  '<button type="button" class="btn" data-job="'+text(j.id)+'" data-action="saved">'+(r.status==="saved"?"★ Saved":"☆ Save")+'</button></div></article>';
+}
+function renderHome(){
+ var eligible=visible().length;
+ var saved=Object.values(records).filter(function(r){return r&&r.status==="saved";}).length;
+ var review=Insights.calculate(records,{goal:goal,range:"all"}).reviewCount;
+ $("homeMatchCount").textContent=eligible?eligible+" unreviewed leads in the current feed.":"No unreviewed leads found in this feed.";
+ $("homeSavedCount").textContent=saved?saved+" saved role"+(saved===1?"":"s")+" ready to review.":"No saved roles yet. Bookmark strong fits.";
+ $("homeReviewCount").textContent=review?review+" applications without a newer status after 14+ days.":"Review submitted applications and update their status.";
+}
 function renderHomeRecent(){
  const fresh=recentMatches(7,$("recentLocation").value,$("recentRole").value,$("recentCity").value);
  const where=$("recentCity").value.trim()||$("recentLocation").options[$("recentLocation").selectedIndex].textContent;
  $("homeRecentLabel").textContent=fresh.length+" recently reported or newly discovered leads · "+where+" · "+$("recentRole").options[$("recentRole").selectedIndex].textContent+" · last 7 days.";
- $("homeRecentList").innerHTML=fresh.length?fresh.slice(0,3).map(jobMarkup).join(""):'<div class="empty"><h3>No recent dated matches with your saved filters</h3><p>Try a broader location or role in Latest Jobs, or browse all opportunities below.</p></div>';
+ $("homeRecentList").innerHTML=fresh.length?fresh.slice(0,2).map(homeLeadMarkup).join(""):'<div class="empty"><h3>No recent dated matches with your saved filters</h3><p>Try a broader location or role in Latest Jobs, or browse all opportunities below.</p></div>';
 }
 function renderRecent(){
  const loc=$("recentLocation").value,role=$("recentRole").value,days=$("recentDays").value,city=$("recentCity").value;
@@ -645,7 +714,7 @@ function render(){var progress=Progress.summary(records,goal);$("jobCount").text
 $("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/11 discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Feed refreshed "+$("feedDate").textContent:"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
 $("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/11. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
-renderDiscover();renderExplore();renderCompanies();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();}
+renderDiscover();renderExplore();renderCompanies();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();renderHome();}
 $("saveGoal").onclick=function(){var n=Number($("goalInput").value);if(!Number.isInteger(n)||n<1||n>30){notify("Choose a goal between 1 and 30.");return;}goal=n;try{localStorage.setItem(SETTINGS,JSON.stringify({dailyGoal:goal}));}catch(e){}render();notify("Goal saved.");};
 function download(content,name,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}
 function csv(v){var s=String(v==null?"":v);if(/^[=+@\- \t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
@@ -657,7 +726,7 @@ if(!confirm("Replace your current browser-local application history with "+Objec
 $("clear").onclick=function(){if(confirm("Permanently clear this browser's application history? Export a backup first.")){records={};save();render();notify("Local history cleared.");}};
 render();
 const opened=(location.hash||"").slice(1);
-if(["recent","explore","companies","pipeline","insights"].includes(opened))setPage(opened);
+if(["home","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"].includes(opened))setPage(opened,false);
 })();
 </script>
 </body></html>
