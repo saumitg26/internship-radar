@@ -29,3 +29,4 @@ jobs:
           node scripts/test_application_pipeline.cjs
           node scripts/test_daily_progress.cjs
           node scripts/test_insights.cjs
+          node scripts/test_navigation.cjs
