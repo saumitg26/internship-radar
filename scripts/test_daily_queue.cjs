@@ -48,12 +48,12 @@ assert.equal(ranked.some(x=>x.job.id==="a"),false,"Manual applications on same c
 assert.equal(ranked.some(x=>x.job.id==="b"),false,"Skipped status excluded");
 assert.ok(ranked.find(x=>x.job.id==="c").reasons.includes("Saved by you"));
 let many=Array.from({length:7},(_,i)=>good("a"+i,"Software Engineer Intern "+i,"Fairfax, VA",{company:"Same Company"}))
-  .concat(Array.from({length:7},(_,i)=>good("b"+i,"Software Developer Intern "+i,"Reston, VA",{company:"Other "+i})));
+  .concat(Array.from({length:9},(_,i)=>good("b"+i,"Software Developer Intern "+i,"Reston, VA",{company:"Other "+i})));
 let diversified=Daily.build(many,{},prefs,10,now);
 assert.equal(diversified.length,10);
 assert.ok(diversified.filter(x=>x.job.company==="Same Company").length<=2,"Companies limited when enough alternatives exist");
 let all=Daily.build(many,{},prefs,30,now);
-assert.equal(all.length,14,"If variety is exhausted, remaining leads may still be presented");
+assert.equal(all.length,16,"If variety is exhausted, remaining leads may still be presented");
 assert.deepEqual(Daily.build(many,{},prefs,10,now).map(x=>x.job.id),diversified.map(x=>x.job.id),"Deterministic ranking");
 const html=fs.readFileSync("site/index.html","utf8");
 for(const id of ["daily","dailyList","dailyFocus","dailyEmployer","dailyConfirm","dailyApplied","dailyPreferences","dailyResume","dailyNext"]){
