@@ -1,0 +1,29 @@
+name: Validate pull requests
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate browser JavaScript syntax
+        run: |
+          node --check site/progress.js
+          node --check site/resume-studio.js
+          node -e "const fs=require('fs');let s=fs.readFileSync('site/index.html','utf8');let m=s.match(/<script>([\s\S]*?)<\/script>/);if(!m)process.exit(1);fs.writeFileSync('/tmp/radar-inline.cjs',m[1])"
+          node --check /tmp/radar-inline.cjs
+      - name: Run deterministic unit tests
+        run: |
+          python scripts/test_job_descriptions.py
+          node scripts/test_resume_edits.cjs
+          node scripts/test_application_pipeline.cjs
+          node scripts/test_daily_progress.cjs
