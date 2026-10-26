@@ -636,7 +636,7 @@ var canonical=Progress.canonicalUrl(url),duplicate=Object.values(records).some(f
  return !r.job.url&&String(r.job.company||"").trim().toLowerCase()===company.toLowerCase()&&String(r.job.title||"").trim().toLowerCase()===title.toLowerCase();
 });
 if(duplicate){notify("This application is already tracked. Update it in My Pipeline.");return;}
-var entered=$("appliedDate").value,submittedAt=new Date();if(entered){submittedAt=new Date(entered+"T12:00:00");if(!Number.isFinite(submittedAt.getTime())||Progress.dateKey(submittedAt)!==entered||submittedAt>new Date()){notify("Enter a valid submission date no later than today.");return;}}
+var entered=$("appliedDate").value,submittedAt=new Date();if(entered){submittedAt=new Date(entered+"T12:00:00");if(!Number.isFinite(submittedAt.getTime())||Progress.dateKey(submittedAt)!==entered||entered>today()){notify("Enter a valid submission date no later than today.");return;}}
 var before=Progress.summary(records,goal).today,id="manual-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);
 records[id]={status:"applied",changed_at:new Date().toISOString(),applied_at:submittedAt.toISOString(),job:{id:id,company:company,title:title,location:"",url:link(url)}};
 save();$("manual").reset();render();var next=Progress.summary(records,goal);
