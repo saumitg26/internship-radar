@@ -4,6 +4,28 @@ A free internship discovery and application-tracking dashboard. Deployed via Git
 
 Do not commit resumes, application backups, credentials, or personal schedules.
 
+## Daily application mission
+
+The **Discover** homepage tracks real submissions toward a default goal of **10 applications per day** (changeable from Settings). It is designed to make the next meaningful application obvious—not to reward spam.
+
+- A progress bar and milestones at 20%, 50%, 80%, and 100% of the daily goal celebrate recorded submissions.
+- A seven-day activity history highlights consistency without punishing rest days or requiring streaks.
+- A single next-action button takes you to saved opportunities (or Explore when the queue is empty).
+- Press **I applied** only after submitting through the employer's website, or add an already-submitted application in **My pipeline**.
+- Saved/skipped roles and opening job links do not count. Repeated status clicks do not earn additional credit, and normalized duplicate URLs are counted once.
+- Dates follow your device's local timezone. Progress derives from your existing browser-local application records; no telemetry, login, or external service.
+- Application history remains exportable in Settings. Incorrect submissions can be undone in My pipeline by switching the status back to Saved or Remove.
+- Goal celebrations acknowledge effort; they are **not** claims about application quality, hiring likelihood, or employer responses.
+
+Test the dashboard and calculations before deploying with:
+
+```bash
+python scripts/test_job_descriptions.py
+node scripts/test_resume_edits.cjs
+node scripts/test_application_pipeline.cjs
+node scripts/test_daily_progress.cjs
+```
+
 ## Resume Studio
 
 From an internship listing, select **Enhance resume**, or open `/resume-studio.html` to start with a custom job description.
