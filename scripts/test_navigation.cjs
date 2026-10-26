@@ -8,7 +8,7 @@ const slice=(begin,end)=>{
  assert.ok(b>a,"Missing delimiter "+end);
  return html.slice(a,b);
 };
-const home=slice('<section id="home" class="view active">','<section id="discover" class="view">');
+const home=slice('<section id="home" class="view active">','<section id="daily" class="view">');
 const discover=slice('<section id="discover" class="view">','<section id="recent" class="view">');
 const insights=slice('<section id="insights" class="view">','<section id="programs" class="view">');
 const nav=slice('<nav class="nav" aria-label="Main navigation">','</nav>');
