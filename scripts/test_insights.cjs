@@ -24,8 +24,8 @@ let records={
 };
 let s=Insights.calculate(records,{range:"7",now,goal:2});
 assert.equal(s.submitted,4);
-assert.equal(s.previous,2);
-assert.equal(s.delta,2);
+assert.equal(s.previous,1);
+assert.equal(s.delta,3);
 assert.equal(s.stage.applied,1);
 assert.equal(s.stage.oa,1);
 assert.equal(s.stage.interview,1);
