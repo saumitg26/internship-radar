@@ -68,10 +68,12 @@
   }
   function build(jobs,records,rawPrefs,limit,now){
     var prefs=preferences(rawPrefs),at=now instanceof Date?now:new Date(),count=Math.max(1,Math.min(30,Number(limit)||10));
-    var blocked=new Set(),seen=new Set(),out=[],byCompany=Object.create(null);
+    var blocked=new Set(),savedUrls=new Set(),seen=new Set(),out=[],byCompany=Object.create(null);
     Object.keys(records||{}).forEach(function(id){
-      var r=records[id];if(!r||!DONE.includes(r.status))return;
-      var key=canonicalUrl(r.job&&r.job.url);if(key)blocked.add(key);
+      var r=records[id];if(!r)return;
+      var key=canonicalUrl(r.job&&r.job.url);
+      if(r.status==="saved"&&key)savedUrls.add(key);
+      if(DONE.includes(r.status)&&key)blocked.add(key);
     });
     (Array.isArray(jobs)?jobs:[]).forEach(function(j){
       if(!j||!j.id||!j.title||!j.company||!safeUrl(j.url))return;
@@ -81,7 +83,7 @@
       var key=canonicalUrl(j.url),identity=String(j.company).toLowerCase().trim()+"|"+String(j.title).toLowerCase().trim()+"|"+String(j.location||"").toLowerCase().trim();
       if(!key||blocked.has(key)||seen.has(key)||seen.has("role:"+identity))return;
       seen.add(key);seen.add("role:"+identity);
-      var item=Object.assign({},j,{isSaved:Boolean(state&&state.status==="saved")});
+      var item=Object.assign({},j,{isSaved:Boolean((state&&state.status==="saved")||savedUrls.has(key))});
       var scored=score(item,prefs,at);
       out.push({job:j,points:scored.points,reasons:scored.reasons,warnings:scored.warnings,skills:scored.matchedSkills});
     });
