@@ -19,6 +19,7 @@ jobs:
         run: |
           node --check site/progress.js
           node --check site/insights.js
+          node --check site/daily-queue.js
           node --check site/resume-studio.js
           node -e "const fs=require('fs');let s=fs.readFileSync('site/index.html','utf8');let m=s.match(/<script>([\s\S]*?)<\/script>/);if(!m)process.exit(1);fs.writeFileSync('/tmp/radar-inline.cjs',m[1])"
           node --check /tmp/radar-inline.cjs
@@ -30,3 +31,4 @@ jobs:
           node scripts/test_daily_progress.cjs
           node scripts/test_insights.cjs
           node scripts/test_navigation.cjs
+          node scripts/test_daily_queue.cjs
