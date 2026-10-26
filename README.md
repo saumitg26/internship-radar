@@ -4,6 +4,16 @@ A free internship discovery and application-tracking dashboard. Deployed via Git
 
 Do not commit resumes, application backups, credentials, or personal schedules.
 
+## Navigation and interaction design
+
+The standalone site uses principles from [OpenAI's Plugin UI guidelines](https://developers.openai.com/plugins/concepts/ui-guidelines) as a **design reference**, not as an Apps SDK implementation.
+
+- **Home** (default) contains only today's mission, three actionable next-step shortcuts, and a compact preview of recently discovered internships.
+- **Top 10 matches**, **Latest jobs**, **Explore internships**, **My pipeline**, **Stats & Insights**, and **Resume Studio** remain separate, task-focused views.
+- **Stats & Insights** is the dedicated destination for date-range comparisons, interactive charts, pipeline status details, and trends. Home links there rather than duplicating the analytics dashboard.
+- Navigation updates the URL fragment, preserves direct links (including `#pipeline` from Resume Studio), updates `aria-current`, and respects browser Back.
+- The design uses the existing system font, consistent spacing, limited accent colors, keyboard-focus styles, responsive layouts, and honest empty-state messaging.
+
 ## Daily application mission
 
 The **Discover** homepage tracks real submissions toward a default goal of **10 applications per day** (changeable from Settings). It is designed to make the next meaningful application obvious—not to reward spam.
