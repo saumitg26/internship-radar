@@ -14,6 +14,17 @@ The standalone site uses principles from [OpenAI's Plugin UI guidelines](https:/
 - Navigation updates the URL fragment, preserves direct links (including `#pipeline` from Resume Studio), updates `aria-current`, and respects browser Back.
 - The design uses the existing system font, consistent spacing, limited accent colors, keyboard-focus styles, responsive layouts, and honest empty-state messaging.
 
+## Personalized Daily 10 and focused apply mode
+
+- **Home** is still the default tab; the **Daily 10** tab is a purpose-built workflow next to Home and Top 10 Matches.
+- Set a preferred technical role (software, cloud/platform, AI/data, or all), location priority (DMV, Virginia, remote, or nationwide), and up to eight comma-separated skills. They are saved **only in this browser**.
+- Recommendations are ranked using explainable signals: preferred role and region, job description keywords, recently discovered listings, saved jobs, and whether the lead comes from a direct employer feed. The ranking is deterministic and does **not** predict hiring success.
+- The shortlist only includes leads with HTTPS job URLs and excludes existing submitted or skipped applications, including a manual submission with the same normalized application link.
+- Select a job to view matching reasons, source and eligibility caveats, a job-description excerpt, the actual application link, and a role-specific Resume Studio handoff. Review every employer listing yourself.
+- Click **Next recommendation** to inspect another role without losing progress, or **Save** to bookmark it. You may be shown fewer than ten jobs if fewer valid leads are available.
+- **Mark as applied** remains disabled until you explicitly confirm that you have already submitted through the employer's site. The app does **not** autofill, submit, or verify applications automatically. Completed applications immediately disappear from the recommendation queue and update your daily goal.
+- Rankings can shift as the live feed refreshes or you change your preferences, so this is a refreshed shortlist rather than a fixed promise of ten independently verified openings.
+
 ## Daily application mission
 
 The **Discover** homepage tracks real submissions toward a default goal of **10 applications per day** (changeable from Settings). It is designed to make the next meaningful application obvious—not to reward spam.
