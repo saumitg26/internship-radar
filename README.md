@@ -26,6 +26,19 @@ node scripts/test_application_pipeline.cjs
 node scripts/test_daily_progress.cjs
 ```
 
+## Stats & Insights
+
+The new **Stats & Insights** workspace turns your private, browser-local application records into an interactive dashboard:
+
+- Toggle the analysis window between 7, 30, 90 days and all time.
+- Compare application volume against the previous same-length period, see average submissions per active day, and identify days meeting your currently configured daily goal.
+- Track the percentage of applications whose **current recorded status** is Assessment, Interview, Offer or Rejected. This *recorded response rate* is not a success prediction, and a rejection counts as a response.
+- Click activity-chart bars and current-stage breakdowns to drill into the corresponding jobs; clear filters to return to the full range.
+- See actionable prompts for saved roles, untouched applications after 14 days, and unrecorded outcomes. No automated messages are sent.
+- When manually logging a previously submitted application, optionally choose the original application date so historical counts are accurate; otherwise today's date is used.
+
+This is a **current pipeline snapshot**, not a stage-transition funnel. Historical interview/offer conversion and employer response times require a separate timestamped status-event history that is not tracked yet. Duplicate canonical URLs are excluded from summaries. Stats disappear if you clear browser data, so export backups regularly.
+
 ## Resume Studio
 
 From an internship listing, select **Enhance resume**, or open `/resume-studio.html` to start with a custom job description.
