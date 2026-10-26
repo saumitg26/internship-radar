@@ -1,5 +1,6 @@
 /* Run using node scripts/test_application_pipeline.cjs. No browser/network needed. */
 const assert=require('node:assert/strict');
+const Progress=require('../site/progress.js');
 const vm=require('node:vm');
 const fs=require('node:fs');
 const html=fs.readFileSync('site/index.html','utf8');
@@ -35,7 +36,7 @@ const jobs=[
 ];
 let handler=null;
 const ctx={
- jobs,records,exploreCompany:'',
+ jobs,records,exploreCompany:'',Progress,goal:10,
  sortJobDates:(a,b)=>(b.score||0)-(a.score||0),
  '$':id=>{assert.ok(elements[id],'Known element '+id);return elements[id]},
  document:{addEventListener:(name,fn)=>{if(name==='click')handler=fn}},
@@ -95,4 +96,7 @@ assert.equal(ctx.exploreVisible().length,0,'All applied jobs hidden from default
 ctx.renderPipeline();
 assert.equal(elements.pApplied.textContent,2,'Both applied records included');
 assert.equal(JSON.parse(stored).j2.status,'applied','Saving over an existing Saved record works');
+assert.equal(Progress.summary(records,10).today,2,'Two genuine application submissions count today');
+press('j2','applied');
+assert.equal(Progress.summary(records,10).today,2,'Clicking Applied again cannot farm goal progress');
 console.log('PASS: I applied across every dynamic job card, local save, immediate hide, pipeline entry, status filters and counts.');
