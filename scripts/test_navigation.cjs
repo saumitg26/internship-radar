@@ -16,6 +16,10 @@ assert.ok(nav.indexOf('data-page="home"')<nav.indexOf('data-page="discover"'),"H
 assert.equal((html.match(/id="momentumPanel"/g)||[]).length,1,"One mission only");
 assert.ok(home.includes('id="momentumPanel"'),"Mission only on Home");
 assert.ok(home.includes('id="homeSavedCount"'),"Saved action available on Home");
+assert.ok(home.includes('data-home-target="daily"'),"Home promotes the Daily 10 workflow");
+const daily=slice('<section id="daily" class="view">','<section id="discover" class="view">');
+assert.ok(daily.includes('id="dailyPreferences"')&&daily.includes('id="dailyFocus"'),"Daily 10 has preferences and a focused review");
+assert.ok(!home.includes('id="dailyList"'),"Home is not overwhelmed by the application queue");
 assert.ok(home.includes('id="homeRecentList"'),"Compact fresh leads on Home");
 assert.ok(home.includes('id="homeInsights"'),"Deeper stats are one click away");
 assert.ok(!home.includes('id="insightsBars"'),"Detailed charts are not on Home");
@@ -31,7 +35,7 @@ assert.ok(html.includes('window.addEventListener("popstate"'),"Browser back is s
 assert.ok(html.includes('aria-current="page"'),"Navigation exposes active state");
 assert.ok(html.includes('.home-task:focus-visible'),"Home actions include visible keyboard focus");
 assert.ok(html.includes('@media(max-width:650px)'),"Compact layout has a mobile breakpoint");
-for(const id of ["home","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"]){
+for(const id of ["home","daily","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"]){
  assert.equal((html.match(new RegExp('id="'+id+'" class="view','g'))||[]).length,1,"View "+id+" occurs once");
 }
 console.log("PASS: Home is first, separated from discovery and analytics, responsive and deep-linkable.");
