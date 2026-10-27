@@ -113,6 +113,41 @@ def scan(board):
     if typ=="ashby":
         rows=get("https://api.ashbyhq.com/posting-api/job-board/"+slug)
         return [dict(company=company,title=x.get("title",""),location=x.get("location",""),description=clean(x.get("descriptionHtml") or x.get("descriptionPlain")),url=x.get("jobUrl") or x.get("applyUrl") or "",source="Ashby") for x in rows.get("jobs",[]) if x.get("isListed",True)]
+    if typ=="smartrecruiters":
+        # Official unauthenticated public Posting API; one keyword-scoped page.
+        rows=get("https://api.smartrecruiters.com/v1/companies/"+quote(slug,safe="")+"/postings?q=intern&limit=100&offset=0")
+        if not isinstance(rows,dict) or not isinstance(rows.get("content"),list):
+            raise ValueError("Unexpected SmartRecruiters postings response")
+        results=[]
+        for item in rows["content"]:
+            if not isinstance(item,dict):continue
+            identifier=str(item.get("id") or "")
+            if not re.fullmatch(r"[A-Za-z0-9-]{4,100}",identifier):continue
+            loc=item.get("location") or {}
+            if not isinstance(loc,dict):loc={}
+            location=", ".join(str(loc.get(x)) for x in ("city","region","country") if loc.get(x))
+            url="https://jobs.smartrecruiters.com/"+slug+"/"+identifier
+            results.append(dict(company=company,title=str(item.get("name") or ""),
+                location=location,description="",url=url,source="SmartRecruiters",
+                posted=str(item.get("releasedDate") or "")[:10]))
+        return results
+    if typ=="workable":
+        # Workable's documented public account feed (no credentials/candidates).
+        payload=get("https://www.workable.com/api/accounts/"+quote(slug,safe="")+"?details=true")
+        if not isinstance(payload,dict) or not isinstance(payload.get("jobs"),list):
+            raise ValueError("Unexpected Workable public jobs response")
+        results=[]
+        for item in payload["jobs"]:
+            if not isinstance(item,dict):continue
+            shortcode=str(item.get("shortcode") or "")
+            if not re.fullmatch(r"[A-Za-z0-9_-]{3,100}",shortcode):continue
+            location=", ".join(str(item.get(k)) for k in ("city","state","country") if item.get(k))
+            if item.get("telecommuting") or item.get("workplace_type")=="remote":location="Remote · "+location
+            url="https://apply.workable.com/"+slug+"/j/"+shortcode+"/"
+            results.append(dict(company=company,title=str(item.get("title") or ""),
+                location=location,description=clean(item.get("description") or ""),
+                url=url,source="Workable",posted=str(item.get("published_on") or "")[:10]))
+        return results
     raise ValueError("Unsupported ATS")
 def normalize(x):
     title=str(x["title"]);location=str(x["location"] or "Location unspecified");desc=x["description"]
