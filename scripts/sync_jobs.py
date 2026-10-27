@@ -16,6 +16,7 @@ from extra_jobs import gather as gather_extra
 
 ROOT=Path(__file__).resolve().parents[1]
 BOARD_FILE=ROOT/"scripts"/"boards.json"
+PRIORITY_FILE=ROOT/"scripts"/"priority_employers.json"
 SITE=ROOT/"site"
 RX_ROLE=re.compile(r"\b(intern(ship)?|co[- ]?op|fellow(ship)?|apprentice(ship)?)\b", re.I)
 RX_TECH=re.compile(r"software|developer|engineering|computer science|backend|front.?end|cloud|platform|devops|data engineer|data scien|data analy|cyber|machine learning|artificial intelligence|information technology|\btechnology\b|\btechnical\b|\bit\s+intern\b|\bai\b|\bml\b",re.I)
@@ -59,7 +60,7 @@ def workday_jobs(board, fetch=None):
     fetch=fetch or post_json
     seen=set()
     result=[]
-    for term in ("intern","co-op"):
+    for term in ("intern",):
         for offset in range(0,300,100):
             payload={"appliedFacets":{},"limit":100,"offset":offset,"searchText":term}
             data=fetch(endpoint,payload)
@@ -263,18 +264,21 @@ def enrich_selected_descriptions(matches):
 def main():
     prior=previous_snapshot()
     boards=json.loads(BOARD_FILE.read_text())
-    jobs={};errors=[];working=0
+    priority_employers=json.loads(PRIORITY_FILE.read_text())
+    jobs={};errors=[];working=0;board_health={}
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
         future_map={ex.submit(scan,b):b for b in boards}
         for f in concurrent.futures.as_completed(future_map):
             b=future_map[f]
             try:
+                raw_jobs=f.result()
                 working+=1
-                for raw in f.result():
+                board_health[b["company"]]="ok"
+                for raw in raw_jobs:
                     job=normalize(raw)
                     if job:jobs[job["id"]]=job
             except Exception as error:
-                working-=1
+                board_health[b["company"]]="error"
                 errors.append(f'{b["company"]}: {str(error)[:100]}')
     # Blend direct employer boards with the broader community sources
     community,community_ok,community_errors,community_counts=gather_community(get)
@@ -352,7 +356,22 @@ def main():
         job["eligibility_notes"]=list(dict.fromkeys(flags))
     # Never silently preserve a stale snapshot as if it were newly refreshed.
     companies=sorted({job["company"] for job in matches if job["company"].strip() and job["company"]!="Unknown employer"},key=str.casefold)
-    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"note":"Community listings may be outdated. Check the employer site before applying."}
+    direct_counts={}
+    for job in matches:
+        if not job.get("community"):
+            name=job["company"]
+            direct_counts[name]=direct_counts.get(name,0)+1
+    configured={board["company"] for board in boards}
+    featured=[]
+    for row in priority_employers:
+        company=str(row["company"])
+        mode="direct" if company in configured else "link_only"
+        status=board_health.get(company,"unknown") if mode=="direct" else "not_connected"
+        featured.append({
+            "company":company,"careers_url":row["careers_url"],"mode":mode,
+            "status":status,"direct_jobs":direct_counts.get(company,0)
+        })
+    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"priority_employers":featured,"note":"Community listings may be outdated. Check the employer site before applying."}
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
