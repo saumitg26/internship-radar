@@ -552,6 +552,7 @@ function renderExplore(){
  const newest=matches.filter(j=>freshnessDate(j)===today()).sort(sortJobDates);
  $("exploreTotal").textContent=jobs.length;
  $("exploreCoverage").textContent=companyEntries.length+" companies across the US · "+(feed.community_sources_ok||[]).length+" responding community feeds";
+ if(Number(feed.discovered_ats_scanned)>0){$("exploreCoverage").textContent+=" · "+Number(feed.discovered_ats_responding||0)+"/"+Number(feed.discovered_ats_scanned)+" automatically discovered employer boards responding";}
  $("exploreVA").textContent=jobs.filter(virginia).length;
  $("exploreDMV").textContent=jobs.filter(local).length;
  $("exploreMatches").textContent=matches.length;
