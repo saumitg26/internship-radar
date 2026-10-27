@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Internship Radar — Find your next opportunity</title>
 <script src="jobs.js"></script>
 <script src="progress.js"></script>
@@ -192,11 +192,13 @@
 .va-employer .va-link-arrow{color:var(--teal);font-size:15px;flex:none}
 .va-footnote{font-size:11px;color:var(--muted);margin:13px 0 0}
 @media(max-width:700px){.va-employers{grid-template-columns:1fr}.va-head{flex-direction:column}.va-summary{text-align:left}}
-</style></head>
-<body><div class="shell">
+</style>
+<link rel="stylesheet" href="./interface-refresh.css">
+</head>
+<body><a class="skip-link" href="#mainContent">Skip to content</a><div class="shell">
 <aside class="sidebar">
- <div class="brand"><div class="logo">IR↗</div><div>Internship Radar</div></div>
- <div><p class="sublabel">WORKSPACE</p><nav class="nav" aria-label="Main navigation">
+ <div class="brand"><div class="logo">IR↗</div><div>Internship Radar</div></div><button type="button" class="mobile-menu-toggle" id="mobileMenuToggle" aria-controls="workspaceNavigation" aria-expanded="false"><span aria-hidden="true">☰</span> Menu</button>
+ <div id="workspaceNavigation"><p class="sublabel">WORKSPACE</p><nav class="nav" aria-label="Main navigation">
  <button type="button" data-page="home" class="active" aria-current="page"><span class="ico" aria-hidden="true">⌂</span> Home</button>
  <button type="button" data-page="daily"><span class="ico" aria-hidden="true">◎</span> Daily 10</button>
  <button type="button" data-page="discover"><span class="ico" aria-hidden="true">◇</span> Top 10 matches</button>
@@ -211,7 +213,7 @@
  <button data-page="settings"><span class="ico">⚙</span> Settings</button></nav></div>
  <div class="aside-note"><strong>Your search, your pace.</strong>Free, public job discovery. Applications stay in this browser. No login or automatic submissions. Resume Studio saves documents privately in your browser.</div>
 </aside>
-<main class="main"><div class="topbar"><div class="crumb">WORKSPACE / <b id="crumb">HOME</b></div><span id="liveStatus" class="status warn">● Checking job feed</span></div>
+<main class="main" id="mainContent" tabindex="-1"><div class="topbar"><div class="crumb">WORKSPACE / <b id="crumb">HOME</b></div><div class="topbar-actions"><button id="quickFind" type="button" class="top-quick-search"><span>⌕ &nbsp;Find internships</span><kbd>/</kbd></button><span id="liveStatus" class="status warn">● Checking job feed</span></div></div>
 <section id="home" class="view active">
  <header class="intro home-intro"><div class="eyebrow">YOUR DAILY WORKSPACE</div><h1>One good application <span>at a time.</span></h1><p>See today's progress, choose a relevant opening, and log a submission only after you've applied through the employer's website.</p></header>
  <section class="momentum-panel" id="momentumPanel" aria-labelledby="momentumTitle">
@@ -400,7 +402,15 @@
  <div class="panel"><h3>Privacy</h3><p>No account, resume upload, form auto-filling, or automatic application submissions. Do not store passwords, confidential notes, or documents here. Local storage is not encrypted and can be read by extensions or other trusted scripts on this domain.</p><button class="btn btn-danger" id="clear">Clear application history</button></div></div>
 </section>
 <div class="footer">INTERNSHIP RADAR · Public job postings; personal application records remain in this browser. Apply only through actual employer pages.</div>
-</main></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main></div>
+<nav class="mobile-tabbar" aria-label="Quick navigation">
+ <button type="button" data-page="home" aria-current="page" class="active"><span aria-hidden="true">⌂</span><span>Home</span></button>
+ <button type="button" data-page="daily"><span aria-hidden="true">◎</span><span>Daily 10</span></button>
+ <button type="button" data-page="explore"><span aria-hidden="true">⌕</span><span>Explore</span></button>
+ <button type="button" data-page="pipeline"><span aria-hidden="true">▤</span><span>Pipeline</span></button>
+ <button type="button" id="mobileMore"><span aria-hidden="true">☷</span><span>More</span></button>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (function(){
 "use strict";
@@ -413,6 +423,21 @@ var feed=window.INTERNSHIP_RADAR_FEED||{jobs:[],generated_at:null,scanned_boards
 var employerRegistry=Array.isArray(feed.employer_registry)?feed.employer_registry:[],registryLimit=60;
 var jobs=Array.isArray(feed.jobs)?feed.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";}):[];
 var records={}, goal=10, view="home", exploreLimit=25, companyLimit=60, exploreCompany="";
+function setMobileMenu(open){
+ var el=$("workspaceNavigation"),btn=$("mobileMenuToggle"),more=$("mobileMore");
+ if(!el||!btn)return;
+ el.classList.toggle("is-open",Boolean(open));
+ btn.setAttribute("aria-expanded",String(Boolean(open)));
+ btn.innerHTML=Boolean(open)?'<span aria-hidden="true">×</span> Close':'<span aria-hidden="true">☰</span> Menu';
+ if(more){more.classList.toggle("active",Boolean(open));more.setAttribute("aria-expanded",String(Boolean(open)));}
+}
+$("mobileMenuToggle").addEventListener("click",function(){setMobileMenu(!$("workspaceNavigation").classList.contains("is-open"));});
+$("mobileMore").addEventListener("click",function(){
+ var opening=!$("workspaceNavigation").classList.contains("is-open");
+ setMobileMenu(opening);
+ if(opening)$("mobileMenuToggle").focus();
+});
+
 try{var loaded=JSON.parse(localStorage.getItem(KEY)||"{}");if(loaded&&typeof loaded==="object"&&!Array.isArray(loaded))records=loaded;}catch(e){}
 try{var g=Number(JSON.parse(localStorage.getItem(SETTINGS)||"{}").dailyGoal);if(g>=1&&g<=30)goal=g;}catch(e){}
 function text(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -423,6 +448,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){
 function setPage(v,saveHistory){
  if(!["home","daily","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"].includes(v))v="home";
  view=v;
+ setMobileMenu(false);
  document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});
  document.querySelectorAll("[data-page]").forEach(function(x){
   var active=x.dataset.page===v;
@@ -436,6 +462,24 @@ function setPage(v,saveHistory){
  window.scrollTo(0,0);
 }
 document.querySelectorAll("[data-page]").forEach(function(b){b.addEventListener("click",function(){setPage(b.dataset.page);});});
+function focusInternshipSearch(){
+ setPage("explore");
+ $("exploreSearch").focus({preventScroll:true});
+}
+$("quickFind").addEventListener("click",focusInternshipSearch);
+document.addEventListener("keydown",function(e){
+ var target=e.target;
+ var editable=target&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+ if(e.key==="Escape"&&$("workspaceNavigation").classList.contains("is-open")){setMobileMenu(false);$("mobileMenuToggle").focus();return;}
+ if(e.key==="/"&&!editable&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+  e.preventDefault();focusInternshipSearch();
+ }
+});
+document.addEventListener("click",function(e){
+ if(window.innerWidth>950||!$("workspaceNavigation").classList.contains("is-open"))return;
+ if(!e.target.closest(".sidebar")&&!e.target.closest("#mobileMore"))setMobileMenu(false);
+});
+
 $("homeLatest").onclick=function(){setPage("recent");};
 $("homeInsights").onclick=function(){setPage("insights");};
 $("home").addEventListener("click",function(e){
