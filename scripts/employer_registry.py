@@ -87,7 +87,7 @@ def merge(old, leads, configured, at=None):
             continue
         if mode=="public_board":
             probe=from_listing({"company":company,"url":url})
-            if not probe or registry_key(probe)!=k:continue
+            if not probe or registry_key(dict(probe,mode="public_board"))!=k:continue
         else:
             probe=classify_link({"company":company,"url":url})
             if not probe or probe["mode"]!="link_only" or registry_key(probe)!=k:continue
