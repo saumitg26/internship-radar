@@ -86,6 +86,7 @@ def choose(listings,configured,at=None,budget=TOTAL_BUDGET):
         # Small bonus for independent repeat leads, not enough to drown out niche firms.
         return (random_order // min(3,counts[k]),random_order)
     candidates.sort(key=order)
+    if budget<=0:return [],len(candidates)
     taken=Counter()
     selected=[]
     for board in candidates:
