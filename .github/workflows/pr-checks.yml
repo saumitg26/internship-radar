@@ -26,6 +26,7 @@ jobs:
       - name: Run deterministic unit tests
         run: |
           python scripts/test_job_descriptions.py
+          python scripts/test_priority_sources.py
           node scripts/test_resume_edits.cjs
           node scripts/test_application_pipeline.cjs
           node scripts/test_daily_progress.cjs
