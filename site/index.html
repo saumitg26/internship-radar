@@ -167,6 +167,22 @@
 @media(max-width:1160px){.daily-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.daily-fields button{width:100%}}
 @media(max-width:900px){.daily-workspace{grid-template-columns:1fr}.daily-list{max-height:315px}.daily-focus{position:static}}
 @media(max-width:650px){.daily-fields{grid-template-columns:1fr}.daily-topline{flex-direction:column}.daily-preferences{padding:17px}.daily-focus-actions{flex-direction:column}.daily-focus-footer>*{flex:1}.daily-focus h2{font-size:20px}}
+
+/* Verified employer source health vs official-link-only coverage. */
+.va-watch{margin:19px 0 22px}
+.va-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.va-head h2{font-size:20px;letter-spacing:-.4px;margin:5px 0 3px}
+.va-head p{font-size:12px;color:var(--muted);margin:0 0 14px;max-width:730px}
+.va-eyebrow{font-size:10px;letter-spacing:1.2px;font-weight:750;color:var(--teal)}
+.va-summary{font-size:11px;color:var(--muted);text-align:right}
+.va-employers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.va-employer{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--text);text-decoration:none;min-width:0}
+.va-employer:hover,.va-employer:focus-visible{border-color:var(--teal);background:var(--raised);outline:2px solid transparent}
+.va-employer strong{display:block;font-size:13px}
+.va-employer small{display:block;margin-top:3px;font-size:11px;color:var(--muted)}
+.va-employer .va-link-arrow{color:var(--teal);font-size:15px;flex:none}
+.va-footnote{font-size:11px;color:var(--muted);margin:13px 0 0}
+@media(max-width:700px){.va-employers{grid-template-columns:1fr}.va-head{flex-direction:column}.va-summary{text-align:left}}
 </style></head>
 <body><div class="shell">
 <aside class="sidebar">
@@ -280,6 +296,12 @@
  <div class="metric"><small>DC metro leads</small><strong id="exploreDMV">0</strong><span class="hint">DMV priority</span></div>
  <div class="metric"><small>Matching your filters</small><strong id="exploreMatches">0</strong><span class="hint">Browse 25 at a time</span></div>
 </div>
+
+<section class="panel va-watch" aria-labelledby="vaWatchTitle">
+ <div class="va-head"><div><span class="va-eyebrow">VIRGINIA / DC / MARYLAND · OFFICIAL EMPLOYER LINKS</span><h2 id="vaWatchTitle">Major employers to watch</h2><p>Direct-feed health is shown separately from companies with an official careers link only. A responding board doesn't guarantee it has open internships.</p></div><span id="vaWatchSummary" class="va-summary">Loading employer coverage…</span></div>
+ <div id="vaEmployerList" class="va-employers"></div>
+ <p class="va-footnote">A failed source does not mean an employer stopped hiring. Check its official careers page when an employer feed is unavailable. Community-feed leads may also appear independently.</p>
+</section>
 <div class="section-bar"><h2>All matching internships</h2><small id="exploreSourceHealth">Checking sources</small></div>
 <div class="row" style="margin-bottom:12px"><button class="btn" id="exploreCompanyClear" type="button" style="display:none">Clear company filter ×</button></div>
 <div class="filters"><input id="exploreSearch" placeholder="Search role, company, location…" aria-label="Search internships"><select id="exploreLocation"><option value="all">Nationwide · DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="exploreRole"><option value="all">All technical roles</option><option value="swe">Software development</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
@@ -496,6 +518,24 @@ function exploreVisible(){
   return true;
  });
  return $("exploreSort").value==="newest"?filtered.sort(sortJobDates):filtered;
+}
+
+function renderVirginiaEmployers(){
+ var hosts=Array.isArray(feed.priority_employers)?feed.priority_employers:[];
+ if(!hosts.length){
+  $("vaWatchSummary").textContent="Source audit pending first new feed refresh";
+  $("vaEmployerList").innerHTML='<p class="muted">The monitored-employer directory will appear after this version of the data pipeline runs. Visit official company career sites until then.</p>';
+  return;
+ }
+ var direct=hosts.filter(function(x){return x.mode==="direct";});
+ var successful=direct.filter(function(x){return x.status==="ok";}).length;
+ $("vaWatchSummary").textContent=successful+" / "+direct.length+" direct employer feeds responding · "+(hosts.length-direct.length)+" official links";
+ $("vaEmployerList").innerHTML=hosts.map(function(row){
+  var href=link(row.careers_url),info=row.mode!=="direct"?"Official careers link · not scanned":
+   row.status==="ok"?"Direct feed responding · "+Number(row.direct_jobs||0)+" qualifying leads":
+   row.status==="error"?"Direct feed failed · check employer":"Direct feed status unknown";
+  return href?'<a class="va-employer" href="'+text(href)+'" rel="noopener noreferrer" target="_blank"><span><strong>'+text(row.company)+'</strong><small>'+text(info)+'</small></span><span class="va-link-arrow" aria-hidden="true">↗</span></a>':'';
+ }).join("");
 }
 function renderExplore(){
  const matches=exploreVisible();
@@ -863,7 +903,7 @@ function render(){var progress=Progress.summary(records,goal);$("jobCount").text
 $("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/11 discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Feed refreshed "+$("feedDate").textContent:"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
 $("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/11. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
-renderDiscover();renderExplore();renderCompanies();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();renderDaily();renderHome();}
+renderDiscover();renderExplore();renderVirginiaEmployers();renderCompanies();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();renderDaily();renderHome();}
 $("saveGoal").onclick=function(){var n=Number($("goalInput").value);if(!Number.isInteger(n)||n<1||n>30){notify("Choose a goal between 1 and 30.");return;}goal=n;try{localStorage.setItem(SETTINGS,JSON.stringify({dailyGoal:goal}));}catch(e){}render();notify("Goal saved.");};
 function download(content,name,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}
 function csv(v){var s=String(v==null?"":v);if(/^[=+@\- \t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
