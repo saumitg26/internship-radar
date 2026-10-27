@@ -54,6 +54,35 @@ postings in general job listings, or publish positions only through their own
 websites. Broad feeds may repeat jobs, omit details, or lag closures. Always
 verify the employer website before applying.
 
+## Automatic discovery of big and small U.S. employers
+
+The 52 manually configured employer ATS boards are a foundation, **not a ceiling**.
+On every scheduled four-hour refresh, Internship Radar also inspects the
+employer application URLs surfaced by all 14 public internship feeds. It
+automatically discovers additional public Greenhouse, Lever, Ashby and Workday
+boards, including smaller companies that are not on any hand-maintained list.
+
+- Up to **50 additional employer ATS boards per refresh** are selected from
+  discovered candidates. A deterministic rotating selection changes every
+  four-hour slot, allowing other companies to be checked across the day.
+- Only official ATS hostnames and well-formed job URLs are eligible. No
+  arbitrary websites are crawled; no logins, private data, or mass applications.
+- Short public Workday scans are capped at three pages of 20 results each.
+  Other ATS endpoints are requested only once per selected employer.
+- Selected sources can fail; in that case, third-party leads remain available
+  with appropriate caveats instead of treating a timeout as a closure.
+- The feed reports **discovered_ats_candidates**, **discovered_ats_scanned**,
+  **discovered_ats_responding**, and **discovered_ats_added_before_dedup**.
+  These values show the breadth and reliability of discovery, not guaranteed
+  job openings or the total number of U.S. companies.
+- Beyond these supported ATS platforms, employers using private job platforms,
+  individual websites, or jobs that appear in no public feed may still be missed.
+
+The core objective is *broad U.S. discovery followed by personalized ranking*,
+not rewarding a large raw job count. Daily 10 continues to rank based on
+the selected role, skills and location preference and removes previously
+submitted or skipped roles.
+
 ## Virginia / DMV employer coverage
 
 Internship Radar prioritizes DC, Northern Virginia, and Maryland, while retaining a nationwide search. The source configuration monitors the following **official public employer applicant-tracking feeds** in addition to broader nationwide feeds: Capital One, Fannie Mae, Booz Allen Hamilton, GDIT, Leidos, Northrop Grumman, Shield AI, Appian, and other configured ATS boards. Workday sources use a bounded, unauthenticated public search endpoint; public ATS hosts sometimes block automated requests.
