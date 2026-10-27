@@ -16,6 +16,7 @@ from extra_jobs import gather as gather_extra
 from nationwide_jobs import gather as gather_nationwide, SOURCES as NATIONWIDE_SOURCES
 from community_jobs import SOURCES as COMMUNITY_SOURCES
 from extra_jobs import SOURCES as EXTRA_SOURCES
+from discover_boards import choose as choose_discovered_boards
 
 ROOT=Path(__file__).resolve().parents[1]
 BOARD_FILE=ROOT/"scripts"/"boards.json"
@@ -63,8 +64,9 @@ def workday_jobs(board, fetch=None):
     fetch=fetch or post_json
     seen=set()
     result=[]
+    max_pages=3 if board.get("discovered") else 12
     for term in ("intern",):
-        for offset in range(0,240,20):
+        for offset in range(0,max_pages*20,20):
             payload={"appliedFacets":{},"limit":20,"offset":offset,"searchText":term}
             data=fetch(endpoint,payload)
             if not isinstance(data,dict) or not isinstance(data.get("jobPostings"),list):
@@ -294,6 +296,27 @@ def main():
     community_counts.update(other_counts)
     community_counts.update(nationwide_counts)
     errors.extend(community_errors+other_errors+nationwide_errors)
+    # Expand beyond a hand-maintained employer list: infer verified public ATS
+    # endpoints from the independent national/community internship links.
+    # Rotate a fixed budget each 4-hour refresh, including small employers.
+    discovered_boards,discoverable_count=choose_discovered_boards(community,boards)
+    dynamic_success=0;dynamic_leads=0;dynamic_failures=0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
+        tasks={ex.submit(scan,board):board for board in discovered_boards}
+        for future in concurrent.futures.as_completed(tasks):
+            board=tasks[future]
+            try:
+                rows=future.result()
+                dynamic_success+=1
+                for raw in rows:
+                    job=normalize(raw)
+                    if job and job["id"] not in jobs:
+                        jobs[job["id"]]=job
+                        dynamic_leads+=1
+            except Exception as exc:
+                dynamic_failures+=1
+                # These may be transient; preserve third-party leads instead.
+                if len(errors)<30:errors.append("Discovered "+board["company"]+" ("+board["ats"]+"): "+str(exc)[:95])
     def semantic_key(job):
         return (re.sub(r"\W+","",job["company"].lower()),
                 re.sub(r"\W+","",job["title"].lower()),
@@ -378,11 +401,12 @@ def main():
             "company":company,"careers_url":row["careers_url"],"mode":mode,
             "status":status,"direct_jobs":direct_counts.get(company,0)
         })
-    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"community_sources_configured":len(COMMUNITY_SOURCES)+len(EXTRA_SOURCES)+len(NATIONWIDE_SOURCES),"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"priority_employers":featured,"note":"Community listings may be outdated. Check the employer site before applying."}
+    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"discovered_ats_candidates":discoverable_count,"discovered_ats_scanned":len(discovered_boards),"discovered_ats_responding":dynamic_success,"discovered_ats_added_before_dedup":dynamic_leads,"community_sources_ok":community_ok,"community_counts":community_counts,"community_sources_configured":len(COMMUNITY_SOURCES)+len(EXTRA_SOURCES)+len(NATIONWIDE_SOURCES),"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"priority_employers":featured,"note":"Community listings may be outdated. Check the employer site before applying."}
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
     print(f"Freshness tracking: {new_count} newly discovered roles; baseline available: {bool(prior)}")
+    print(f"ATS auto-discovery: {discoverable_count} candidate company boards, {len(discovered_boards)} scanned, {dynamic_success} responsive, {dynamic_leads} directly fetched leads before cross-source dedup; {dynamic_failures} failed.")
     print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/{len(COMMUNITY_SOURCES)+len(EXTRA_SOURCES)+len(NATIONWIDE_SOURCES)} discovery feeds; counts: {community_counts}")
 if __name__=="__main__":main()
