@@ -62,5 +62,21 @@
   {
     "company": "Dev Technology",
     "careers_url": "https://job-boards.greenhouse.io/devtechnology"
+  },
+  {
+    "company": "Amazon / AWS",
+    "careers_url": "https://amazon.jobs/content/en/career-programs/university/sde"
+  },
+  {
+    "company": "Lockheed Martin",
+    "careers_url": "https://www.lockheedmartin.com/en-us/careers/candidates/students-early-careers/internships.html"
+  },
+  {
+    "company": "Peraton",
+    "careers_url": "https://www.careers.peraton.com/students-early-career"
+  },
+  {
+    "company": "Noblis",
+    "careers_url": "https://careers.noblis.org/internships"
   }
 ]
