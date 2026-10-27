@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qsl, urlencode, urlunsplit
 from urllib.request import Request, urlopen
+from urllib.parse import quote
 from community_jobs import gather as gather_community
 from extra_jobs import gather as gather_extra
 
@@ -17,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BOARD_FILE=ROOT/"scripts"/"boards.json"
 SITE=ROOT/"site"
 RX_ROLE=re.compile(r"\b(intern(ship)?|co[- ]?op|fellow(ship)?|apprentice(ship)?)\b", re.I)
-RX_TECH=re.compile(r"software|developer|engineering|computer science|backend|front.?end|cloud|platform|devops|data engineer|data science|cyber|machine learning|artificial intelligence|information technology|\bit\s+intern\b|\bai\b|\bml\b",re.I)
+RX_TECH=re.compile(r"software|developer|engineering|computer science|backend|front.?end|cloud|platform|devops|data engineer|data scien|data analy|cyber|machine learning|artificial intelligence|information technology|\\btechnology\\b|\\btechnical\\b|\bit\s+intern\b|\bai\b|\bml\b",re.I)
 RX_EXCLUDE=re.compile(r"\b(sales|marketing|accounting|recruiting|human resources|business development|graphic design|legal|mechanical|manufacturing|civil engineering|electrical engineering|chemical engineering|industrial engineering|aerospace engineering|materials engineering)\b",re.I)
 RX_FOREIGN=re.compile(r"\b(london|india|singapore|australia|germany|united kingdom|canada|france|netherlands|poland|japan|dublin|ireland|spain|brazil|toronto|vancouver|montreal|berlin|munich|amsterdam|paris|sydney|melbourne|hyderabad|bengaluru)\b",re.I)
 RX_DMV=re.compile(r"\b(washington\s*,?\s*d\.?c\.?|district of columbia|northern virginia|dmv|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville)\b",re.I)
@@ -40,8 +41,63 @@ def get(url):
     req=Request(url,headers={"User-Agent":"InternshipRadar/1.0 (personal internship search)","Accept":"application/json"})
     with urlopen(req,timeout=17) as response:
         return json.load(response)
+
+def workday_jobs(board, fetch=None):
+    """Scan public Workday job-search results without sign-in.
+
+    Workday may reject requests. A failed scan is NOT evidence that there are
+    no openings. Use bounded pagination to limit request volume.
+    """
+    host=str(board.get("host","")).lower()
+    site=str(board.get("slug",""))
+    if not re.fullmatch(r"[a-z0-9-]+\.wd\d+\.myworkdayjobs\.com",host):
+        raise ValueError("Invalid Workday host")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+",site):
+        raise ValueError("Invalid Workday board identifier")
+    tenant=host.split(".")[0]
+    endpoint=f"https://{host}/wday/cxs/{tenant}/{site}/jobs"
+    fetch=fetch or post_json
+    seen=set()
+    result=[]
+    for term in ("intern","co-op"):
+        for offset in range(0,300,100):
+            payload={"appliedFacets":{},"limit":100,"offset":offset,"searchText":term}
+            data=fetch(endpoint,payload)
+            if not isinstance(data,dict) or not isinstance(data.get("jobPostings"),list):
+                raise ValueError("Unexpected Workday job search response")
+            posts=data["jobPostings"]
+            for post in posts:
+                if not isinstance(post,dict):continue
+                path=str(post.get("externalPath") or "")
+                if not path.startswith("/job/") or path.startswith("//"):continue
+                url=f"https://{host}/{quote(site,safe='')}{path}"
+                if url in seen:continue
+                seen.add(url)
+                location=post.get("locationsText") or post.get("location") or ""
+                if not location and isinstance(post.get("bulletFields"),list):
+                    location=", ".join(str(x) for x in post["bulletFields"][:2])
+                result.append(dict(
+                    company=board["company"],title=str(post.get("title") or ""),
+                    location=str(location),description="",url=url,source="Workday",
+                    posted=""
+                ))
+            total=data.get("total")
+            if len(posts)<100 or (isinstance(total,int) and offset+100>=total):break
+    return result
+
+def post_json(url,payload):
+    body=json.dumps(payload).encode("utf-8")
+    req=Request(url,data=body,headers={
+        "User-Agent":"Mozilla/5.0 (compatible; InternshipRadar/1.0; public-job-search)",
+        "Accept":"application/json","Content-Type":"application/json"
+    },method="POST")
+    with urlopen(req,timeout=17) as response:
+        return json.load(response)
+
 def scan(board):
     slug=board["slug"]; typ=board["ats"]; company=board["company"]
+    if typ=="workday":
+        return workday_jobs(board)
     if typ=="greenhouse":
         rows=get("https://boards-api.greenhouse.io/v1/boards/"+slug+"/jobs?content=true").get("jobs",[])
         return [dict(company=company,title=x.get("title",""),location=(x.get("location") or {}).get("name",""),description=clean(x.get("content","")),url=x.get("absolute_url",""),source="Greenhouse") for x in rows]
