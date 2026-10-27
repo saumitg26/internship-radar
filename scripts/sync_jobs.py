@@ -13,6 +13,9 @@ from urllib.request import Request, urlopen
 from urllib.parse import quote
 from community_jobs import gather as gather_community
 from extra_jobs import gather as gather_extra
+from nationwide_jobs import gather as gather_nationwide, SOURCES as NATIONWIDE_SOURCES
+from community_jobs import SOURCES as COMMUNITY_SOURCES
+from extra_jobs import SOURCES as EXTRA_SOURCES
 
 ROOT=Path(__file__).resolve().parents[1]
 BOARD_FILE=ROOT/"scripts"/"boards.json"
@@ -283,10 +286,14 @@ def main():
     # Blend direct employer boards with the broader community sources
     community,community_ok,community_errors,community_counts=gather_community(get)
     other,other_ok,other_errors,other_counts=gather_extra(get)
+    nationwide,nationwide_ok,nationwide_errors,nationwide_counts=gather_nationwide()
     community.extend(other)
+    community.extend(nationwide)
     community_ok.extend(other_ok)
+    community_ok.extend(nationwide_ok)
     community_counts.update(other_counts)
-    errors.extend(community_errors+other_errors)
+    community_counts.update(nationwide_counts)
+    errors.extend(community_errors+other_errors+nationwide_errors)
     def semantic_key(job):
         return (re.sub(r"\W+","",job["company"].lower()),
                 re.sub(r"\W+","",job["title"].lower()),
@@ -371,11 +378,11 @@ def main():
             "company":company,"careers_url":row["careers_url"],"mode":mode,
             "status":status,"direct_jobs":direct_counts.get(company,0)
         })
-    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"priority_employers":featured,"note":"Community listings may be outdated. Check the employer site before applying."}
+    data={"generated_at":datetime.now(timezone.utc).isoformat(),"scanned_boards":len(boards),"responsive_boards":working,"community_sources_ok":community_ok,"community_counts":community_counts,"community_sources_configured":len(COMMUNITY_SOURCES)+len(EXTRA_SOURCES)+len(NATIONWIDE_SOURCES),"company_count":len(companies),"jobs":matches,"count":len(matches),"new_count":new_count,"freshness_tracked":bool(prior),"description_coverage":sum(bool(j.get("job_description")) for j in matches),"errors":errors[:30],"priority_employers":featured,"note":"Community listings may be outdated. Check the employer site before applying."}
     SITE.mkdir(exist_ok=True)
     (SITE/"jobs.json").write_text(json.dumps(data,indent=2,ensure_ascii=True))
     (SITE/"jobs.js").write_text("window.INTERNSHIP_RADAR_FEED = "+json.dumps(data,ensure_ascii=True)+";\n")
     virginia_count=sum(1 for job in matches if re.search(r"\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|chantilly|richmond)\b",job["location"],re.I))
     print(f"Freshness tracking: {new_count} newly discovered roles; baseline available: {bool(prior)}")
-    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/11 discovery feeds; counts: {community_counts}")
+    print(f"Collected {len(matches)} unique internship leads from {len(companies)} companies ({virginia_count} in Virginia), {working}/{len(boards)} employer boards and {len(community_ok)}/{len(COMMUNITY_SOURCES)+len(EXTRA_SOURCES)+len(NATIONWIDE_SOURCES)} discovery feeds; counts: {community_counts}")
 if __name__=="__main__":main()
