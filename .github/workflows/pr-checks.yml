@@ -33,3 +33,7 @@ jobs:
           node scripts/test_insights.cjs
           node scripts/test_navigation.cjs
           node scripts/test_daily_queue.cjs
+
+      - name: Diagnose Virginia employer feeds (not a deployment gate)
+        continue-on-error: true
+        run: python scripts/check_priority_sources.py
