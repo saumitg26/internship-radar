@@ -312,7 +312,7 @@
  <div id="vaEmployerList" class="va-employers"></div>
  <p class="va-footnote">Failed feeds don't mean an employer stopped hiring. Community-feed leads may appear independently. Always confirm deadlines on employer sites.</p>
 </details>
-<div class="section-bar"><h2>All matching internships</h2><small id="exploreSourceHealth">Checking sources</small></div>
+<div class="section-bar"><div><h2>All matching internships</h2><small id="exploreCoverage">Nationwide coverage loading…</small></div><small id="exploreSourceHealth">Checking sources</small></div>
 <div class="row" style="margin-bottom:12px"><button class="btn" id="exploreCompanyClear" type="button" style="display:none">Clear company filter ×</button></div>
 <div class="filters"><input id="exploreSearch" placeholder="Search role, company, location…" aria-label="Search internships"><select id="exploreLocation"><option value="all">Nationwide · DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="exploreRole"><option value="all">All technical roles</option><option value="swe">Software development</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
 <div class="filters" style="grid-template-columns:1fr 1fr"><select id="exploreAge" aria-label="Filter by listing date"><option value="all">Any listing date</option><option value="today">First seen today</option><option value="3">First seen in last 3 days</option><option value="7">First seen in last 7 days</option><option value="30">First seen in last 30 days</option></select><select id="exploreStatus" aria-label="Filter by application status"><option value="new">Not yet applied</option><option value="all">All statuses (including applied)</option><option value="saved">Saved only</option><option value="applied">Applied / later</option></select></div>
@@ -498,7 +498,7 @@ try{
   ["exploreLocation","exploreRole","exploreCity","exploreKeywords","exploreSort"].forEach(id=>{
    if(typeof prefs[id]==="string"&&(!$(id).options||Array.from($(id).options).some(o=>o.value===prefs[id])))$(id).value=prefs[id];
   });
- }else{$("exploreLocation").value="dmv";$("exploreRole").value="swe";}
+ }else{$("exploreLocation").value="all";$("exploreRole").value="swe";}
 }catch(e){}
 function exploreVisible(){
  const q=$("exploreSearch").value.trim().toLowerCase(),
@@ -551,10 +551,11 @@ function renderExplore(){
  const matches=exploreVisible();
  const newest=matches.filter(j=>freshnessDate(j)===today()).sort(sortJobDates);
  $("exploreTotal").textContent=jobs.length;
+ $("exploreCoverage").textContent=companyEntries.length+" companies across the US · "+(feed.community_sources_ok||[]).length+" responding community feeds";
  $("exploreVA").textContent=jobs.filter(virginia).length;
  $("exploreDMV").textContent=jobs.filter(local).length;
  $("exploreMatches").textContent=matches.length;
- $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/11 discovery feeds";
+ $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+" discovery feeds";
  $("exploreCompanyClear").style.display=exploreCompany?"inline-block":"none";
  $("exploreFreshCount").textContent=newest.length+" today";
  $("exploreFreshHint").textContent=!feed.freshness_tracked?"First-seen history is unavailable for this refresh; new postings cannot be verified yet.":newest.length
@@ -634,7 +635,7 @@ try{
   }
   if(typeof p.city==="string")$("recentCity").value=p.city.slice(0,100);
  }else{
-  $("recentLocation").value=$("exploreLocation").value==="all"?"dmv":$("exploreLocation").value;
+  $("recentLocation").value=$("exploreLocation").value;
   $("recentRole").value=$("exploreRole").value==="all"?"swe":$("exploreRole").value;
   $("recentCity").value=$("exploreCity").value;
  }
@@ -681,7 +682,7 @@ function renderRecent(){
 });
 $("recentLoadMore").onclick=()=>{recentLimit+=20;renderRecent();};
 $("recentReset").onclick=()=>{
- $("recentLocation").value="dmv";$("recentRole").value="swe";$("recentDays").value="7";$("recentCity").value="";
+ $("recentLocation").value="all";$("recentRole").value="swe";$("recentDays").value="7";$("recentCity").value="";
  recentLimit=20;storeRecentPrefs();renderRecent();renderHomeRecent();
 };
 // A browser-local company directory derived from the daily public listings.
@@ -910,9 +911,9 @@ records[id]={status:"applied",changed_at:new Date().toISOString(),applied_at:sub
 save();$("manual").reset();render();var next=Progress.summary(records,goal);
 if(next.today>before)rewardProgress(next);else notify("Existing application added.");};
 function render(){var progress=Progress.summary(records,goal);$("jobCount").textContent=jobs.length;$("appliedTotal").textContent=progress.total;$("appliedToday").textContent=progress.today;$("dailyGoal").textContent=goal;
-$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/11 discovery feeds";
+$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+" discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Feed refreshed "+$("feedDate").textContent:"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
-$("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/11. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
+$("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+". Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
 renderDiscover();renderExplore();renderVirginiaEmployers();renderCompanies();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();renderDaily();renderHome();}
 $("saveGoal").onclick=function(){var n=Number($("goalInput").value);if(!Number.isInteger(n)||n<1||n>30){notify("Choose a goal between 1 and 30.");return;}goal=n;try{localStorage.setItem(SETTINGS,JSON.stringify({dailyGoal:goal}));}catch(e){}render();notify("Goal saved.");};
 function download(content,name,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}
