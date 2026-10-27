@@ -348,7 +348,18 @@
 <p id="companySummary" class="muted" role="status" aria-live="polite" style="font-size:12px"></p>
 <div id="companyList" class="companies-list"></div>
 <div class="section-bar"><small id="companyShowing"></small><button id="companiesLoadMore" class="btn btn-primary" type="button">Show 60 more companies ↗</button></div>
-<p class="muted" style="font-size:12px">Click a company to browse its internship leads in Explore. Company counts reflect only the monitored sources; confirm availability on the employer website.</p>
+<p class="muted" style="font-size:12px">Click a company to browse its internship leads in Explore. These companies have matching jobs in the latest feed.</p>
+ <details id="registryPanel" class="panel" style="margin-top:22px">
+  <summary class="va-summary-trigger"><span><span class="va-eyebrow">NATIONWIDE · LONG-TAIL DISCOVERY</span><strong>Previously discovered employer directory</strong><small class="va-summary" id="registryCount">Loading observed employers…</small></span><span class="va-chevron" aria-hidden="true">⌄</span></summary>
+  <p class="va-intro">These are employers found through public internship listings across refreshes. Some have a supported public job board; others have only a link to a specific job posting. An entry here does <strong>not</strong> mean that company currently has an open internship.</p>
+  <div class="filters" style="grid-template-columns:2fr 1fr">
+   <input id="registrySearch" placeholder="Search any previously discovered employer…" aria-label="Search observed nationwide employers">
+   <select id="registryType" aria-label="Employer discovery source type"><option value="all">All discovered</option><option value="public_board">Public ATS boards</option><option value="link_only">Job links only</option></select>
+  </div>
+  <p id="registryShowing" class="muted" role="status" aria-live="polite" style="font-size:12px"></p>
+  <div class="va-employers" id="registryList"></div>
+  <div class="section-bar"><small>Only sources actually found in public leads appear here.</small><button class="btn" type="button" id="registryMore">Show 60 more employers</button></div>
+ </details>
 </section>
 <section id="pipeline" class="view"><header class="intro"><div class="eyebrow">YOUR APPLICATION HISTORY</div><h1>Keep every application <span>organized.</span></h1><p>Save interesting jobs and track actual submissions through assessments, interviews, offers, and rejections.</p></header>
  <div class="metrics"><div class="metric"><small>Applied / later</small><strong id="pApplied">0</strong></div><div class="metric"><small>Saved</small><strong id="pSaved">0</strong></div><div class="metric"><small>Assessments</small><strong id="pOa">0</strong></div><div class="metric"><small>Interviews</small><strong id="pInterview">0</strong></div></div>
@@ -399,6 +410,7 @@ var $=function(id){return document.getElementById(id);};
  var Daily=window.InternshipDailyQueue;
 var KEY="internship-radar-tracker-v2", SETTINGS="internship-radar-options-v2";
 var feed=window.INTERNSHIP_RADAR_FEED||{jobs:[],generated_at:null,scanned_boards:0,responsive_boards:0,errors:[]};
+var employerRegistry=Array.isArray(feed.employer_registry)?feed.employer_registry:[],registryLimit=60;
 var jobs=Array.isArray(feed.jobs)?feed.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";}):[];
 var records={}, goal=10, view="home", exploreLimit=25, companyLimit=60, exploreCompany="";
 try{var loaded=JSON.parse(localStorage.getItem(KEY)||"{}");if(loaded&&typeof loaded==="object"&&!Array.isArray(loaded))records=loaded;}catch(e){}
@@ -705,6 +717,32 @@ var companyEntries=Array.from(companyMap.values()).sort(function(a,b){
  return Number(b.dmv)-Number(a.dmv) || Number(b.va)-Number(a.va) ||
  b.count-a.count || a.name.localeCompare(b.name);
 }).map(function(c,i){c.i=i;return c;});
+function renderRegistry(){
+ var total=Number(feed.employer_registry_companies)||0;
+ $("registryCount").textContent=total?total.toLocaleString()+" distinct employers observed across refreshes · "+employerRegistry.length.toLocaleString()+" source records":"Index appears after its first deployed refresh";
+ if(!$("registryPanel").open)return;
+ var q=$("registrySearch").value.toLowerCase().trim(),type=$("registryType").value;
+ var list=employerRegistry.filter(function(r){
+  return r&&typeof r.company==="string"&&(!q||r.company.toLowerCase().includes(q))&&(type==="all"||r.mode===type);
+ });
+ list.sort(function(a,b){
+  return (b.last_seen||"").localeCompare(a.last_seen||"")||a.company.localeCompare(b.company);
+ });
+ $("registryShowing").textContent="Showing "+Math.min(registryLimit,list.length)+" of "+list.length+" discovery records; statuses reflect the last refresh attempt, not current hiring.";
+ $("registryMore").style.display=registryLimit<list.length?"inline-block":"none";
+ $("registryList").innerHTML=list.length?list.slice(0,registryLimit).map(function(r){
+  var url=link(r.careers_url);
+  if(!url)return "";
+  var label=r.mode==="public_board"?(r.last_status==="ok"?"Public board · last check succeeded":r.last_status==="error"?"Public board · last check failed":"Public board · not checked yet"):
+   "Job link only · not scanned automatically";
+  return '<a class="va-employer" href="'+text(url)+'" target="_blank" rel="noopener noreferrer"><span><strong>'+text(r.company)+'</strong><small>'+text(label)+'</small></span><span class="va-link-arrow" aria-hidden="true">↗</span></a>';
+ }).join(""):'<div class="empty"><h3>No employers match</h3><p>Try a broader search or wait for the next feed refresh.</p></div>';
+}
+$("registryPanel").addEventListener("toggle",renderRegistry);
+$("registrySearch").addEventListener("input",function(){registryLimit=60;renderRegistry();});
+$("registryType").addEventListener("change",function(){registryLimit=60;renderRegistry();});
+$("registryMore").onclick=function(){registryLimit+=60;renderRegistry();};
+
 function renderCompanies(){
  var q=$("companySearch").value.trim().toLowerCase(),area=$("companyArea").value;
  var list=companyEntries.filter(function(c){
@@ -915,7 +953,7 @@ function render(){var progress=Progress.summary(records,goal);$("jobCount").text
 $("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+" discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Feed refreshed "+$("feedDate").textContent:"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
 $("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+". Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
-renderDiscover();renderExplore();renderVirginiaEmployers();renderCompanies();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();renderDaily();renderHome();}
+renderDiscover();renderExplore();renderVirginiaEmployers();renderCompanies();renderRegistry();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();renderDaily();renderHome();}
 $("saveGoal").onclick=function(){var n=Number($("goalInput").value);if(!Number.isInteger(n)||n<1||n>30){notify("Choose a goal between 1 and 30.");return;}goal=n;try{localStorage.setItem(SETTINGS,JSON.stringify({dailyGoal:goal}));}catch(e){}render();notify("Goal saved.");};
 function download(content,name,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}
 function csv(v){var s=String(v==null?"":v);if(/^[=+@\- \t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
