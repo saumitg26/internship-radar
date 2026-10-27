@@ -16,6 +16,8 @@ def run():
         ("MidCorp","https://job-boards.greenhouse.io/midcorp/jobs/342434","greenhouse","midcorp"),
         ("LegacyCo","https://boards.greenhouse.io/legacy/jobs/1234","greenhouse","legacy"),
         ("Enterprise","https://enterprise.wd4.myworkdayjobs.com/en-US/External_Careers/job/New-York/Software-Engineering-Intern_R8888","workday","External_Careers"),
+        ("Middle Market","https://jobs.smartrecruiters.com/MiddleMarket/1000000-Intern","smartrecruiters","MiddleMarket"),
+        ("Little Works","https://apply.workable.com/littleworks/j/A1B2C3/","workable","littleworks"),
     ]
     for name,url,kind,slug in urls:
         b=d.from_listing(lead(name,url))
@@ -23,6 +25,8 @@ def run():
     invalid=[
         "https://tiny-startup.example/careers/jobs/abc",
         "https://jobs.ashbyhq.com/boardonly",
+        "https://apply.workable.com/boardonly",
+        "https://jobs.smartrecruiters.com/boardonly",
         "https://jobs.lever.co/boardonly",
         "https://boards.greenhouse.io/boardonly",
         "https://jobs.ashbyhq.com.evil.org/fake/jobs/123",
@@ -41,12 +45,12 @@ def run():
     jobs+=[lead("SmallCo","https://jobs.lever.co/smallco/another/job")]
     configured=[{"company":"MidCorp","ats":"greenhouse","slug":"midcorp"}]
     boards,counts=d.discover(jobs,configured)
-    assert len(boards)==4,len(boards)
+    assert len(boards)==6,len(boards)
     assert max(counts.values())==2
     now=datetime(2026,10,26,17,tzinfo=timezone.utc)
     first,total=d.choose(jobs,configured,now,budget=3)
     second,total2=d.choose(jobs,configured,now,budget=3)
-    assert total==total2==4 and first==second
+    assert total==total2==6 and first==second
     assert len(first)==3
     assert not any(x["company"]=="MidCorp" for x in first)
     assert d.choose(jobs,configured,now,budget=0)[0]==[]
@@ -66,6 +70,27 @@ def run():
         ]}
     results=sync.workday_jobs(wd,fetch=fetch)
     assert calls==[0,20,40] and len(results)==60,(calls,len(results))
-    print("PASS: safe ATS host extraction, employer deduplication, bounded rotation, and small-company coverage")
+    original=sync.get
+    try:
+        def fake_get(url):
+            if url.startswith("https://api.smartrecruiters.com/"):
+                assert "MiddleMarket/postings" in url
+                return {"content":[{"id":"1234567","name":"Software Engineering Intern",
+                    "location":{"city":"Chicago","region":"IL","country":"USA"},"releasedDate":"2026-10-25"}]}
+            if url.startswith("https://www.workable.com/api/accounts/littleworks"):
+                return {"jobs":[{"shortcode":"A1B2C3","title":"Software Developer Intern",
+                    "description":"Build APIs using Java and Python",
+                    "city":"Austin","state":"TX","country":"USA"}]}
+            raise ValueError("Unexpected request "+url)
+        sync.get=fake_get
+        sr=sync.scan({"company":"Middle Market","ats":"smartrecruiters","slug":"MiddleMarket"})
+        wk=sync.scan({"company":"Little Works","ats":"workable","slug":"littleworks"})
+        assert len(sr)==len(wk)==1
+        assert sr[0]["url"]=="https://jobs.smartrecruiters.com/MiddleMarket/1234567"
+        assert wk[0]["url"]=="https://apply.workable.com/littleworks/j/A1B2C3/"
+        assert sync.normalize(dict(sr[0])) and sync.normalize(dict(wk[0]))
+    finally:
+        sync.get=original
+    print("PASS: six public ATS platforms, small-company discovery, bounded rotation, and safe job URL normalization")
 if __name__=="__main__":
     run()
