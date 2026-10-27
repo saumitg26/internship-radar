@@ -27,6 +27,7 @@ jobs:
         run: |
           python scripts/test_job_descriptions.py
           python scripts/test_priority_sources.py
+          python scripts/test_nationwide_sources.py
           node scripts/test_resume_edits.cjs
           node scripts/test_application_pipeline.cjs
           node scripts/test_daily_progress.cjs
@@ -34,6 +35,9 @@ jobs:
           node scripts/test_navigation.cjs
           node scripts/test_daily_queue.cjs
 
+      - name: Diagnose new nationwide sources (not a deployment gate)
+        continue-on-error: true
+        run: python scripts/check_nationwide_sources.py
       - name: Diagnose Virginia employer feeds (not a deployment gate)
         continue-on-error: true
         run: python scripts/check_priority_sources.py
