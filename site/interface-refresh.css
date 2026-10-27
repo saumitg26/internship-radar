@@ -295,3 +295,14 @@ input[type=checkbox]{min-height:0}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* Practical job-browsing polish: concise scan paths and clear filter controls. */
+.job .desc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;max-width:75ch}
+.job .actions{margin-top:17px;align-items:center}
+.job .actions .btn{min-height:37px}
+.job .score{font-size:10px;font-weight:850;letter-spacing:1.05px;padding:7px 11px;color:#b6eee0;background:#1c3c3c}
+.explore-shortcuts{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:14px}
+.explore-shortcuts .btn{min-height:33px;padding:6px 12px;color:#d1e4e5}
+.daily-focus #dailyFocusTitle{scroll-margin-top:120px}
+.company-row:focus-visible,.daily-item:focus-visible,.home-task:focus-visible{outline:2px solid #9beeda;outline-offset:2px}
+@media(max-width:650px){.job .actions .btn{flex:1 1 auto}.job .actions .btn-primary{flex:1 1 100%}.explore-shortcuts{justify-content:flex-start}}
