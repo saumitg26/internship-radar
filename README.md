@@ -33,7 +33,7 @@ Explore internships includes an **official employer watchlist** for 16 major emp
 
 - The refresh workflow attempts configured sources every four hours. The listing feed includes only qualifying technical internship leads found in responding sources, and failed sources are reported instead of silently labeled as having no openings.
 - Source status and per-company qualifying counts refer to the most recently published feed, not a live inquiry when a user clicks the page.
-- The Workday scanner limits its query to the first 300 `intern` results per configured public board and does not guarantee every employer job, a valid application window, or fully independent closure checks.
+- The Workday scanner limits its query to the first 240 `intern` results per configured public board and does not guarantee every employer job, a valid application window, or fully independent closure checks.
 - Offline parser/configuration checks run before publishing. A separate diagnostic checks actual source connectivity on pull requests without publishing data. Source failures aren't interpreted as closed internship programs.
 - Official careers URLs are maintained in `scripts/priority_employers.json`, and direct ATS source definitions live in `scripts/boards.json`.
 
