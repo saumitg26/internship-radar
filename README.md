@@ -54,6 +54,34 @@ postings in general job listings, or publish positions only through their own
 websites. Broad feeds may repeat jobs, omit details, or lag closures. Always
 verify the employer website before applying.
 
+## Persistent nationwide employer discovery
+
+The new index keeps public-employer discoveries **across published refreshes**, rather
+than forgetting companies when an upstream internship listing disappears. The
+last published `jobs.json` provides the prior registry to the next scheduled
+run (the draft PR does not mutate production). New employer sources are folded
+in every four hours; the registry is bounded at 12,000 source records and
+retains entries seen within the past year.
+
+- Official public boards on Greenhouse, Lever, Ashby, Workday, SmartRecruiters
+  and Workable can be rechecked on a **least-recently-scanned-first** schedule.
+  The scanner can rotate up to 60 additional boards per refresh and backs off
+  failures instead of retrying broken sources on every run.
+- Jobvite, iCIMS, Oracle Recruiting, SAP SuccessFactors and custom public
+  job URLs are indexed as **observed job links only**, not falsely labeled
+  as publicly scannable boards. Some platforms require customer credentials
+  or do not offer a general public listing API.
+- The Companies tab has a searchable disclosure that distinguishes
+  **companies with matching current feed leads** from **historically observed
+  employer/source records**. A company in the index is not a verified active
+  internship program.
+- The registry reports how many supported ATS boards have been observed,
+  checked, and responded on their last scan. A failed request is never
+  interpreted as a closed employer or internship.
+- This is a long-tail search index, **not** a census of all U.S. employers
+  or a guarantee of 5,000–10,000 companies. Its measured size grows with
+  accessible sources and actual observed companies.
+
 ## Automatic discovery of big and small U.S. employers
 
 The 52 manually configured employer ATS boards are a foundation, **not a ceiling**.
