@@ -28,6 +28,7 @@ jobs:
           python scripts/test_job_descriptions.py
           python scripts/test_priority_sources.py
           python scripts/test_nationwide_sources.py
+          python scripts/test_discover_boards.py
           node scripts/test_resume_edits.cjs
           node scripts/test_application_pipeline.cjs
           node scripts/test_daily_progress.cjs
