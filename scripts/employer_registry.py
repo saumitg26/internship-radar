@@ -5,6 +5,7 @@ It does NOT imply an available job or a verified hiring program. Previously
 observed sources survive through the public jobs.json snapshot after deploy.
 """
 import hashlib
+import ipaddress
 import re
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlsplit
@@ -33,6 +34,11 @@ def classify_link(raw):
             return None
     except ValueError:return None
     host=parsed.hostname.lower()
+    if "." not in host or host.endswith((".local",".internal",".localhost")):return None
+    try:
+        if not ipaddress.ip_address(host).is_global:return None
+    except ValueError:
+        pass
     if host in BLACKLIST or host.endswith(".linkedin.com") or host.endswith(".indeed.com"):
         return None
     direct=from_listing(raw)
