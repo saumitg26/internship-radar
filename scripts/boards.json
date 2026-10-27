@@ -223,5 +223,40 @@
     "company": "AnaVation",
     "ats": "lever",
     "slug": "anavationllc"
+  },
+  {
+    "company": "Capital One",
+    "ats": "workday",
+    "host": "capitalone.wd12.myworkdayjobs.com",
+    "slug": "Capital_One"
+  },
+  {
+    "company": "Fannie Mae",
+    "ats": "workday",
+    "host": "fanniemae.wd1.myworkdayjobs.com",
+    "slug": "FannieMaeCareers"
+  },
+  {
+    "company": "GDIT",
+    "ats": "workday",
+    "host": "gdit.wd5.myworkdayjobs.com",
+    "slug": "External_Career_Site"
+  },
+  {
+    "company": "Leidos",
+    "ats": "workday",
+    "host": "leidos.wd5.myworkdayjobs.com",
+    "slug": "External"
+  },
+  {
+    "company": "Northrop Grumman",
+    "ats": "workday",
+    "host": "ngc.wd1.myworkdayjobs.com",
+    "slug": "Northrop_Grumman_External_Site"
+  },
+  {
+    "company": "Shield AI",
+    "ats": "lever",
+    "slug": "shieldai"
   }
 ]
