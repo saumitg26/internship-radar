@@ -25,6 +25,35 @@ The standalone site uses principles from [OpenAI's Plugin UI guidelines](https:/
 - **Mark as applied** remains disabled until you explicitly confirm that you have already submitted through the employer's site. The app does **not** autofill, submit, or verify applications automatically. Completed applications immediately disappear from the recommendation queue and update your daily goal.
 - Rankings can shift as the live feed refreshes or you change your preferences, so this is a refreshed shortlist rather than a fixed promise of ten independently verified openings.
 
+## Nationwide internship discovery
+
+Internship Radar searches **across the United States**, while giving Virginia/DMV
+opportunities a relevance boost. **Nationwide** is the default Explore and Latest
+Jobs view for new installations; existing saved filters are respected. Daily 10
+continues to treat the chosen city/region as a ranking preference, **not an
+exclusion**: a strong internship in Seattle, Boston, Chicago, or anywhere else
+in the U.S. can appear.
+
+The pipeline combines:
+- **52 configured official ATS employer boards** (Greenhouse, Lever, Ashby and
+  bounded public Workday search), subject to availability and per-site limits.
+- **14 public technical internship discovery sources**, including the original
+  11 and three additional public national catalogs: Trakker US Internships,
+  Big Tech Internship Tracker, and Jobbie US Listings.
+- Direct HTTPS employer application links from the added catalogs. No third-party
+  auto-apply or signup links are ingested. Each third-party feed remains a
+  discovery lead, not guaranteed to be open.
+- Canonical-URL and company/title/location deduplication across sources before
+  displaying the combined catalog.
+- Source health metrics. Missing or failed providers are reported rather than
+  silently presented as having zero job openings.
+
+No public aggregator can index **every company or opening** in the U.S. Some
+employers require authentication, reject programmatic access, hide internship
+postings in general job listings, or publish positions only through their own
+websites. Broad feeds may repeat jobs, omit details, or lag closures. Always
+verify the employer website before applying.
+
 ## Virginia / DMV employer coverage
 
 Internship Radar prioritizes DC, Northern Virginia, and Maryland, while retaining a nationwide search. The source configuration monitors the following **official public employer applicant-tracking feeds** in addition to broader nationwide feeds: Capital One, Fannie Mae, Booz Allen Hamilton, GDIT, Leidos, Northrop Grumman, Shield AI, Appian, and other configured ATS boards. Workday sources use a bounded, unauthenticated public search endpoint; public ATS hosts sometimes block automated requests.
@@ -39,11 +68,11 @@ Explore internships includes an **official employer watchlist** for 20 major emp
 
 ## Daily application mission
 
-The **Discover** homepage tracks real submissions toward a default goal of **10 applications per day** (changeable from Settings). It is designed to make the next meaningful application obvious—not to reward spam.
+The **Home** page tracks real submissions toward a default goal of **10 applications per day** (changeable from Settings). It is designed to make the next meaningful application obvious—not to reward spam.
 
 - A progress bar and milestones at 20%, 50%, 80%, and 100% of the daily goal celebrate recorded submissions.
 - A seven-day activity history highlights consistency without punishing rest days or requiring streaks.
-- A single next-action button takes you to saved opportunities (or Explore when the queue is empty).
+- A single next-action button opens Daily 10 (or your pipeline after completing the mission).
 - Press **I applied** only after submitting through the employer's website, or add an already-submitted application in **My pipeline**.
 - Saved/skipped roles and opening job links do not count. Repeated status clicks do not earn additional credit, and normalized duplicate URLs are counted once.
 - Dates follow your device's local timezone. Progress derives from your existing browser-local application records; no telemetry, login, or external service.
