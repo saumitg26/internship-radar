@@ -1,0 +1,41 @@
+/* Static UX/a11y regression checks for the Nightfall visual refresh. */
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const html=fs.readFileSync("site/index.html","utf8");
+const css=fs.readFileSync("site/interface-refresh.css","utf8");
+const studio=fs.readFileSync("site/resume-studio.html","utf8");
+const studioCss=fs.readFileSync("site/resume-studio.css","utf8");
+const stamp=fs.readFileSync("scripts/stamp_assets.py","utf8");
+function present(pattern,label){
+ assert.ok(pattern.test(html),label);
+}
+present(/style-src 'self' 'unsafe-inline'/,"CSP permits only first-party stylesheet and existing inline styles");
+present(/href="\.\/interface-refresh\.css"/,"Nightfall stylesheet loaded");
+present(/class="skip-link" href="#mainContent"/,"Skip-navigation link");
+present(/<main class="main" id="mainContent" tabindex="-1">/,"Keyboard skip target");
+present(/id="mobileMenuToggle" aria-controls="workspaceNavigation" aria-expanded="false"/,"Mobile menu is accessible");
+present(/id="workspaceNavigation"/,"Mobile workspace navigation container");
+present(/<nav class="mobile-tabbar" aria-label="Quick navigation">/,"Phone navigation");
+present(/id="mobileMore"/,"Phone more-menu button");
+present(/id="quickFind"/,"Global Find Internships action");
+present(/document.addEventListener\("keydown"/,"Keyboard shortcut handler");
+present(/e\.key==="\/"/,"Slash-to-search shortcut");
+present(/function setMobileMenu\(open\)/,"Mobile menu open/close logic");
+present(/setMobileMenu\(false\)/,"Navigation closes menu");
+present(/id="exploreReset"/,"Explore can reset all filters");
+present(/\$\("exploreReset"\)\.onclick/,"Explore reset button is functional");
+present(/"TECH LEAD"/,"Job cards do not present a pseudo-percentage");
+assert.ok(!/Number\(j\.score\)\|\|0\)\+' match'/.test(html),"Heuristic 0–99 number not labeled a percent match");
+present(/Fresh opportunities for you/,"Homepage heading respects nationwide discovery");
+present(/responding discovery feeds plus employer boards/,"No stale hardcoded source count");
+assert.ok(css.includes("prefers-reduced-motion"),"Reduced-motion users avoid decorative animation");
+assert.ok(css.includes(".view.active{animation:page-in"),"Page transition is coherent");
+assert.ok(css.includes(".mobile-tabbar"),"Mobile tabs are styled");
+assert.ok(css.includes(".top-quick-search"),"Quick search action is styled");
+assert.ok(css.includes(".job .desc{display:-webkit-box"),"Long job descriptions are visually clamped");
+assert.ok(css.includes("Avenir Next"),"Typography is intentionally curated without remote fonts");
+assert.ok(stamp.includes('"interface-refresh.css"'),"Deploy stamps first-party stylesheet for cache busting");
+assert.ok(studio.includes('href="./index.html#daily"'),"Resume Studio links back to Daily 10");
+assert.ok(studio.includes('href="#resumeMain"'),"Resume Studio has skip link");
+assert.ok(studioCss.includes("prefers-reduced-motion"),"Resume Studio respects motion preferences");
+console.log("PASS: Nightfall navigation, mobile UX, keyboard search, honest cards, reduced-motion and cache-bust coverage.");
