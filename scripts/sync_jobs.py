@@ -61,8 +61,8 @@ def workday_jobs(board, fetch=None):
     seen=set()
     result=[]
     for term in ("intern",):
-        for offset in range(0,300,100):
-            payload={"appliedFacets":{},"limit":100,"offset":offset,"searchText":term}
+        for offset in range(0,240,20):
+            payload={"appliedFacets":{},"limit":20,"offset":offset,"searchText":term}
             data=fetch(endpoint,payload)
             if not isinstance(data,dict) or not isinstance(data.get("jobPostings"),list):
                 raise ValueError("Unexpected Workday job search response")
@@ -83,7 +83,7 @@ def workday_jobs(board, fetch=None):
                     posted=""
                 ))
             total=data.get("total")
-            if len(posts)<100 or (isinstance(total,int) and offset+100>=total):break
+            if len(posts)<20 or (isinstance(total,int) and offset+20>=total):break
     return result
 
 def post_json(url,payload):
