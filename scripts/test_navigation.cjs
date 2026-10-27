@@ -29,6 +29,13 @@ assert.ok(!discover.includes('id="momentumPanel"'),"Mission is not duplicated on
 assert.ok(!discover.includes('id="homeRecentList"'),"Fresh preview moved to Home");
 assert.ok(insights.includes('id="insightsBars"'),"Charts remain on Stats & Insights");
 assert.ok(insights.includes('id="insightsStages"'),"Pipeline analytics stay in Stats");
+const companies=slice('<section id="companies" class="view">','<section id="pipeline" class="view">');
+assert.ok(companies.includes('id="registryPanel"'),"Previously observed employers are discoverable separately");
+assert.ok(companies.includes('id="registrySearch"')&&companies.includes('id="registryType"'),"Long-tail company directory is searchable and filterable");
+assert.ok(html.includes('function renderRegistry()'),"Long-tail registry has a renderer");
+assert.ok(html.includes('Job link only · not scanned automatically'),"Unsupported portals are not described as directly monitored");
+assert.ok(html.includes('does <strong>not</strong> mean'),"Directory explicitly avoids promising current jobs");
+
 assert.ok(html.includes('var records={}, goal=10, view="home"'),"Default browser view is Home");
 assert.ok(html.includes('window.history.pushState'),"Navigating updates URL");
 assert.ok(html.includes('window.addEventListener("popstate"'),"Browser back is supported");
