@@ -13,8 +13,8 @@ from urllib.parse import urlsplit
 SLUG=re.compile(r"^[a-zA-Z0-9_.-]{2,70}$")
 WD_HOST=re.compile(r"^[a-z0-9-]+\.wd[0-9]+\.myworkdayjobs\.com$")
 LOCALE=re.compile(r"^[a-z]{2}-[a-z]{2}$",re.I)
-CAPS={"greenhouse":30,"lever":16,"ashby":20,"workday":6}
-TOTAL_BUDGET=50
+CAPS={"greenhouse":30,"lever":16,"ashby":20,"workday":6,"smartrecruiters":12,"workable":12}
+TOTAL_BUDGET=60
 
 def from_listing(listing):
     """Return a vetted board reference or None for an unsupported job URL."""
@@ -41,6 +41,12 @@ def from_listing(listing):
     elif host=="jobs.ashbyhq.com":
         if len(path)<2:return None
         kind,slug="ashby",path[0]
+    elif host=="jobs.smartrecruiters.com":
+        if len(path)<2:return None
+        kind,slug="smartrecruiters",path[0]
+    elif host=="apply.workable.com":
+        if len(path)<3 or path[1]!="j":return None
+        kind,slug="workable",path[0]
     elif WD_HOST.fullmatch(host):
         if path and LOCALE.fullmatch(path[0]):path=path[1:]
         if len(path)<3 or path[1]!="job":return None
