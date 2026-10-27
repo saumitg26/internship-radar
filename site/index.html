@@ -170,6 +170,15 @@
 
 /* Verified employer source health vs official-link-only coverage. */
 .va-watch{margin:19px 0 22px}
+.va-summary-trigger{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;list-style:none}
+.va-summary-trigger::-webkit-details-marker{display:none}
+.va-summary-trigger:focus-visible{outline:2px solid var(--teal);outline-offset:5px;border-radius:5px}
+.va-summary-trigger strong{display:block;font-size:19px;margin:5px 0 3px}
+.va-summary-trigger .va-summary{display:block;text-align:left}
+.va-chevron{font-size:23px;color:var(--teal)}
+.va-watch[open] .va-chevron{transform:rotate(180deg)}
+.va-intro{font-size:12px;color:var(--muted);margin:15px 0;max-width:780px}
+
 .va-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
 .va-head h2{font-size:20px;letter-spacing:-.4px;margin:5px 0 3px}
 .va-head p{font-size:12px;color:var(--muted);margin:0 0 14px;max-width:730px}
@@ -297,11 +306,12 @@
  <div class="metric"><small>Matching your filters</small><strong id="exploreMatches">0</strong><span class="hint">Browse 25 at a time</span></div>
 </div>
 
-<section class="panel va-watch" aria-labelledby="vaWatchTitle">
- <div class="va-head"><div><span class="va-eyebrow">VIRGINIA / DC / MARYLAND · OFFICIAL EMPLOYER LINKS</span><h2 id="vaWatchTitle">Major employers to watch</h2><p>Direct-feed health is shown separately from companies with an official careers link only. A responding board doesn't guarantee it has open internships.</p></div><span id="vaWatchSummary" class="va-summary">Loading employer coverage…</span></div>
+<details class="panel va-watch">
+ <summary class="va-summary-trigger"><span><span class="va-eyebrow">VIRGINIA / DC / MARYLAND · OFFICIAL EMPLOYER LINKS</span><strong id="vaWatchTitle">Major employers to watch</strong><small id="vaWatchSummary" class="va-summary">Loading employer coverage…</small></span><span class="va-chevron" aria-hidden="true">⌄</span></summary>
+ <p class="va-intro">Explore official career portals for 20 major employers. Direct-feed health is distinct from career links that are not scanned automatically. A responding board doesn't mean it has open internships.</p>
  <div id="vaEmployerList" class="va-employers"></div>
- <p class="va-footnote">A failed source does not mean an employer stopped hiring. Check its official careers page when an employer feed is unavailable. Community-feed leads may also appear independently.</p>
-</section>
+ <p class="va-footnote">Failed feeds don't mean an employer stopped hiring. Community-feed leads may appear independently. Always confirm deadlines on employer sites.</p>
+</details>
 <div class="section-bar"><h2>All matching internships</h2><small id="exploreSourceHealth">Checking sources</small></div>
 <div class="row" style="margin-bottom:12px"><button class="btn" id="exploreCompanyClear" type="button" style="display:none">Clear company filter ×</button></div>
 <div class="filters"><input id="exploreSearch" placeholder="Search role, company, location…" aria-label="Search internships"><select id="exploreLocation"><option value="all">Nationwide · DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="exploreRole"><option value="all">All technical roles</option><option value="swe">Software development</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
