@@ -39,6 +39,10 @@ def classify_link(raw):
         if not ipaddress.ip_address(host).is_global:return None
     except ValueError:
         pass
+    # Do not index deceptive domains embedding a familiar ATS hostname.
+    public_domains={"jobs.ashbyhq.com","jobs.lever.co","jobs.smartrecruiters.com",
+                    "apply.workable.com","boards.greenhouse.io","job-boards.greenhouse.io"}
+    if any(host.startswith(official+".") for official in public_domains):return None
     if host in BLACKLIST or host.endswith(".linkedin.com") or host.endswith(".indeed.com"):
         return None
     direct=from_listing(raw)
