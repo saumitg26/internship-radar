@@ -29,7 +29,7 @@ def test():
     def fake_fetch(url,payload):
         urls.append((url,payload))
         assert payload["searchText"]=="intern"
-        assert payload["limit"]==100
+        assert payload["limit"]==20
         return {"total":3,"jobPostings":[
             {"title":"Technology Internship Program - Summer 2027",
              "externalPath":"/job/McLean-VA/Technology-Internship-Program---Summer-2027_R244387-1",
@@ -51,11 +51,11 @@ def test():
 
     def partial_fetch(url,payload):
         if payload["offset"]==0:
-            return {"total":101,"jobPostings":[
+            return {"total":21,"jobPostings":[
                 {"title":"Software Intern","externalPath":"/job/x/test_R1","locationsText":"Reston, VA"}
-            ]*100}
-        assert payload["offset"]==100
-        return {"total":101,"jobPostings":[
+            ]*20}
+        assert payload["offset"]==20
+        return {"total":21,"jobPostings":[
             {"title":"Software Intern 2","externalPath":"/job/y/test_R2","locationsText":"Reston, VA"}
         ]}
     assert len(m.workday_jobs(board,fetch=partial_fetch))==2
