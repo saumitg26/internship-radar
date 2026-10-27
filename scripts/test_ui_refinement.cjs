@@ -24,7 +24,7 @@ present(/function setMobileMenu\(open\)/,"Mobile menu open/close logic");
 present(/setMobileMenu\(false\)/,"Navigation closes menu");
 present(/id="exploreReset"/,"Explore can reset all filters");
 present(/\$\("exploreReset"\)\.onclick/,"Explore reset button is functional");
-present(/"TECH LEAD"/,"Job cards do not present a pseudo-percentage");
+present(/TECH LEAD/,"Job cards do not present a pseudo-percentage");
 assert.ok(!/Number\(j\.score\)\|\|0\)\+' match'/.test(html),"Heuristic 0–99 number not labeled a percent match");
 present(/Fresh opportunities for you/,"Homepage heading respects nationwide discovery");
 present(/responding discovery feeds plus employer boards/,"No stale hardcoded source count");
