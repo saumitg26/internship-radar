@@ -5,9 +5,12 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Internship Radar — Find your next opportunity</title>
 <script src="jobs.js"></script>
+<script src="progress.js"></script>
+<script src="insights.js"></script>
+<script src="daily-queue.js"></script>
 <style>
 :root{color-scheme:dark;--bg:#090f1e;--surface:#111c30;--raised:#18263d;--border:#2a3850;--text:#f0f5ff;--muted:#9babc1;--teal:#53e2cb;--accent:#7e9dff;--orange:#ffb46a}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}.shell{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:100vh}.sidebar{background:#0e192b;border-right:1px solid var(--border);padding:27px 17px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:850;letter-spacing:-.8px}.logo{background:var(--teal);color:#061522;display:grid;place-items:center;width:37px;height:37px;border-radius:11px;font-size:18px}.sublabel{color:var(--muted);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;font-weight:800;margin:0 10px 10px}.nav{display:grid;gap:5px}.nav button{width:100%;border:0;background:transparent;color:var(--muted);text-align:left;border-radius:11px;padding:12px;display:flex;gap:10px;align-items:center}.nav button.active,.nav button:hover{background:#1d324a;color:var(--teal)}.nav .ico{font-size:16px;width:24px;text-align:center}.nav .resume-nav{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--muted);border-radius:11px;padding:12px;width:100%;font-size:15px}.nav .resume-nav:hover{background:#1d324a;color:var(--teal)}.aside-note{margin-top:auto;border:1px solid var(--border);border-radius:13px;padding:14px;background:var(--surface);color:var(--muted);font-size:12px}.aside-note strong{display:block;color:#c8d8ff;margin-bottom:7px}.main{max-width:1420px;width:100%;padding:27px clamp(18px,3.5vw,56px) 80px;margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:34px}.crumb{font-size:11px;font-weight:850;letter-spacing:1.6px;color:var(--muted)}.crumb b{color:var(--teal)}.status{border:1px solid #315445;background:#183227;color:#b3f5cf;font-size:12px;padding:7px 11px;border-radius:30px}.status.warn{background:#352b1e;color:#ffd9a8;border-color:#6d5034}.intro .eyebrow{color:var(--teal);font-size:12px;font-weight:850;letter-spacing:1.8px}.intro h1{font-size:clamp(32px,5vw,54px);letter-spacing:-2px;line-height:1.08;margin:12px 0}.intro h1 span{color:var(--teal)}.intro p{font-size:16px;max-width:650px;color:var(--muted);margin:0 0 24px}.hero{background:linear-gradient(115deg,#183553,#172943 65%,#182440);border:1px solid #375572;padding:24px;border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 22px}.hero h2{margin:5px 0 7px;font-size:22px;letter-spacing:-.5px}.hero p{color:#bdc9da;margin:0;max-width:650px}.hero small{color:var(--teal);letter-spacing:1.2px;font-weight:800}.btn{border:1px solid var(--border);border-radius:9px;padding:10px 14px;background:var(--raised);color:var(--text);font-weight:700}.btn:hover{border-color:var(--teal)}.btn-primary{background:var(--teal);border-color:var(--teal);color:#071f27}.btn-danger{border-color:#794d5c;color:#ffb6be}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:22px 0 32px}.metric{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}.metric small{color:var(--muted);font-size:12px}.metric strong{display:block;font-size:29px;letter-spacing:-1px;margin:5px 0}.metric .hint{color:var(--muted);font-size:11px}.section-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:30px 0 17px}.section-bar h2{font-size:24px;letter-spacing:-.7px;margin:0}.section-bar small{color:var(--muted)}.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:18px}input,select{border:1px solid var(--border);border-radius:10px;background:#111e33;color:var(--text);padding:11px 13px;width:100%;outline:none;min-width:0}input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 2px #53e2cb22}input::placeholder{color:#8392a9}.jobs{display:grid;gap:11px}.job{background:var(--surface);border:1px solid var(--border);padding:21px;border-radius:15px}.job:hover{border-color:#4d607c}.job-head{display:flex;align-items:start;justify-content:space-between;gap:10px}.job h3{margin:0 0 4px;font-size:18px}.job .company{font-size:13px;color:#b6c5d6}.score{white-space:nowrap;border-radius:30px;background:#173c3b;border:1px solid #32665d;color:var(--teal);padding:5px 10px;font-size:12px;font-weight:800}.desc{font-size:13px;color:var(--muted);margin:12px 0;line-height:1.65}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}.tag{border:1px solid #344960;color:#b5d9e4;background:#162a40;border-radius:6px;padding:3px 8px;font-size:11px}.tag.warn{color:#ffcc91;border-color:#705139}.actions{display:flex;gap:7px;flex-wrap:wrap}.actions .btn{font-size:12px;padding:8px 11px}.empty{border:1px dashed #496079;background:#0e1b2d;border-radius:15px;padding:36px;text-align:center;color:var(--muted)}.empty h3{margin:0 0 8px;color:var(--text)}.view{display:none}.view.active{display:block}.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}.panel h3{margin:0 0 9px}.panel p,.muted{color:var(--muted)}.panel p{margin:5px 0 14px}.panel-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}.panel-row:last-child{border-bottom:0}.panel-row small{display:block;color:var(--muted);margin-top:4px}.panel-row select{max-width:180px}.manual{display:grid;grid-template-columns:1fr 1.5fr 1.5fr auto;gap:8px;margin-top:14px}.programs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.program small{color:var(--teal);font-weight:800;letter-spacing:1px}.program a{display:inline-block;margin-top:8px;color:var(--teal);font-weight:750}.plan{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.companies-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.company-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);padding:14px;min-height:67px}.company-row:hover,.company-row:focus-visible{border-color:var(--teal);outline:0}.company-meta{font-size:12px;color:var(--muted)}.settings-grid .panel{margin:0}.setup-info{border:1px solid #55503b;color:#e8d6aa;background:#2a271c;border-radius:12px;padding:13px;font-size:12px;margin:12px 0}.field{display:flex;gap:8px;align-items:center}.field input{max-width:100px}.footer{border-top:1px solid var(--border);color:var(--muted);margin-top:35px;padding-top:18px;font-size:12px}.toast{position:fixed;bottom:22px;right:22px;padding:13px 18px;background:#1c433d;border:1px solid #3e8c7d;border-radius:10px;color:#d5fff3;box-shadow:0 15px 35px #0005;display:none;z-index:99}.toast.show{display:block}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}.shell{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:100vh}.sidebar{background:#0e192b;border-right:1px solid var(--border);padding:27px 17px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:850;letter-spacing:-.8px}.logo{background:var(--teal);color:#061522;display:grid;place-items:center;width:37px;height:37px;border-radius:11px;font-size:18px}.sublabel{color:var(--muted);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;font-weight:800;margin:0 10px 10px}.nav{display:grid;gap:5px}.nav button{width:100%;border:0;background:transparent;color:var(--muted);text-align:left;border-radius:11px;padding:12px;display:flex;gap:10px;align-items:center}.nav button.active,.nav button:hover{background:#1d324a;color:var(--teal)}.nav .ico{font-size:16px;width:24px;text-align:center}.nav .resume-nav{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--muted);border-radius:11px;padding:12px;width:100%;font-size:15px}.nav .resume-nav:hover{background:#1d324a;color:var(--teal)}.aside-note{margin-top:auto;border:1px solid var(--border);border-radius:13px;padding:14px;background:var(--surface);color:var(--muted);font-size:12px}.aside-note strong{display:block;color:#c8d8ff;margin-bottom:7px}.main{max-width:1420px;width:100%;padding:27px clamp(18px,3.5vw,56px) 80px;margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:34px}.crumb{font-size:11px;font-weight:850;letter-spacing:1.6px;color:var(--muted)}.crumb b{color:var(--teal)}.status{border:1px solid #315445;background:#183227;color:#b3f5cf;font-size:12px;padding:7px 11px;border-radius:30px}.status.warn{background:#352b1e;color:#ffd9a8;border-color:#6d5034}.intro .eyebrow{color:var(--teal);font-size:12px;font-weight:850;letter-spacing:1.8px}.intro h1{font-size:clamp(32px,5vw,54px);letter-spacing:-2px;line-height:1.08;margin:12px 0}.intro h1 span{color:var(--teal)}.intro p{font-size:16px;max-width:650px;color:var(--muted);margin:0 0 24px}.hero{background:linear-gradient(115deg,#183553,#172943 65%,#182440);border:1px solid #375572;padding:24px;border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 22px}.hero h2{margin:5px 0 7px;font-size:22px;letter-spacing:-.5px}.hero p{color:#bdc9da;margin:0;max-width:650px}.hero small{color:var(--teal);letter-spacing:1.2px;font-weight:800}.btn{border:1px solid var(--border);border-radius:9px;padding:10px 14px;background:var(--raised);color:var(--text);font-weight:700}.btn:hover{border-color:var(--teal)}.btn-primary{background:var(--teal);border-color:var(--teal);color:#071f27}.btn-danger{border-color:#794d5c;color:#ffb6be}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:22px 0 32px}.metric{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}.metric small{color:var(--muted);font-size:12px}.metric strong{display:block;font-size:29px;letter-spacing:-1px;margin:5px 0}.metric .hint{color:var(--muted);font-size:11px}.section-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:30px 0 17px}.section-bar h2{font-size:24px;letter-spacing:-.7px;margin:0}.section-bar small{color:var(--muted)}.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:18px}input,select{border:1px solid var(--border);border-radius:10px;background:#111e33;color:var(--text);padding:11px 13px;width:100%;outline:none;min-width:0}input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 2px #53e2cb22}input::placeholder{color:#8392a9}.jobs{display:grid;gap:11px}.job{background:var(--surface);border:1px solid var(--border);padding:21px;border-radius:15px}.job:hover{border-color:#4d607c}.job-head{display:flex;align-items:start;justify-content:space-between;gap:10px}.job h3{margin:0 0 4px;font-size:18px}.job .company{font-size:13px;color:#b6c5d6}.score{white-space:nowrap;border-radius:30px;background:#173c3b;border:1px solid #32665d;color:var(--teal);padding:5px 10px;font-size:12px;font-weight:800}.desc{font-size:13px;color:var(--muted);margin:12px 0;line-height:1.65}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}.tag{border:1px solid #344960;color:#b5d9e4;background:#162a40;border-radius:6px;padding:3px 8px;font-size:11px}.tag.warn{color:#ffcc91;border-color:#705139}.actions{display:flex;gap:7px;flex-wrap:wrap}.actions .btn{font-size:12px;padding:8px 11px}.empty{border:1px dashed #496079;background:#0e1b2d;border-radius:15px;padding:36px;text-align:center;color:var(--muted)}.empty h3{margin:0 0 8px;color:var(--text)}.view{display:none}.view.active{display:block}.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}.panel h3{margin:0 0 9px}.panel p,.muted{color:var(--muted)}.panel p{margin:5px 0 14px}.panel-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}.panel-row:last-child{border-bottom:0}.panel-row small{display:block;color:var(--muted);margin-top:4px}.panel-row select{max-width:180px}.manual{display:grid;grid-template-columns:1fr 1.5fr 1.5fr 170px auto;gap:8px;margin-top:14px}.manual-date{display:grid;gap:4px;font-size:11px;color:var(--muted)}.manual-date input{padding:7px 8px;font-size:12px}.programs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.program small{color:var(--teal);font-weight:800;letter-spacing:1px}.program a{display:inline-block;margin-top:8px;color:var(--teal);font-weight:750}.plan{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.companies-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.company-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);padding:14px;min-height:67px}.company-row:hover,.company-row:focus-visible{border-color:var(--teal);outline:0}.company-meta{font-size:12px;color:var(--muted)}.settings-grid .panel{margin:0}.setup-info{border:1px solid #55503b;color:#e8d6aa;background:#2a271c;border-radius:12px;padding:13px;font-size:12px;margin:12px 0}.field{display:flex;gap:8px;align-items:center}.field input{max-width:100px}.footer{border-top:1px solid var(--border);color:var(--muted);margin-top:35px;padding-top:18px;font-size:12px}.toast{position:fixed;bottom:22px;right:22px;padding:13px 18px;background:#1c433d;border:1px solid #3e8c7d;border-radius:10px;color:#d5fff3;box-shadow:0 15px 35px #0005;display:none;z-index:99}.toast.show{display:block}
 @media(max-width:950px){.shell{grid-template-columns:1fr}.sidebar{position:static;height:auto;padding:16px;gap:12px}.nav{display:flex;gap:5px;overflow:auto}.nav button{white-space:nowrap;font-size:12px}.sublabel,.aside-note{display:none}.brand{font-size:17px}.main{padding:22px 17px 50px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.hero{align-items:start;flex-direction:column}.filters{grid-template-columns:1fr}.programs,.plan,.settings-grid,.companies-list{grid-template-columns:1fr}.manual{grid-template-columns:1fr}.panel-row{align-items:start;flex-direction:column}.panel-row select{max-width:100%}.job-head{flex-direction:column}.topbar{flex-wrap:wrap}.metrics{gap:8px}.metric{padding:12px}.metric strong{font-size:22px}}
 .filter-extra{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 18px}
@@ -26,30 +29,250 @@
 .job .fresh-tag{background:#163e37;border-color:#367969;color:#99f2dc}
 @media(max-width:1050px){.latest-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.latest-controls{grid-template-columns:1fr}.latest-hero{padding:19px}.latest-hero h2{font-size:19px}}
+
+/* Daily mission: earned from recorded submissions, never from clicks. */
+.momentum-panel{border:1px solid #33616c;border-radius:18px;background:linear-gradient(125deg,#122a38,#132039 78%);padding:24px;margin:0 0 22px;overflow:hidden}
+.momentum-head{display:flex;justify-content:space-between;gap:20px;align-items:center}
+.momentum-kicker{color:var(--teal);font-size:11px;font-weight:850;letter-spacing:1.5px}
+.momentum-panel h2{font-size:26px;letter-spacing:-.6px;margin:7px 0 5px}
+.momentum-panel p{color:#bccddd;margin:0;font-size:13px}
+.momentum-counter{text-align:right;flex:none}
+.momentum-counter strong{display:block;color:var(--teal);font-size:40px;line-height:1.12;font-variant-numeric:tabular-nums}
+.momentum-counter strong span{font-size:23px;color:#a8b9cf}
+.momentum-counter small{font-size:11px;color:#acbed3}
+.momentum-track{margin:20px 0 13px;height:13px;border-radius:999px;background:#2c3f55;overflow:hidden}
+.momentum-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#39b9c9,#53e2cb);transition:width .45s ease}
+.momentum-milestones{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+.momentum-milestone{font-size:11px;color:#8fa6b9;font-weight:700}
+.momentum-milestone.done{color:#84f1d8}
+.momentum-bottom{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:21px 0}
+.momentum-bottom p{font-size:14px;color:#e4f6ff}
+.momentum-week-wrap{border-top:1px solid #34455b;padding-top:15px}
+.momentum-week-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+.momentum-week-head b{font-size:12px}.momentum-week-head span{font-size:11px;color:#aabdd0}
+.momentum-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.momentum-day{border-radius:9px;background:#1d3245;text-align:center;padding:8px 3px;color:#9fb4c7;border:1px solid #2c4556;font-size:12px}
+.momentum-day.active{background:#173f44;border-color:#368779;color:#c6fff1}
+.momentum-day.today{outline:1px solid #65e8d2;outline-offset:2px}
+.momentum-day b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.momentum-day small{font-size:10px;color:inherit}
+.momentum-panel .momentum-note{font-size:11px;color:#91a8bc;margin-top:13px}
+.momentum-panel.celebrate{animation:momentum-glow .75s ease-out}
+@keyframes momentum-glow{0%{box-shadow:0 0 0 0 #53e2cb55}55%{box-shadow:0 0 0 7px #53e2cb33}100%{box-shadow:none}}
+@media(max-width:650px){.momentum-panel{padding:18px}.momentum-head{align-items:start}.momentum-panel h2{font-size:21px}.momentum-counter strong{font-size:29px}.momentum-counter strong span{font-size:17px}.momentum-bottom{align-items:stretch;flex-direction:column}.momentum-bottom .btn{width:100%}.momentum-week{gap:4px}.momentum-day{padding:7px 1px}}
+@media(prefers-reduced-motion:reduce){.momentum-fill{transition:none}.momentum-panel.celebrate{animation:none}}
+
+/* Insights: genuinely interactive, generated from browser-local history. */
+.insights-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:0 0 18px}
+.insights-toolbar label{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px}
+.insights-toolbar select{width:170px}
+.insights-toolbar p{margin:0;color:var(--muted);font-size:12px}
+.insights-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.insights-metric{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px}
+.insights-metric small{font-size:12px;color:var(--muted);display:block}
+.insights-metric strong{font-size:30px;letter-spacing:-1px;display:block;margin:6px 0}
+.insights-metric span{font-size:11px;color:#9fc3c7;display:block}
+.insights-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;margin-bottom:14px}
+.insights-grid .panel{margin:0}
+.insights-topline{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.insights-topline h2{margin:0;font-size:19px;letter-spacing:-.4px}
+.insights-topline small{color:var(--muted)}
+.insights-bars{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));align-items:end;gap:7px;height:215px;margin-top:21px}
+.insights-bar{min-width:0;background:transparent;color:var(--muted);border:1px solid transparent;border-radius:8px;padding:0 2px 3px;display:flex;flex-direction:column;align-items:center;justify-content:end;gap:6px}
+.insights-bar:hover,.insights-bar:focus-visible,.insights-bar.active{background:#1e3445;border-color:#478a89;outline:none;color:var(--teal)}
+.insights-bar b{font-size:11px;font-variant-numeric:tabular-nums}
+.insights-bar-fill{display:block;width:min(100%,38px);min-height:4px;background:#4b9ca0;border-radius:5px 5px 3px 3px}
+.insights-bar.active .insights-bar-fill{background:var(--teal)}
+.insights-bar small{font-size:10px;text-align:center;white-space:nowrap;color:inherit}
+.insights-tip{font-size:11px;color:var(--muted);margin-top:12px}
+.insights-stages{display:grid;gap:10px;margin-top:19px}
+.insights-stage{width:100%;display:grid;grid-template-columns:112px minmax(0,1fr) 32px;align-items:center;gap:10px;padding:8px;border-radius:9px;background:transparent;color:var(--text);border:1px solid transparent;text-align:left}
+.insights-stage:hover,.insights-stage.active,.insights-stage:focus-visible{border-color:#477a7e;background:#1b3141;outline:none}
+.insights-stage span{font-size:12px}.insights-stage b{text-align:right;font-size:13px;font-variant-numeric:tabular-nums}
+.insights-stage-track{height:9px;background:#2b3b53;border-radius:6px;overflow:hidden}
+.insights-stage-track i{display:block;height:100%;border-radius:6px;background:#63bfbb}
+.insights-action{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid #345a61;background:#142b38;color:#e4f7f5;border-radius:10px;padding:14px 16px;text-align:left;margin-top:10px}
+.insights-action:hover,.insights-action:focus-visible{border-color:var(--teal);outline:0}
+.insights-action span{font-size:13px}
+.insights-rows{display:grid;gap:0}
+.insights-row{border-bottom:1px solid var(--border);padding:13px 0;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.insights-row:last-child{border-bottom:0}
+.insights-row strong{display:block;font-size:13px}
+.insights-row small{display:block;font-size:11px;color:var(--muted);margin-top:5px}
+.insights-row a{font-size:12px;color:var(--teal);white-space:nowrap}
+.insights-none{color:var(--muted);padding:18px 0;font-size:13px}
+@media(max-width:1050px){.insights-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.insights-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.insights-metrics{gap:8px}.insights-metric{padding:14px}.insights-metric strong{font-size:25px}.insights-bars{gap:2px;height:185px}.insights-bar small{font-size:9px}.insights-stage{grid-template-columns:95px minmax(0,1fr) 25px}.insights-row{align-items:flex-start}}
+@media(max-width:950px) and (min-width:651px){.manual{grid-template-columns:repeat(2,minmax(0,1fr))}.manual button{grid-column:span 2}}
+
+/* Home is deliberately focused: mission first, next steps second, fresh leads last. */
+.home-intro h1{font-size:clamp(29px,3.5vw,42px);letter-spacing:-1.4px}
+.home-intro p{max-width:740px}
+.home-section-heading{margin-top:26px}
+.home-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.home-task{display:grid;align-content:start;gap:11px;min-height:110px;padding:18px;text-align:left;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:14px}
+.home-task:hover,.home-task:focus-visible{border-color:var(--teal);outline:2px solid transparent;background:var(--raised)}
+.home-task-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.home-task-top strong{font-size:14px;font-weight:700}.home-task-top span{color:var(--teal)}
+.home-task>span:last-child{font-size:12px;line-height:1.5;color:var(--muted)}
+.home-lead{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 17px;border:1px solid var(--border);background:var(--surface);border-radius:12px}
+.home-lead h3{margin:0 0 4px;font-size:15px;line-height:1.4}
+.home-lead p{margin:0;font-size:12px;color:var(--muted)}
+.home-lead .actions{flex:none}
+.home-caveat{font-size:12px;color:var(--muted);margin:14px 0 0}
+.momentum-panel{background:var(--surface);border:1px solid var(--border)}
+.momentum-panel .momentum-kicker{letter-spacing:1.2px}
+.momentum-panel h2{font-size:23px}
+.hero{background:var(--surface);border-color:var(--border)}
+.nav button:focus-visible,.btn:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+@media(max-width:1000px){.home-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.home-task:last-child{grid-column:1/-1}}
+@media(max-width:650px){.home-actions{grid-template-columns:1fr}.home-task:last-child{grid-column:auto}.home-lead{align-items:flex-start;flex-direction:column}.home-lead .actions{width:100%}.home-lead .btn{flex:1;text-align:center}.home-section-heading{align-items:flex-start;flex-direction:column}}
+
+/* Daily 10: focused review, compact queue, and explicit submission confirmation. */
+.daily-preferences{padding:22px}
+.daily-topline{display:flex;align-items:start;justify-content:space-between;gap:16px}
+.daily-topline h2{font-size:20px;letter-spacing:-.5px;margin:0 0 6px}
+.daily-topline p{font-size:12px;color:var(--muted);margin:0 0 13px}
+.daily-private{white-space:nowrap;font-size:11px;color:var(--teal)}
+.daily-fields{display:grid;grid-template-columns:1fr 1fr minmax(170px,1.35fr) auto;gap:10px;align-items:end}
+.daily-fields label{display:grid;gap:7px;font-size:12px;font-weight:650;color:#b4c6d9}
+.daily-fields button{min-height:44px}
+.daily-hint,.daily-note{color:var(--muted);font-size:12px;line-height:1.6}
+.daily-preferences .daily-hint{margin:12px 0 0}
+.daily-results{margin:22px 0 11px}
+.daily-workspace{display:grid;grid-template-columns:minmax(260px,.86fr) minmax(360px,1.45fr);gap:14px;align-items:start}
+.daily-list{display:grid;gap:8px;max-height:750px;overflow-y:auto;padding:2px}
+.daily-item{display:grid;grid-template-columns:28px 1fr;gap:10px;width:100%;border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:13px;color:var(--text);text-align:left}
+.daily-item:hover,.daily-item:focus-visible,.daily-item.active{outline:none;border-color:var(--teal);background:#1a303d}
+.daily-item .daily-rank{color:var(--teal);font-weight:800;font-size:12px}
+.daily-item strong{display:block;font-size:13px;line-height:1.45}
+.daily-item small{display:block;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.daily-focus{position:sticky;top:20px;overflow:hidden}
+.daily-focus-inner{display:grid;gap:12px}
+.daily-focus-top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:var(--teal);font-weight:750;letter-spacing:.4px}
+.daily-focus h2{font-size:23px;line-height:1.3;margin:0;letter-spacing:-.6px}
+.daily-focus-meta{color:#bed0df;font-size:13px;margin:0}
+.daily-tags{display:flex;flex-wrap:wrap;gap:6px}
+.daily-tags span{display:inline-flex;border-radius:20px;border:1px solid #39666b;padding:5px 9px;font-size:11px;color:#b9f7ed}
+.daily-description{line-height:1.7;color:var(--muted);font-size:13px;white-space:pre-line;max-height:205px;overflow-y:auto}
+.daily-warnings:not(:empty){border-left:3px solid #e5af6f;background:#3a291e;padding:12px;font-size:12px;color:#ffd8a3;line-height:1.6;border-radius:6px}
+.daily-focus-actions,.daily-focus-footer{display:flex;gap:9px;flex-wrap:wrap}
+.daily-focus-actions>*{flex:1;text-align:center}
+.daily-confirm{display:flex;gap:12px;align-items:start;padding:12px;border:1px solid var(--border);border-radius:11px;font-size:13px;line-height:1.5;cursor:pointer}
+.daily-confirm input{flex:none;width:18px;height:18px;accent-color:var(--teal);margin:1px 0 0}
+.daily-submit{width:100%;min-height:46px}
+.daily-submit:disabled{opacity:.45;cursor:not-allowed}
+.daily-focus-footer{justify-content:space-between}
+.daily-note{margin:16px 0}
+@media(max-width:1160px){.daily-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.daily-fields button{width:100%}}
+@media(max-width:900px){.daily-workspace{grid-template-columns:1fr}.daily-list{max-height:315px}.daily-focus{position:static}}
+@media(max-width:650px){.daily-fields{grid-template-columns:1fr}.daily-topline{flex-direction:column}.daily-preferences{padding:17px}.daily-focus-actions{flex-direction:column}.daily-focus-footer>*{flex:1}.daily-focus h2{font-size:20px}}
+
+/* Verified employer source health vs official-link-only coverage. */
+.va-watch{margin:19px 0 22px}
+.va-summary-trigger{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;list-style:none}
+.va-summary-trigger::-webkit-details-marker{display:none}
+.va-summary-trigger:focus-visible{outline:2px solid var(--teal);outline-offset:5px;border-radius:5px}
+.va-summary-trigger strong{display:block;font-size:19px;margin:5px 0 3px}
+.va-summary-trigger .va-summary{display:block;text-align:left}
+.va-chevron{font-size:23px;color:var(--teal)}
+.va-watch[open] .va-chevron{transform:rotate(180deg)}
+.va-intro{font-size:12px;color:var(--muted);margin:15px 0;max-width:780px}
+
+.va-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.va-head h2{font-size:20px;letter-spacing:-.4px;margin:5px 0 3px}
+.va-head p{font-size:12px;color:var(--muted);margin:0 0 14px;max-width:730px}
+.va-eyebrow{font-size:10px;letter-spacing:1.2px;font-weight:750;color:var(--teal)}
+.va-summary{font-size:11px;color:var(--muted);text-align:right}
+.va-employers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.va-employer{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--text);text-decoration:none;min-width:0}
+.va-employer:hover,.va-employer:focus-visible{border-color:var(--teal);background:var(--raised);outline:2px solid transparent}
+.va-employer strong{display:block;font-size:13px}
+.va-employer small{display:block;margin-top:3px;font-size:11px;color:var(--muted)}
+.va-employer .va-link-arrow{color:var(--teal);font-size:15px;flex:none}
+.va-footnote{font-size:11px;color:var(--muted);margin:13px 0 0}
+@media(max-width:700px){.va-employers{grid-template-columns:1fr}.va-head{flex-direction:column}.va-summary{text-align:left}}
 </style></head>
 <body><div class="shell">
 <aside class="sidebar">
  <div class="brand"><div class="logo">IR↗</div><div>Internship Radar</div></div>
  <div><p class="sublabel">WORKSPACE</p><nav class="nav" aria-label="Main navigation">
- <button data-page="discover" class="active"><span class="ico">◇</span> Top 10 matches</button>
+ <button type="button" data-page="home" class="active" aria-current="page"><span class="ico" aria-hidden="true">⌂</span> Home</button>
+ <button type="button" data-page="daily"><span class="ico" aria-hidden="true">◎</span> Daily 10</button>
+ <button type="button" data-page="discover"><span class="ico" aria-hidden="true">◇</span> Top 10 matches</button>
  <button data-page="recent"><span class="ico">✦</span> Latest jobs <span id="recentNavCount" class="new-count">RECENT</span></button>
  <button data-page="explore"><span class="ico">⌕</span> Explore internships</button>
  <button data-page="companies"><span class="ico">▦</span> Companies</button>
  <button data-page="pipeline"><span class="ico">▤</span> My pipeline</button>
+ <button data-page="insights"><span class="ico">▥</span> Stats &amp; insights</button>
  <a class="resume-nav" href="./resume-studio.html"><span class="ico">✦</span> Resume Studio</a>
  <button data-page="programs"><span class="ico">☆</span> Programs</button>
  <button data-page="plan"><span class="ico">▦</span> Weekly plan</button>
  <button data-page="settings"><span class="ico">⚙</span> Settings</button></nav></div>
  <div class="aside-note"><strong>Your search, your pace.</strong>Free, public job discovery. Applications stay in this browser. No login or automatic submissions. Resume Studio saves documents privately in your browser.</div>
 </aside>
-<main class="main"><div class="topbar"><div class="crumb">WORKSPACE / <b id="crumb">DISCOVER</b></div><span id="liveStatus" class="status warn">● Checking job feed</span></div>
-<section id="discover" class="view active">
- <header class="intro"><div class="eyebrow">SUMMER 2027 · SOFTWARE ENGINEERING</div><h1>Find your next <span>opportunity.</span></h1><p>Open to roles across the United States. DC, Northern Virginia, and nearby Maryland are prioritized, not required. Real employer links, clear progress, and no fake guarantees.</p></header>
- <div class="hero"><div><small>YOUR INTERNSHIP COMMAND CENTER</small><h2>One application at a time.</h2><p>Review the fit, verify graduation requirements, apply at the employer's site, then track the outcome here.</p></div><button class="btn btn-primary" id="jumpJobs">See top matches ↗</button><button class="btn" id="jumpLatest" type="button">View latest jobs ↗</button></div>
- <div class="metrics"><div class="metric"><small>Internship leads</small><strong id="jobCount">0</strong><span class="hint">Employer and community feeds</span></div><div class="metric"><small>Applied today</small><strong id="appliedToday">0</strong><span class="hint">Your daily goal: <span id="dailyGoal">10</span></span></div><div class="metric"><small>Applications total</small><strong id="appliedTotal">0</strong><span class="hint">Tracked in this browser</span></div><div class="metric"><small>Feed updated</small><strong id="feedDate" style="font-size:17px;margin-top:13px">Not yet</strong><span id="feedSource" class="hint">Awaiting first sync</span></div></div>
+<main class="main"><div class="topbar"><div class="crumb">WORKSPACE / <b id="crumb">HOME</b></div><span id="liveStatus" class="status warn">● Checking job feed</span></div>
+<section id="home" class="view active">
+ <header class="intro home-intro"><div class="eyebrow">YOUR DAILY WORKSPACE</div><h1>One good application <span>at a time.</span></h1><p>See today's progress, choose a relevant opening, and log a submission only after you've applied through the employer's website.</p></header>
+ <section class="momentum-panel" id="momentumPanel" aria-labelledby="momentumTitle">
+  <div class="momentum-head"><div><div class="momentum-kicker">TODAY'S APPLICATION MISSION</div><h2 id="momentumTitle">Build your momentum.</h2><p id="momentumMessage">Submit a strong application, then log it here.</p></div><div class="momentum-counter"><strong><span id="momentumCount">0</span> <span id="momentumGoal">/ 10</span></strong><small>real submissions today</small></div></div>
+  <div class="momentum-track" id="momentumTrack" role="progressbar" aria-label="Daily application goal" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div class="momentum-fill" id="momentumBar"></div></div>
+  <div class="momentum-milestones" id="momentumMilestones"></div>
+  <div class="momentum-bottom"><p id="momentumNext">Your first application is the first milestone.</p><button type="button" class="btn btn-primary" id="momentumAction">Find your next opportunity ↗</button></div>
+  <div class="momentum-week-wrap"><div class="momentum-week-head"><b>Your last 7 days</b><span id="momentumWeekSummary">Build a steady rhythm</span></div><div class="momentum-week" id="momentumWeek" aria-label="Applications over the last seven days"></div></div>
+  <p class="momentum-note">Only applications you've actually submitted count. Saving, skipping, or opening a job doesn't earn progress. Take your time on the right opportunities.</p>
+ </section>
+ <div class="section-bar home-section-heading"><div><small>WHAT TO DO NEXT</small><h2>Your next steps</h2></div><button type="button" class="btn" id="homeInsights">View all stats</button></div>
+ <div class="home-actions">
+  <button type="button" class="home-task" data-home-target="daily"><span class="home-task-top"><strong>Start Daily 10</strong><span aria-hidden="true">↗</span></span><span id="homeMatchCount">Checking your tailored shortlist…</span></button>
+  <button type="button" class="home-task" data-home-target="pipeline"><span class="home-task-top"><strong>Continue saved jobs</strong><span aria-hidden="true">↗</span></span><span id="homeSavedCount">Your saved queue appears here.</span></button>
+  <button type="button" class="home-task" data-home-target="pipeline"><span class="home-task-top"><strong>Review your pipeline</strong><span aria-hidden="true">↗</span></span><span id="homeReviewCount">Keep application outcomes current.</span></button>
+ </div>
  <div class="section-bar"><div><small>DATED OR NEWLY DISCOVERED · YOUR SAVED PREFERENCES</small><h2>Fresh openings near you</h2></div><button class="btn btn-primary" id="homeLatest" type="button">See all latest jobs ↗</button></div>
  <p id="homeRecentLabel" class="muted" style="font-size:12px;margin:0 0 12px">Finding the newest dated internships in your preferred locations.</p>
  <div id="homeRecentList" class="jobs"></div>
+ 
+ <p class="home-caveat">Listings are leads, not confirmed openings. Verify employer requirements before applying. Your application history stays in this browser.</p>
+</section>
+<section id="daily" class="view">
+ <header class="intro"><div class="eyebrow">PERSONALIZED APPLICATION WORKFLOW</div><h1>Your <span>Daily 10.</span></h1><p>A focused shortlist of unapplied internships ranked by your preferences. These are suggestions, not verified eligibility decisions. Always check the employer's requirements before submitting.</p></header>
+ <div class="panel daily-preferences">
+  <div class="daily-topline"><div><h2>Make this your shortlist</h2><p>Choose what matters. Preferences stay in your browser, and matching reasons appear on every recommendation.</p></div><span class="daily-private">Saved on this device</span></div>
+  <form id="dailyPreferences" class="daily-fields">
+   <label>Role focus<select id="dailyRole"><option value="swe">Software development</option><option value="ai">AI / data</option><option value="cloud">Cloud / platform</option><option value="all">All technical roles</option></select></label>
+   <label>Preferred location<select id="dailyLocation"><option value="dmv">DC / Northern Virginia / Maryland</option><option value="virginia">Virginia</option><option value="remote">Remote</option><option value="all">Nationwide</option></select></label>
+   <label>Skills to look for<input id="dailySkills" maxlength="240" placeholder="e.g. Java, Python, AWS" aria-describedby="dailyPrefsHelp"></label>
+   <button type="submit" class="btn btn-primary">Update my matches</button>
+  </form>
+  <p class="daily-hint" id="dailyPrefsHelp">Location and role are ranking preferences, not strict filters. Enter only skills you actually have. Employer pages determine eligibility.</p>
+ </div>
+ <div class="daily-topline daily-results"><div><h2>Ready for your next application</h2><p id="dailySummary" role="status" aria-live="polite">Looking for matching internships…</p></div><button type="button" class="btn" id="dailyRefresh">Re-evaluate matches</button></div>
+ <div class="daily-workspace">
+  <div class="daily-list" id="dailyList" aria-label="Recommended Daily 10 internships"></div>
+  <section class="daily-focus panel" id="dailyFocus" aria-labelledby="dailyFocusTitle">
+   <div class="daily-focus-inner">
+    <div class="daily-focus-top"><span id="dailyPosition">UP NEXT</span><span id="dailySource"></span></div>
+    <h2 id="dailyFocusTitle">Choose a recommended internship</h2>
+    <p class="daily-focus-meta" id="dailyCompany"></p>
+    <div class="daily-tags" id="dailyReasons"></div>
+    <p id="dailyDescription" class="daily-description">Select a job to inspect its known details before applying.</p>
+    <div id="dailyWarnings" class="daily-warnings"></div>
+    <p class="daily-hint" id="dailyVerification">Employer listings can change. Confirm this role is still open and that you meet its requirements.</p>
+    <div class="daily-focus-actions">
+      <a class="btn btn-primary" id="dailyEmployer" href="#" target="_blank" rel="noopener noreferrer">Open employer application ↗</a>
+      <a class="btn" id="dailyResume" href="./resume-studio.html">Tailor my resume ↗</a>
+    </div>
+    <label class="daily-confirm"><input type="checkbox" id="dailyConfirm"> <span>I completed and submitted this application on the employer's website.</span></label>
+    <button type="button" class="btn btn-primary daily-submit" id="dailyApplied" disabled>Mark as applied</button>
+    <div class="daily-focus-footer"><button type="button" class="btn" id="dailySave">☆ Save this job</button><button type="button" class="btn" id="dailyNext">Next recommendation →</button></div>
+   </div>
+  </section>
+ </div>
+ <p class="daily-note">The queue updates when you submit or change preferences, and may change when the public feed refreshes. Opening an application doesn't count; only your confirmed submission updates your progress. Nothing is submitted automatically.</p>
+</section>
+<section id="discover" class="view">
+ <header class="intro"><div class="eyebrow">SUMMER 2027 · SOFTWARE ENGINEERING</div><h1>Your top <span>matches.</span></h1><p>Browse the leading internships from monitored sources. Rankings are based on job and location signals—not a prediction of hiring success. Verify each posting on the employer site.</p></header>
+ <div class="metrics"><div class="metric"><small>Internship leads</small><strong id="jobCount">0</strong><span class="hint">Employer and community feeds</span></div><div class="metric"><small>Applied today</small><strong id="appliedToday">0</strong><span class="hint">Your daily goal: <span id="dailyGoal">10</span></span></div><div class="metric"><small>Applications total</small><strong id="appliedTotal">0</strong><span class="hint">Tracked in this browser</span></div><div class="metric"><small>Feed updated</small><strong id="feedDate" style="font-size:17px;margin-top:13px">Not yet</strong><span id="feedSource" class="hint">Awaiting first sync</span></div></div>
  <div id="jobsAnchor"><div class="section-bar"><div><small>NATIONWIDE SEARCH · DMV PRIORITY</small><h2>Top 10 recommended matches</h2></div><div class="actions"><button class="btn btn-primary" id="showLatest" type="button">Latest jobs ↗</button><button class="btn" id="showMore">Explore all internships</button></div></div>
  <div class="filters"><input id="search" placeholder="Search roles, companies, skills…" aria-label="Search jobs"><select id="location"><option value="all">Nationwide — DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro (VA, DC, MD)</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="role"><option value="all">All engineering roles</option><option value="swe">Software engineering</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
  <p id="filterFeedback" class="muted" role="status" aria-live="polite" style="font-size:12px;margin:5px 0 13px"></p><div id="jobList" class="jobs"></div></div><div class="panel" style="margin-top:19px"><strong>Explore more Virginia opportunities</strong><p>Official employer boards; their job availability may change.</p><div class="actions"><a class="btn" href="https://job-boards.greenhouse.io/appian" target="_blank" rel="noopener noreferrer">Appian ↗</a><a class="btn" href="https://job-boards.greenhouse.io/devtechnology" target="_blank" rel="noopener noreferrer">Dev Technology ↗</a><a class="btn" href="https://job-boards.greenhouse.io/darkwolfsolutions" target="_blank" rel="noopener noreferrer">Dark Wolf ↗</a><a class="btn" href="https://jobs.lever.co/anavationllc" target="_blank" rel="noopener noreferrer">AnaVation ↗</a></div></div><p class="muted" style="font-size:12px">Your daily 10 is a shortlist. Open Explore internships to browse the larger nationwide catalog. Scores are keyword-based, not hiring probabilities; verify employer requirements.</p>
@@ -82,7 +305,14 @@
  <div class="metric"><small>DC metro leads</small><strong id="exploreDMV">0</strong><span class="hint">DMV priority</span></div>
  <div class="metric"><small>Matching your filters</small><strong id="exploreMatches">0</strong><span class="hint">Browse 25 at a time</span></div>
 </div>
-<div class="section-bar"><h2>All matching internships</h2><small id="exploreSourceHealth">Checking sources</small></div>
+
+<details class="panel va-watch">
+ <summary class="va-summary-trigger"><span><span class="va-eyebrow">VIRGINIA / DC / MARYLAND · OFFICIAL EMPLOYER LINKS</span><strong id="vaWatchTitle">Major employers to watch</strong><small id="vaWatchSummary" class="va-summary">Loading employer coverage…</small></span><span class="va-chevron" aria-hidden="true">⌄</span></summary>
+ <p class="va-intro">Explore official career portals for 20 major employers. Direct-feed health is distinct from career links that are not scanned automatically. A responding board doesn't mean it has open internships.</p>
+ <div id="vaEmployerList" class="va-employers"></div>
+ <p class="va-footnote">Failed feeds don't mean an employer stopped hiring. Community-feed leads may appear independently. Always confirm deadlines on employer sites.</p>
+</details>
+<div class="section-bar"><div><h2>All matching internships</h2><small id="exploreCoverage">Nationwide coverage loading…</small></div><small id="exploreSourceHealth">Checking sources</small></div>
 <div class="row" style="margin-bottom:12px"><button class="btn" id="exploreCompanyClear" type="button" style="display:none">Clear company filter ×</button></div>
 <div class="filters"><input id="exploreSearch" placeholder="Search role, company, location…" aria-label="Search internships"><select id="exploreLocation"><option value="all">Nationwide · DMV first</option><option value="virginia">Virginia only</option><option value="dmv">DC metro</option><option value="maryland">Maryland only</option><option value="outside">Outside DC metro</option><option value="remote">Remote</option></select><select id="exploreRole"><option value="all">All technical roles</option><option value="swe">Software development</option><option value="cloud">Cloud / platform</option><option value="ai">AI / data</option></select></div>
 <div class="filters" style="grid-template-columns:1fr 1fr"><select id="exploreAge" aria-label="Filter by listing date"><option value="all">Any listing date</option><option value="today">First seen today</option><option value="3">First seen in last 3 days</option><option value="7">First seen in last 7 days</option><option value="30">First seen in last 30 days</option></select><select id="exploreStatus" aria-label="Filter by application status"><option value="new">Not yet applied</option><option value="all">All statuses (including applied)</option><option value="saved">Saved only</option><option value="applied">Applied / later</option></select></div>
@@ -118,12 +348,40 @@
 <p id="companySummary" class="muted" role="status" aria-live="polite" style="font-size:12px"></p>
 <div id="companyList" class="companies-list"></div>
 <div class="section-bar"><small id="companyShowing"></small><button id="companiesLoadMore" class="btn btn-primary" type="button">Show 60 more companies ↗</button></div>
-<p class="muted" style="font-size:12px">Click a company to browse its internship leads in Explore. Company counts reflect only the monitored sources; confirm availability on the employer website.</p>
+<p class="muted" style="font-size:12px">Click a company to browse its internship leads in Explore. These companies have matching jobs in the latest feed.</p>
+ <details id="registryPanel" class="panel" style="margin-top:22px">
+  <summary class="va-summary-trigger"><span><span class="va-eyebrow">NATIONWIDE · LONG-TAIL DISCOVERY</span><strong>Previously discovered employer directory</strong><small class="va-summary" id="registryCount">Loading observed employers…</small></span><span class="va-chevron" aria-hidden="true">⌄</span></summary>
+  <p class="va-intro">These are employers found through public internship listings across refreshes. Some have a supported public job board; others have only a link to a specific job posting. An entry here does <strong>not</strong> mean that company currently has an open internship.</p>
+  <div class="filters" style="grid-template-columns:2fr 1fr">
+   <input id="registrySearch" placeholder="Search any previously discovered employer…" aria-label="Search observed nationwide employers">
+   <select id="registryType" aria-label="Employer discovery source type"><option value="all">All discovered</option><option value="public_board">Public ATS boards</option><option value="link_only">Job links only</option></select>
+  </div>
+  <p id="registryShowing" class="muted" role="status" aria-live="polite" style="font-size:12px"></p>
+  <div class="va-employers" id="registryList"></div>
+  <div class="section-bar"><small>Only sources actually found in public leads appear here.</small><button class="btn" type="button" id="registryMore">Show 60 more employers</button></div>
+ </details>
 </section>
 <section id="pipeline" class="view"><header class="intro"><div class="eyebrow">YOUR APPLICATION HISTORY</div><h1>Keep every application <span>organized.</span></h1><p>Save interesting jobs and track actual submissions through assessments, interviews, offers, and rejections.</p></header>
  <div class="metrics"><div class="metric"><small>Applied / later</small><strong id="pApplied">0</strong></div><div class="metric"><small>Saved</small><strong id="pSaved">0</strong></div><div class="metric"><small>Assessments</small><strong id="pOa">0</strong></div><div class="metric"><small>Interviews</small><strong id="pInterview">0</strong></div></div>
- <div class="panel"><h3>Add an application you already submitted</h3><p>Use this for applications you made before using Radar, or jobs from Handshake and Workday.</p><form id="manual" class="manual"><input id="company" required placeholder="Company" maxlength="100"><input id="title" required placeholder="Job title" maxlength="160"><input id="url" placeholder="https://job-posting…" type="url"><button class="btn btn-primary">Add applied</button></form></div>
+ <div class="panel"><h3>Add an application you already submitted</h3><p>Use this for applications you made before using Radar, or jobs from Handshake and Workday.</p><form id="manual" class="manual"><input id="company" required placeholder="Company" maxlength="100"><input id="title" required placeholder="Job title" maxlength="160"><input id="url" placeholder="https://job-posting…" type="url"><label class="manual-date">Date submitted <input id="appliedDate" aria-label="Date applied (optional)" title="Date you submitted, defaults to today" type="date"></label><button class="btn btn-primary">Add applied</button></form></div>
  <div class="panel"><h3>My application pipeline</h3><div id="pipelineList"></div></div>
+</section>
+<section id="insights" class="view">
+ <header class="intro"><div class="eyebrow">APPLICATION ANALYTICS · PRIVATE TO THIS BROWSER</div><h1>Know your <span>momentum.</span></h1><p>See what you've submitted, which outcomes you've recorded, and what deserves attention next. Every number comes from your actual tracker history.</p></header>
+ <div class="insights-toolbar"><label for="insightsRange">Show statistics for <select id="insightsRange" aria-label="Statistics period"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="all">All time</option></select></label><p id="insightsTrend" role="status" aria-live="polite">Analyzing your application history.</p></div>
+ <div class="insights-metrics">
+  <div class="insights-metric"><small>Applications submitted</small><strong id="insightsSubmitted">0</strong><span id="insightsSubmittedNote">Within selected period</span></div>
+  <div class="insights-metric"><small>Recorded response rate</small><strong id="insightsRate">0%</strong><span id="insightsRateNote">Based on updated statuses</span></div>
+  <div class="insights-metric"><small>Average per active day</small><strong id="insightsAverage">0.0</strong><span id="insightsAverageNote">Days with applications</span></div>
+  <div class="insights-metric"><small>Days meeting today's goal</small><strong id="insightsGoalDays">0</strong><span id="insightsGoalNote">Historical days recalculated using your current goal</span></div>
+ </div>
+ <div class="insights-grid">
+  <div class="panel"><div class="insights-topline"><h2>Application activity</h2><small id="insightsChartLabel">Last 30 days</small></div><div class="insights-bars" id="insightsBars" aria-label="Interactive application activity chart"></div><p class="insights-tip">Click a bar to inspect the applications from those days. Counts are based on the date you submitted.</p></div>
+  <div class="panel"><div class="insights-topline"><h2>Pipeline snapshot</h2><small>Current statuses for this period</small></div><div class="insights-stages" id="insightsStages"></div><p class="insights-tip">Select a status to filter the applications below. This is not a historical conversion funnel.</p></div>
+ </div>
+ <div class="panel"><div class="insights-topline"><h2>Smart next steps</h2><small>Suggestions, not automatic actions</small></div><div id="insightsActions" aria-live="polite"></div></div>
+ <div class="panel"><div class="insights-topline"><h2 id="insightsListTitle">Recent applications</h2><button class="btn" id="insightsReset" type="button">Clear filters</button></div><p class="muted" id="insightsListLabel" style="font-size:12px">Applications shown from your browser history.</p><div class="insights-rows" id="insightsRows"></div></div>
+ <p class="muted" style="font-size:12px">Only tracked submissions are included. A recorded response means the current status is Assessment, Interview, Offer, or Rejected. This does not measure employer views, true historical stage transitions, or your probability of receiving an offer. Manually entered applications count on the date you specify, and clearing browser data removes local statistics.</p>
 </section>
 <section id="programs" class="view"><header class="intro"><div class="eyebrow">ALTERNATIVE EXPERIENCE</div><h1>More paths into <span>tech.</span></h1><p>A program rejection isn't a verdict on your career. Explore skill-building and mentored engineering experiences alongside internships.</p></header>
  <div class="programs">
@@ -147,10 +405,14 @@
 (function(){
 "use strict";
 var $=function(id){return document.getElementById(id);};
+ var Progress=window.InternshipProgress;
+ var Insights=window.InternshipInsights;
+ var Daily=window.InternshipDailyQueue;
 var KEY="internship-radar-tracker-v2", SETTINGS="internship-radar-options-v2";
 var feed=window.INTERNSHIP_RADAR_FEED||{jobs:[],generated_at:null,scanned_boards:0,responsive_boards:0,errors:[]};
+var employerRegistry=Array.isArray(feed.employer_registry)?feed.employer_registry:[],registryLimit=60;
 var jobs=Array.isArray(feed.jobs)?feed.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";}):[];
-var records={}, goal=10, view="discover", exploreLimit=25, companyLimit=60, exploreCompany="";
+var records={}, goal=10, view="home", exploreLimit=25, companyLimit=60, exploreCompany="";
 try{var loaded=JSON.parse(localStorage.getItem(KEY)||"{}");if(loaded&&typeof loaded==="object"&&!Array.isArray(loaded))records=loaded;}catch(e){}
 try{var g=Number(JSON.parse(localStorage.getItem(SETTINGS)||"{}").dailyGoal);if(g>=1&&g<=30)goal=g;}catch(e){}
 function text(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -158,16 +420,53 @@ function link(url){try{var u=new URL(String(url));return u.protocol==="https:"?u
 function today(d){var a=d?new Date(d):new Date();if(isNaN(a.getTime()))return "";var local=new Date(a.getTime()-a.getTimezoneOffset()*60000);return local.toISOString().slice(0,10);}
 function notify(msg){var n=$("toast");n.textContent=msg;n.classList.add("show");setTimeout(function(){n.classList.remove("show");},3000);}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){notify("Unable to save. Export your records as a backup.");}}
-function setPage(v){view=v;document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});document.querySelectorAll("[data-page]").forEach(function(x){x.classList.toggle("active",x.dataset.page===v);});$("crumb").textContent=v==="discover"?"TOP 10 MATCHES":v==="recent"?"LATEST JOBS":v==="explore"?"EXPLORE INTERNSHIPS":v==="companies"?"COMPANIES":v.toUpperCase();render();window.scrollTo(0,0);}
+function setPage(v,saveHistory){
+ if(!["home","daily","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"].includes(v))v="home";
+ view=v;
+ document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("active",x.id===v);});
+ document.querySelectorAll("[data-page]").forEach(function(x){
+  var active=x.dataset.page===v;
+  x.classList.toggle("active",active);
+  if(active)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current");
+ });
+ var titles={home:"HOME",daily:"DAILY 10",discover:"TOP 10 MATCHES",recent:"LATEST JOBS",explore:"EXPLORE INTERNSHIPS",companies:"COMPANIES",pipeline:"MY PIPELINE",insights:"STATS & INSIGHTS",programs:"PROGRAMS",plan:"WEEKLY PLAN",settings:"SETTINGS"};
+ $("crumb").textContent=titles[v];
+ if(saveHistory!==false&&window.history&&window.location.hash!=="#"+v)window.history.pushState(null,"","#"+v);
+ render();
+ window.scrollTo(0,0);
+}
 document.querySelectorAll("[data-page]").forEach(function(b){b.addEventListener("click",function(){setPage(b.dataset.page);});});
-$("jumpJobs").onclick=function(){$("jobsAnchor").scrollIntoView({behavior:"smooth"});};
-$("jumpLatest").onclick=function(){setPage("recent");};
 $("homeLatest").onclick=function(){setPage("recent");};
+$("homeInsights").onclick=function(){setPage("insights");};
+$("home").addEventListener("click",function(e){
+ var button=e.target.closest("button[data-home-target]");
+ if(button)setPage(button.dataset.homeTarget);
+});
+window.addEventListener("popstate",function(){
+ setPage((window.location.hash||"#home").slice(1),false);
+});
 var validStatuses=["saved","applied","oa","interview","offer","rejected","skipped"];
 function getJob(id){return jobs.find(function(j){return j.id===id;})||(records[id]&&records[id].job)||null;}
 function update(id,status){if(validStatuses.indexOf(status)<0)return;var j=getJob(id);if(!j)return;var old=records[id]||{};
-if(old.status===status&&status==="saved"){delete records[id];notify("Removed from saved.");}else{records[id]={status:status,changed_at:new Date().toISOString(),applied_at:old.applied_at||(status!=="saved"&&status!=="skipped"?new Date().toISOString():null),job:{id:id,title:j.title,company:j.company,location:j.location||"",url:link(j.url)}};notify(status==="applied"?"Added to My Pipeline as Applied. This posting is now hidden from unapplied jobs.":"Tracking updated.");}
-save();render();}
+var before=Progress.summary(records,goal).today;
+if(old.status===status&&status==="saved"){delete records[id];notify("Removed from saved.");}
+else{
+ var submitted=["applied","oa","interview","offer","rejected"].includes(status);
+ var appliedAt=submitted?(old.applied_at||new Date().toISOString()):null;
+ records[id]={status:status,changed_at:new Date().toISOString(),applied_at:appliedAt,job:{id:id,title:j.title,company:j.company,location:j.location||"",url:link(j.url)}};
+ notify(status==="applied"?"Added to My Pipeline as Applied. This posting is now hidden from unapplied jobs.":"Tracking updated.");
+}
+save();render();
+var next=Progress.summary(records,goal);
+if(next.today>before&&typeof window!=="undefined")rewardProgress(next);
+}
+function rewardProgress(state){
+ var panel=$("momentumPanel");
+ panel.classList.remove("celebrate");void panel.offsetWidth;panel.classList.add("celebrate");
+ if(state.complete&&state.today===state.goal)notify("Mission complete: "+state.goal+" genuine applications today. Great work!");
+ else if(state.steps.includes(state.today))notify("Milestone unlocked: "+state.today+" of "+state.goal+" applications!");
+ else notify("Application "+state.today+" of "+state.goal+" logged. Keep going!");
+}
 function local(j){return j.dmv_priority===true||/\b(washington\s*,?\s*d\.?c\.?|district of columbia|northern virginia|dmv|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville)\b/i.test(j.location||"");}
 function virginia(j){return /\b(virginia|VA|fairfax|reston|mclean|herndon|arlington|alexandria|falls church|vienna|tysons|chantilly|sterling|ashburn|leesburg|dulles|springfield|manassas|woodbridge|richmond|norfolk|fredericksburg)\b/i.test(j.location||"");}
 function maryland(j){return /\b(maryland|MD|bethesda|rockville|silver spring|gaithersburg|college park|hyattsville|baltimore|frederick)\b/i.test(j.location||"");}
@@ -211,7 +510,7 @@ try{
   ["exploreLocation","exploreRole","exploreCity","exploreKeywords","exploreSort"].forEach(id=>{
    if(typeof prefs[id]==="string"&&(!$(id).options||Array.from($(id).options).some(o=>o.value===prefs[id])))$(id).value=prefs[id];
   });
- }else{$("exploreLocation").value="dmv";$("exploreRole").value="swe";}
+ }else{$("exploreLocation").value="all";$("exploreRole").value="swe";}
 }catch(e){}
 function exploreVisible(){
  const q=$("exploreSearch").value.trim().toLowerCase(),
@@ -242,14 +541,34 @@ function exploreVisible(){
  });
  return $("exploreSort").value==="newest"?filtered.sort(sortJobDates):filtered;
 }
+
+function renderVirginiaEmployers(){
+ var hosts=Array.isArray(feed.priority_employers)?feed.priority_employers:[];
+ if(!hosts.length){
+  $("vaWatchSummary").textContent="Source audit pending first new feed refresh";
+  $("vaEmployerList").innerHTML='<p class="muted">The monitored-employer directory will appear after this version of the data pipeline runs. Visit official company career sites until then.</p>';
+  return;
+ }
+ var direct=hosts.filter(function(x){return x.mode==="direct";});
+ var successful=direct.filter(function(x){return x.status==="ok";}).length;
+ $("vaWatchSummary").textContent=successful+" / "+direct.length+" direct employer feeds responding · "+(hosts.length-direct.length)+" official links";
+ $("vaEmployerList").innerHTML=hosts.map(function(row){
+  var href=link(row.careers_url),info=row.mode!=="direct"?"Official careers link · not scanned":
+   row.status==="ok"?"Direct feed responding · "+Number(row.direct_jobs||0)+" qualifying leads":
+   row.status==="error"?"Direct feed failed · check employer":"Direct feed status unknown";
+  return href?'<a class="va-employer" href="'+text(href)+'" rel="noopener noreferrer" target="_blank"><span><strong>'+text(row.company)+'</strong><small>'+text(info)+'</small></span><span class="va-link-arrow" aria-hidden="true">↗</span></a>':'';
+ }).join("");
+}
 function renderExplore(){
  const matches=exploreVisible();
  const newest=matches.filter(j=>freshnessDate(j)===today()).sort(sortJobDates);
  $("exploreTotal").textContent=jobs.length;
+ $("exploreCoverage").textContent=companyEntries.length+" companies across the US · "+(feed.community_sources_ok||[]).length+" responding community feeds";
+ if(Number(feed.discovered_ats_scanned)>0){$("exploreCoverage").textContent+=" · "+Number(feed.discovered_ats_responding||0)+"/"+Number(feed.discovered_ats_scanned)+" automatically discovered employer boards responding";}
  $("exploreVA").textContent=jobs.filter(virginia).length;
  $("exploreDMV").textContent=jobs.filter(local).length;
  $("exploreMatches").textContent=matches.length;
- $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/11 discovery feeds";
+ $("exploreSourceHealth").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards · "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+" discovery feeds";
  $("exploreCompanyClear").style.display=exploreCompany?"inline-block":"none";
  $("exploreFreshCount").textContent=newest.length+" today";
  $("exploreFreshHint").textContent=!feed.freshness_tracked?"First-seen history is unavailable for this refresh; new postings cannot be verified yet.":newest.length
@@ -329,16 +648,31 @@ try{
   }
   if(typeof p.city==="string")$("recentCity").value=p.city.slice(0,100);
  }else{
-  $("recentLocation").value=$("exploreLocation").value==="all"?"dmv":$("exploreLocation").value;
+  $("recentLocation").value=$("exploreLocation").value;
   $("recentRole").value=$("exploreRole").value==="all"?"swe":$("exploreRole").value;
   $("recentCity").value=$("exploreCity").value;
  }
 }catch(e){}
+function homeLeadMarkup(j){
+ var href=link(j.url),r=records[j.id]||{};
+ return '<article class="home-lead"><div><h3>'+text(j.title)+'</h3><p>'+text(j.company)+' · '+text(j.location||"Location unspecified")+
+  (j.discovered_on?' · Discovered '+text(j.discovered_on):'')+'</p></div><div class="actions">'+
+  (href?'<a class="btn btn-primary" href="'+text(href)+'" target="_blank" rel="noopener noreferrer">View posting ↗</a>':'')+
+  '<button type="button" class="btn" data-job="'+text(j.id)+'" data-action="saved">'+(r.status==="saved"?"★ Saved":"☆ Save")+'</button></div></article>';
+}
+function renderHome(){
+ var eligible=Daily.build(jobs,records,dailyPrefs,Math.max(10,goal)).length;
+ var saved=Object.values(records).filter(function(r){return r&&r.status==="saved";}).length;
+ var review=Insights.calculate(records,{goal:goal,range:"all"}).reviewCount;
+ $("homeMatchCount").textContent=eligible?eligible+" suggested jobs ready to review.":"No eligible shortlist leads found in this feed.";
+ $("homeSavedCount").textContent=saved?saved+" saved role"+(saved===1?"":"s")+" ready to review.":"No saved roles yet. Bookmark strong fits.";
+ $("homeReviewCount").textContent=review?review+" applications without a newer status after 14+ days.":"Review submitted applications and update their status.";
+}
 function renderHomeRecent(){
  const fresh=recentMatches(7,$("recentLocation").value,$("recentRole").value,$("recentCity").value);
  const where=$("recentCity").value.trim()||$("recentLocation").options[$("recentLocation").selectedIndex].textContent;
  $("homeRecentLabel").textContent=fresh.length+" recently reported or newly discovered leads · "+where+" · "+$("recentRole").options[$("recentRole").selectedIndex].textContent+" · last 7 days.";
- $("homeRecentList").innerHTML=fresh.length?fresh.slice(0,3).map(jobMarkup).join(""):'<div class="empty"><h3>No recent dated matches with your saved filters</h3><p>Try a broader location or role in Latest Jobs, or browse all opportunities below.</p></div>';
+ $("homeRecentList").innerHTML=fresh.length?fresh.slice(0,2).map(homeLeadMarkup).join(""):'<div class="empty"><h3>No recent dated matches with your saved filters</h3><p>Try a broader location or role in Latest Jobs, or browse all opportunities below.</p></div>';
 }
 function renderRecent(){
  const loc=$("recentLocation").value,role=$("recentRole").value,days=$("recentDays").value,city=$("recentCity").value;
@@ -361,7 +695,7 @@ function renderRecent(){
 });
 $("recentLoadMore").onclick=()=>{recentLimit+=20;renderRecent();};
 $("recentReset").onclick=()=>{
- $("recentLocation").value="dmv";$("recentRole").value="swe";$("recentDays").value="7";$("recentCity").value="";
+ $("recentLocation").value="all";$("recentRole").value="swe";$("recentDays").value="7";$("recentCity").value="";
  recentLimit=20;storeRecentPrefs();renderRecent();renderHomeRecent();
 };
 // A browser-local company directory derived from the daily public listings.
@@ -383,6 +717,32 @@ var companyEntries=Array.from(companyMap.values()).sort(function(a,b){
  return Number(b.dmv)-Number(a.dmv) || Number(b.va)-Number(a.va) ||
  b.count-a.count || a.name.localeCompare(b.name);
 }).map(function(c,i){c.i=i;return c;});
+function renderRegistry(){
+ var total=Number(feed.employer_registry_companies)||0;
+ $("registryCount").textContent=total?total.toLocaleString()+" distinct employers observed across refreshes · "+employerRegistry.length.toLocaleString()+" source records":"Index appears after its first deployed refresh";
+ if(!$("registryPanel").open)return;
+ var q=$("registrySearch").value.toLowerCase().trim(),type=$("registryType").value;
+ var list=employerRegistry.filter(function(r){
+  return r&&typeof r.company==="string"&&(!q||r.company.toLowerCase().includes(q))&&(type==="all"||r.mode===type);
+ });
+ list.sort(function(a,b){
+  return (b.last_seen||"").localeCompare(a.last_seen||"")||a.company.localeCompare(b.company);
+ });
+ $("registryShowing").textContent="Showing "+Math.min(registryLimit,list.length)+" of "+list.length+" discovery records; statuses reflect the last refresh attempt, not current hiring.";
+ $("registryMore").style.display=registryLimit<list.length?"inline-block":"none";
+ $("registryList").innerHTML=list.length?list.slice(0,registryLimit).map(function(r){
+  var url=link(r.careers_url);
+  if(!url)return "";
+  var label=r.mode==="public_board"?(r.last_status==="ok"?"Public board · last check succeeded":r.last_status==="error"?"Public board · last check failed":"Public board · not checked yet"):
+   "Job link only · not scanned automatically";
+  return '<a class="va-employer" href="'+text(url)+'" target="_blank" rel="noopener noreferrer"><span><strong>'+text(r.company)+'</strong><small>'+text(label)+'</small></span><span class="va-link-arrow" aria-hidden="true">↗</span></a>';
+ }).join(""):'<div class="empty"><h3>No employers match</h3><p>Try a broader search or wait for the next feed refresh.</p></div>';
+}
+$("registryPanel").addEventListener("toggle",renderRegistry);
+$("registrySearch").addEventListener("input",function(){registryLimit=60;renderRegistry();});
+$("registryType").addEventListener("change",function(){registryLimit=60;renderRegistry();});
+$("registryMore").onclick=function(){registryLimit+=60;renderRegistry();};
+
 function renderCompanies(){
  var q=$("companySearch").value.trim().toLowerCase(),area=$("companyArea").value;
  var list=companyEntries.filter(function(c){
@@ -418,6 +778,156 @@ $("companyList").onclick=function(e){
  exploreLimit=25;
  setPage("explore");
 };
+
+function renderMomentum(){
+ var state=Progress.summary(records,goal);
+ $("momentumCount").textContent=state.today;
+ $("momentumGoal").textContent="/ "+state.goal;
+ $("momentumTitle").textContent=state.complete?"Mission complete. Well done.":"Build your momentum.";
+ $("momentumMessage").textContent=Progress.message(state);
+ $("momentumTrack").setAttribute("aria-valuemax",String(state.goal));
+ $("momentumTrack").setAttribute("aria-valuenow",String(Math.min(state.today,state.goal)));
+ $("momentumBar").style.width=state.percent+"%";
+ $("momentumMilestones").innerHTML=state.steps.map(function(step){
+  return '<span class="momentum-milestone'+(state.today>=step?' done':'')+'">'+(state.today>=step?'✓ ':'')+step+' / '+state.goal+'</span>';
+ }).join("");
+ $("momentumNext").textContent=state.complete?
+  "You reached today's goal. Review your applications or call it a day.":
+  state.remaining+" application"+(state.remaining===1?"":"s")+" left · next milestone at "+state.nextStep;
+ $("momentumWeekSummary").textContent=state.weeklyTotal+" submitted this week · "+state.activeDays+" active day"+(state.activeDays===1?"":"s");
+ $("momentumWeek").innerHTML=state.week.map(function(day){
+  var name=new Date(day.date+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"});
+  return '<div class="momentum-day'+(day.count?' active':'')+(day.isToday?' today':'')+'" title="'+day.date+': '+day.count+' applications"><b>'+day.count+'</b><small>'+name+'</small></div>';
+ }).join("");
+ var saved=Object.values(records).some(function(r){return r&&r.status==="saved";});
+ $("momentumAction").textContent=state.complete?"Review your pipeline ↗":saved?"Review saved matches in Daily 10 ↗":"Start Daily 10 ↗";
+ $("momentumAction").dataset.destination=state.complete?"pipeline":"daily";
+}
+$("momentumAction").onclick=function(){setPage($("momentumAction").dataset.destination||"daily");};
+
+
+/* A focused queue; role and location are preferences, never eligibility guarantees. */
+var DAILY_PREFS_KEY="internship-radar-daily-preferences-v1";
+var dailyPrefs=Daily.preferences({role:"swe",location:"dmv",skills:""});
+try{dailyPrefs=Daily.preferences(JSON.parse(localStorage.getItem(DAILY_PREFS_KEY)||"null"));}catch(e){}
+var dailySelectedId="",dailyCheckedId="",dailyListCache=[];
+function dailyQueue(){return Daily.build(jobs,records,dailyPrefs,Math.max(10,goal));}
+function renderDaily(){
+ var queue=dailyQueue();dailyListCache=queue;
+ $("dailyRole").value=dailyPrefs.role;$("dailyLocation").value=dailyPrefs.location;$("dailySkills").value=dailyPrefs.skills;
+ if(!queue.some(function(x){return x.job.id===dailySelectedId;}))dailySelectedId=queue.length?queue[0].job.id:"";
+ var selected=queue.find(function(row){return row.job.id===dailySelectedId;});
+ $("dailySummary").textContent=queue.length?queue.length+" suggested, not-yet-applied openings · ranked from the current public feed":
+   "No valid application links match this shortlist. Explore a wider search or check the next job-feed refresh.";
+ $("dailyList").innerHTML=queue.length?queue.map(function(row,i){
+   var j=row.job;
+   return '<button type="button" class="daily-item'+(j.id===dailySelectedId?' active':'')+'" data-daily-job="'+text(j.id)+'" aria-pressed="'+(j.id===dailySelectedId)+'">'+
+    '<span class="daily-rank">'+(i+1)+'</span><span><strong>'+text(j.title)+'</strong><small>'+text(j.company)+' · '+text(j.location||"Location unspecified")+'</small><small>'+text(row.reasons.slice(0,2).join(" · ")||"Review the role details")+'</small></span></button>';
+ }).join(""):'<div class="empty"><h3>No recommendations available</h3><p>Try broader preferences or use Explore internships. A listing may have disappeared or lack a usable employer link.</p></div>';
+ $("dailyPosition").textContent=selected?"OPTION "+(queue.indexOf(selected)+1)+" OF "+queue.length:"NO ROLE SELECTED";
+ $("dailySource").textContent=selected?(selected.job.community?"Community lead":"Employer feed"):"";
+ $("dailyFocusTitle").textContent=selected?selected.job.title:"No job selected";
+ $("dailyCompany").textContent=selected?selected.job.company+" · "+(selected.job.location||"Location unspecified"):"Browse internships or check back after the next job refresh.";
+ $("dailyReasons").innerHTML=selected?selected.reasons.map(function(r){return '<span>'+text(r)+'</span>';}).join(""):"";
+ var desc=selected?String(selected.job.job_description||selected.job.description||""):"";
+ $("dailyDescription").textContent=desc?desc.slice(0,1200)+(desc.length>1200?"…":""):"No full description in the feed. Read the employer posting for requirements, dates, and eligibility.";
+ $("dailyWarnings").textContent=selected&&selected.warnings.length?"Review eligibility: "+selected.warnings.join(" · "):"";
+ var available=Boolean(selected), href=available?link(selected.job.url):"";
+ $("dailyEmployer").href=href||"#";$("dailyEmployer").style.display=href?"inline-block":"none";
+ $("dailyResume").style.display=available?"inline-block":"none";
+ if(available){$("dailyResume").href="./resume-studio.html?job="+encodeURIComponent(selected.job.id);$("dailyResume").dataset.enhance=selected.job.id;}else{$("dailyResume").removeAttribute("data-enhance");$("dailyResume").href="./resume-studio.html";}
+ if(dailyCheckedId!==dailySelectedId){$("dailyConfirm").checked=false;dailyCheckedId=dailySelectedId;}
+ $("dailyConfirm").disabled=!available;
+ $("dailyApplied").disabled=!available||!$("dailyConfirm").checked;
+ $("dailySave").disabled=!available;$("dailyNext").disabled=queue.length<2;
+ $("dailySave").textContent=available&&records[selected.job.id]&&records[selected.job.id].status==="saved"?"★ Remove saved":"☆ Save this job";
+ $("dailyVerification").textContent=selected&&selected.job.community?
+   "Community-sourced lead. The listing may be old or closed; verify the official employer site before submitting.":
+   "Check the employer's current listing, actual deadline, and eligibility. Opening a posting doesn't count as applying.";
+}
+$("dailyPreferences").onsubmit=function(e){
+ e.preventDefault();
+ dailyPrefs=Daily.preferences({role:$("dailyRole").value,location:$("dailyLocation").value,skills:$("dailySkills").value});
+ try{localStorage.setItem(DAILY_PREFS_KEY,JSON.stringify(dailyPrefs));}catch(err){notify("Could not save preferences in this browser.");}
+ dailySelectedId="";dailyCheckedId="";renderDaily();renderHome();notify("Your personalized queue has been updated.");
+};
+$("dailyRefresh").onclick=function(){dailySelectedId="";dailyCheckedId="";renderDaily();notify("Rankings recalculated from the current feed.");};
+$("dailyList").onclick=function(e){
+ var b=e.target.closest("[data-daily-job]");if(!b)return;
+ dailySelectedId=b.dataset.dailyJob;dailyCheckedId="";renderDaily();
+ $("dailyFocusTitle").setAttribute("tabindex","-1");
+ $("dailyFocusTitle").focus();
+};
+$("dailyConfirm").onchange=function(){$("dailyApplied").disabled=!this.checked||!dailySelectedId;};
+$("dailyApplied").onclick=function(){
+ if(!dailySelectedId||!$("dailyConfirm").checked)return;
+ var chosen=dailyListCache.find(function(row){return row.job.id===dailySelectedId;});
+ if(!chosen)return;
+ var id=chosen.job.id;
+ dailySelectedId="";dailyCheckedId="";
+ update(id,"applied");
+ renderDaily();
+};
+$("dailySave").onclick=function(){if(dailySelectedId)update(dailySelectedId,"saved");};
+$("dailyNext").onclick=function(){
+ var i=dailyListCache.findIndex(function(row){return row.job.id===dailySelectedId;});
+ if(i<0||dailyListCache.length<2)return;
+ dailySelectedId=dailyListCache[(i+1)%dailyListCache.length].job.id;dailyCheckedId="";renderDaily();
+};
+
+var insightRange="30",insightStage="all",insightBin=null;
+function renderInsights(){
+ var result=Insights.calculate(records,{goal:goal,range:insightRange});
+ var labels={applied:"Applied",oa:"Online assessment",interview:"Interview",offer:"Offer",rejected:"Rejected"};
+ $("insightsRange").value=insightRange;
+ $("insightsSubmitted").textContent=result.submitted;
+ $("insightsRate").textContent=result.responseRate+"%";
+ $("insightsRateNote").textContent=result.responseCount+" recorded outcome"+(result.responseCount===1?"":"s")+" / "+result.submitted+" submitted";
+ $("insightsAverage").textContent=result.perActiveDay.toFixed(1);
+ $("insightsAverageNote").textContent=result.activeDays+" day"+(result.activeDays===1?"":"s")+" with applications";
+ $("insightsGoalDays").textContent=result.goalDays;
+ $("insightsGoalNote").textContent="Days with "+goal+"+ submissions at current goal";
+ $("insightsSubmittedNote").textContent=insightRange==="all"?"All tracked history":"Submitted during selected "+insightRange+" days";
+ $("insightsTrend").textContent=result.previous===null?"All-time view · "+result.saved+" saved jobs":result.delta===0?
+   "Same number of submissions as the previous "+insightRange+" days":
+   (result.delta>0?"+":"")+result.delta+" applications versus the previous "+insightRange+" days";
+ $("insightsChartLabel").textContent=result.chartLabel;
+ var max=Math.max(1,...result.chart.map(function(b){return b.count;}));
+ $("insightsBars").style.gridTemplateColumns="repeat("+result.chart.length+",minmax(0,1fr))";
+ $("insightsBars").innerHTML=result.chart.map(function(b,i){
+  var short=new Date(b.start+"T12:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  var height=Math.max(4,Math.round(b.count/max*136));
+  var label=b.label+": "+b.count+" submissions";
+  return '<button type="button" class="insights-bar'+(insightBin===i?' active':'')+'" data-insights-bin="'+i+'" aria-pressed="'+(insightBin===i)+'" title="'+text(label)+'" aria-label="'+text(label)+'"><b>'+b.count+'</b><span class="insights-bar-fill" style="height:'+height+'px"></span><small>'+text(short)+'</small></button>';
+ }).join("");
+ $("insightsStages").innerHTML=Object.keys(labels).map(function(stage){
+  var n=result.stage[stage],width=result.submitted?Math.round(n/result.submitted*100):0;
+  return '<button type="button" class="insights-stage'+(insightStage===stage?' active':'')+'" data-insights-stage="'+stage+'" aria-pressed="'+(insightStage===stage)+'"><span>'+labels[stage]+'</span><span class="insights-stage-track"><i style="width:'+width+'%"></i></span><b>'+n+'</b></button>';
+ }).join("");
+ $("insightsActions").innerHTML=result.suggestions.length?result.suggestions.map(function(s){
+  return '<button type="button" class="insights-action" data-insights-page="'+s.page+'"><span>'+text(s.text)+'</span><span aria-hidden="true">↗</span></button>';
+ }).join(""):'<p class="insights-none">Your tracked applications look up to date. Review new opportunities when you are ready.</p>';
+ var selectedBin=insightBin===null?null:result.chart[insightBin];
+ var rows=result.entries.filter(function(x){
+  return (insightStage==="all"||x.status===insightStage)&&(!selectedBin||(x.day>=selectedBin.start&&x.day<=selectedBin.end));
+ }).sort(function(a,b){return b.at-a.at;});
+ $("insightsListTitle").textContent=(insightStage==="all"?"Applications":labels[insightStage])+(selectedBin?" · selected days":"");
+ $("insightsListLabel").textContent=rows.length+" matching submission"+(rows.length===1?"":"s")+" · "+(selectedBin?selectedBin.label+" · ":"")+$("insightsRange").options[$("insightsRange").selectedIndex].textContent;
+ $("insightsRows").innerHTML=rows.length?rows.slice(0,30).map(function(x){
+  var href=link(x.url);
+  return '<div class="insights-row"><div><strong>'+text(x.company)+' — '+text(x.title)+'</strong><small>'+text(x.day)+' · '+labels[x.status]+'</small></div>'+(href?'<a href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Employer ↗</a>':'')+'</div>';
+ }).join(""):'<p class="insights-none">No recorded applications match these filters. Choose a different period, bar, or stage.</p>';
+ if(rows.length>30)$("insightsRows").insertAdjacentHTML("beforeend",'<p class="insights-none">Showing the 30 newest of '+rows.length+' results. Export CSV from Settings for your complete records.</p>');
+ $("insightsReset").disabled=insightStage==="all"&&insightBin===null;
+}
+$("insightsRange").onchange=function(){insightRange=this.value;insightStage="all";insightBin=null;renderInsights();};
+$("insightsReset").onclick=function(){insightStage="all";insightBin=null;renderInsights();};
+$("insights").addEventListener("click",function(e){
+ var bar=e.target.closest("[data-insights-bin]"),stage=e.target.closest("[data-insights-stage]"),action=e.target.closest("[data-insights-page]");
+ if(bar){var i=Number(bar.dataset.insightsBin);insightBin=insightBin===i?null:i;renderInsights();var updated=$("insightsBars").querySelector('[data-insights-bin="'+i+'"]');if(updated)updated.focus();return;}
+ if(stage){var chosen=stage.dataset.insightsStage;insightStage=insightStage===chosen?"all":chosen;renderInsights();var updated=$("insightsStages").querySelector('[data-insights-stage="'+chosen+'"]');if(updated)updated.focus();return;}
+ if(action&&["pipeline","explore"].includes(action.dataset.insightsPage))setPage(action.dataset.insightsPage);
+});
 function renderPipeline(){var list=Object.keys(records).filter(function(id){return records[id]&&records[id].job&&records[id].status!=="skipped";}).sort(function(a,b){return String(records[b].changed_at||"").localeCompare(String(records[a].changed_at||""));});
 var names={saved:"Saved",applied:"Applied",oa:"Online assessment",interview:"Interview",offer:"Offer",rejected:"Rejected",skipped:"Remove"};
 $("pipelineList").innerHTML=list.length?list.map(function(id){var r=records[id],j=r.job;var href=link(j.url);return '<div class="panel-row"><div><strong>'+text(j.company)+' — '+text(j.title)+'</strong><small>'+text(j.location||"")+(r.applied_at?" · Applied "+text(today(r.applied_at)):"")+(href?' · <a href="'+text(href)+'" target="_blank" rel="noopener noreferrer">Job link ↗</a>':"")+'</small></div><select data-record="'+text(id)+'" aria-label="Application status">'+Object.keys(names).map(function(s){return '<option value="'+s+'"'+(r.status===s?" selected":"")+'>'+names[s]+'</option>';}).join("")+'</select></div>';}).join(""):'<div class="empty"><h3>Your pipeline is empty</h3><p>Save roles or add your existing applications above.</p></div>';
@@ -427,12 +937,23 @@ $("pOa").textContent=values.filter(function(r){return r.status==="oa";}).length;
 $("pInterview").textContent=values.filter(function(r){return r.status==="interview";}).length;
 $("pApplied").textContent=values.filter(function(r){return ["applied","oa","interview","offer","rejected"].indexOf(r.status)>=0;}).length;}
 $("pipelineList").onchange=function(e){if(e.target.matches("select[data-record]"))update(e.target.dataset.record,e.target.value);};
-$("manual").onsubmit=function(e){e.preventDefault();var company=$("company").value.trim(),title=$("title").value.trim(),url=$("url").value.trim();if(!company||!title)return;if(url&&!link(url)){notify("Only HTTPS job links are supported.");return;}var id="manual-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);records[id]={status:"applied",changed_at:new Date().toISOString(),applied_at:new Date().toISOString(),job:{id:id,company:company,title:title,location:"",url:link(url)}};save();$("manual").reset();render();notify("Existing application added.");};
-function render(){var applied=Object.values(records).filter(function(r){return r&&r.applied_at;});$("jobCount").textContent=jobs.length;$("appliedTotal").textContent=applied.length;$("appliedToday").textContent=applied.filter(function(r){return today(r.applied_at)===today();}).length;$("dailyGoal").textContent=goal;
-$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/11 discovery feeds";
+$("manual").onsubmit=function(e){e.preventDefault();var company=$("company").value.trim(),title=$("title").value.trim(),url=$("url").value.trim();if(!company||!title)return;if(url&&!link(url)){notify("Only HTTPS job links are supported.");return;}
+var canonical=Progress.canonicalUrl(url),duplicate=Object.values(records).some(function(r){
+ if(!r||!r.job||r.status==="skipped")return false;
+ if(canonical)return canonical===Progress.canonicalUrl(r.job.url);
+ return !r.job.url&&String(r.job.company||"").trim().toLowerCase()===company.toLowerCase()&&String(r.job.title||"").trim().toLowerCase()===title.toLowerCase();
+});
+if(duplicate){notify("This application is already tracked. Update it in My Pipeline.");return;}
+var entered=$("appliedDate").value,submittedAt=new Date();if(entered){submittedAt=new Date(entered+"T12:00:00");if(!Number.isFinite(submittedAt.getTime())||Progress.dateKey(submittedAt)!==entered||entered>today()){notify("Enter a valid submission date no later than today.");return;}}
+var before=Progress.summary(records,goal).today,id="manual-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);
+records[id]={status:"applied",changed_at:new Date().toISOString(),applied_at:submittedAt.toISOString(),job:{id:id,company:company,title:title,location:"",url:link(url)}};
+save();$("manual").reset();render();var next=Progress.summary(records,goal);
+if(next.today>before)rewardProgress(next);else notify("Existing application added.");};
+function render(){var progress=Progress.summary(records,goal);$("jobCount").textContent=jobs.length;$("appliedTotal").textContent=progress.total;$("appliedToday").textContent=progress.today;$("dailyGoal").textContent=goal;
+$("goalInput").value=goal;var latest=feed.generated_at?new Date(feed.generated_at):null;$("feedDate").textContent=latest&&!isNaN(latest)?latest.toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Not yet";$("feedSource").textContent=(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+" employer boards, "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+" discovery feeds";
 $("liveStatus").textContent=feed.generated_at?"● Feed refreshed "+$("feedDate").textContent:"● Awaiting first sync";$("liveStatus").classList.toggle("warn",!feed.generated_at);
-$("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/11. Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
-renderDiscover();renderExplore();renderCompanies();renderPipeline();renderRecent();renderHomeRecent();}
+$("feedHealth").textContent="Refreshed: "+($("feedDate").textContent)+". Responsive boards: "+(feed.responsive_boards||0)+"/"+(feed.scanned_boards||0)+". Internship leads: "+jobs.length+". Companies represented: "+companyEntries.length+". Community feeds: "+(feed.community_sources_ok||[]).length+"/"+(feed.community_sources_configured||11)+". Feed warnings: "+(Array.isArray(feed.errors)?feed.errors.length:0)+".";
+renderDiscover();renderExplore();renderVirginiaEmployers();renderCompanies();renderRegistry();renderPipeline();renderRecent();renderHomeRecent();renderMomentum();renderInsights();renderDaily();renderHome();}
 $("saveGoal").onclick=function(){var n=Number($("goalInput").value);if(!Number.isInteger(n)||n<1||n>30){notify("Choose a goal between 1 and 30.");return;}goal=n;try{localStorage.setItem(SETTINGS,JSON.stringify({dailyGoal:goal}));}catch(e){}render();notify("Goal saved.");};
 function download(content,name,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}
 function csv(v){var s=String(v==null?"":v);if(/^[=+@\- \t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
@@ -444,7 +965,7 @@ if(!confirm("Replace your current browser-local application history with "+Objec
 $("clear").onclick=function(){if(confirm("Permanently clear this browser's application history? Export a backup first.")){records={};save();render();notify("Local history cleared.");}};
 render();
 const opened=(location.hash||"").slice(1);
-if(["recent","explore","companies","pipeline"].includes(opened))setPage(opened);
+if(["home","daily","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"].includes(opened))setPage(opened,false);
 })();
 </script>
 </body></html>

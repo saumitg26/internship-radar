@@ -26,8 +26,16 @@ jobs:
       - name: Test employer description extraction and accepted resume exports
         run: |
           python scripts/test_job_descriptions.py
+          python scripts/test_priority_sources.py
+          python scripts/test_nationwide_sources.py
+          python scripts/test_discover_boards.py
+          python scripts/test_employer_registry.py
           node scripts/test_resume_edits.cjs
           node scripts/test_application_pipeline.cjs
+          node scripts/test_daily_progress.cjs
+          node scripts/test_insights.cjs
+          node scripts/test_navigation.cjs
+          node scripts/test_daily_queue.cjs
       - name: Sync public listings (handles unavailable boards gracefully)
         run: python scripts/sync_jobs.py
       - name: Stamp asset versions to bypass stale browser caches

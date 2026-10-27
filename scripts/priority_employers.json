@@ -1,0 +1,82 @@
+[
+  {
+    "company": "Capital One",
+    "careers_url": "https://www.capitalonecareers.com/students"
+  },
+  {
+    "company": "Fannie Mae",
+    "careers_url": "https://fanniemae.wd1.myworkdayjobs.com/FannieMaeCareers"
+  },
+  {
+    "company": "Freddie Mac",
+    "careers_url": "https://careers.freddiemac.com/us/en/internships/"
+  },
+  {
+    "company": "Booz Allen Hamilton",
+    "careers_url": "https://www.boozallen.com/careers/internships-and-early-careers.html"
+  },
+  {
+    "company": "CACI",
+    "careers_url": "https://searchcareers.caci.com/careers?filter_skills_category=internships&sort_by=timestamp&start=0"
+  },
+  {
+    "company": "MITRE",
+    "careers_url": "https://careers.mitre.org/us/en/student-programs"
+  },
+  {
+    "company": "GDIT",
+    "careers_url": "https://gdit.wd5.myworkdayjobs.com/External_Career_Site"
+  },
+  {
+    "company": "Leidos",
+    "careers_url": "https://leidos.wd5.myworkdayjobs.com/External"
+  },
+  {
+    "company": "Northrop Grumman",
+    "careers_url": "https://ngc.wd1.myworkdayjobs.com/Northrop_Grumman_External_Site"
+  },
+  {
+    "company": "Navy Federal Credit Union",
+    "careers_url": "https://www.navyfederal.org/about/careers/internships.html"
+  },
+  {
+    "company": "Appian",
+    "careers_url": "https://job-boards.greenhouse.io/appian"
+  },
+  {
+    "company": "Shield AI",
+    "careers_url": "https://jobs.lever.co/shieldai"
+  },
+  {
+    "company": "SAIC",
+    "careers_url": "https://jobs.saic.com/pages/early-career"
+  },
+  {
+    "company": "BAE Systems",
+    "careers_url": "https://jobs.baesystems.com/studentsandgraduates"
+  },
+  {
+    "company": "RTX",
+    "careers_url": "https://careers.rtx.com/global/en/campusprograms"
+  },
+  {
+    "company": "Dev Technology",
+    "careers_url": "https://job-boards.greenhouse.io/devtechnology"
+  },
+  {
+    "company": "Amazon / AWS",
+    "careers_url": "https://amazon.jobs/content/en/career-programs/university/sde"
+  },
+  {
+    "company": "Lockheed Martin",
+    "careers_url": "https://www.lockheedmartin.com/en-us/careers/candidates/students-early-careers/internships.html"
+  },
+  {
+    "company": "Peraton",
+    "careers_url": "https://www.careers.peraton.com/students-early-career"
+  },
+  {
+    "company": "Noblis",
+    "careers_url": "https://careers.noblis.org/internships"
+  }
+]
