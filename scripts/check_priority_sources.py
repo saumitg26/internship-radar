@@ -39,6 +39,17 @@ def main():
         print(f"{company}: {status}; qualifying tech internships={count}; VA/DMV={local}; examples={info}")
     success=sum(status=="responding" for _,status,_,_,_ in results)
     print(f"Sources responding from this Actions runner: {success}/{len(results)}")
+    for company,term in (("Capital One","Technology Internship"),("GDIT","Summer 2027 Internship")):
+        board=next(b for b in focus if b["company"]==company)
+        host=board["host"];tenant=host.split(".")[0]
+        endpoint=f'https://{host}/wday/cxs/{tenant}/{board["slug"]}/jobs'
+        try:
+            result=sync_jobs.post_json(endpoint,{"appliedFacets":{},"limit":20,"offset":0,"searchText":term})
+            examples=" | ".join(str(x.get("title",""))[:65] for x in result.get("jobPostings",[])[:5])
+            print(f"Targeted query {company!s} ({term}): total={result.get('total','?')}, sample={examples}")
+        except Exception as e:
+            print(f"Targeted query {company!s}: {type(e).__name__}: {str(e)[:80]}")
+
     # Do not fail or fake live coverage. The actual refresh tracks failures itself.
 
 if __name__=="__main__":
