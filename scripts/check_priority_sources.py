@@ -23,6 +23,8 @@ def check(board):
         tech=[j for j in tech if j]
         local=sum(1 for j in tech if j.get("dmv_priority") or sync_jobs.RX_REGION.search(j["location"]))
         samples=" | ".join(j["title"][:65] for j in tech[:2])
+        if not tech:
+            samples="No qualifying titles in "+str(len(rows))+" scanned; sample: "+" | ".join(str(r.get("title",""))[:50] for r in rows[:3])
         return board["company"],"responding",len(tech),local,samples
     except Exception as e:
         return board["company"],"request blocked/error",0,0,type(e).__name__+": "+str(e)[:120]
