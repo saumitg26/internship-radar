@@ -59,16 +59,17 @@ verify the employer website before applying.
 The 52 manually configured employer ATS boards are a foundation, **not a ceiling**.
 On every scheduled four-hour refresh, Internship Radar also inspects the
 employer application URLs surfaced by all 14 public internship feeds. It
-automatically discovers additional public Greenhouse, Lever, Ashby and Workday
-boards, including smaller companies that are not on any hand-maintained list.
+automatically discovers additional public Greenhouse, Lever, Ashby, Workday, SmartRecruiters,
+  and Workable boards, including smaller companies that are not on any hand-maintained list.
 
-- Up to **50 additional employer ATS boards per refresh** are selected from
+- Up to **60 additional employer ATS boards per refresh** are selected from
   discovered candidates. A deterministic rotating selection changes every
   four-hour slot, allowing other companies to be checked across the day.
 - Only official ATS hostnames and well-formed job URLs are eligible. No
   arbitrary websites are crawled; no logins, private data, or mass applications.
 - Short public Workday scans are capped at three pages of 20 results each.
-  Other ATS endpoints are requested only once per selected employer.
+  Other ATS endpoints are requested once per selected employer, with
+  SmartRecruiters keyword filtering and Workable public job-board responses.
 - Selected sources can fail; in that case, third-party leads remain available
   with appropriate caveats instead of treating a timeout as a closure.
 - The feed reports **discovered_ats_candidates**, **discovered_ats_scanned**,
