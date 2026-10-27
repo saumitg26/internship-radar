@@ -38,6 +38,10 @@ jobs:
       - name: Diagnose new nationwide sources (not a deployment gate)
         continue-on-error: true
         run: python scripts/check_nationwide_sources.py
+      - name: Smoke-test combined nationwide catalog (no deployment)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python scripts/sync_jobs.py
       - name: Diagnose Virginia employer feeds (not a deployment gate)
         continue-on-error: true
         run: python scripts/check_priority_sources.py
