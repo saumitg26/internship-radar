@@ -37,6 +37,7 @@ jobs:
           node scripts/test_insights.cjs
           node scripts/test_navigation.cjs
           node scripts/test_ui_refinement.cjs
+          node scripts/test_job_intelligence.cjs
           node scripts/test_daily_queue.cjs
       - name: Sync public listings (handles unavailable boards gracefully)
         run: python scripts/sync_jobs.py
