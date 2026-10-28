@@ -11,6 +11,7 @@
 <script defer src="./vendor/jspdf.umd.min.js"></script>
 <script defer src="./resume-edits.js"></script>
 <script defer src="./resume-layout.js"></script>
+<script defer src="./job-intelligence.js"></script>
 <script defer src="./resume-studio.js"></script>
 </head>
 <body>
@@ -43,6 +44,7 @@
  <div class="match-info"><div class="eyebrow teal">EXPLAINABLE MATCH</div><h2>Resume ↔ job alignment <span class="subpill" id="ratingLabel">Add a resume</span></h2><p id="scoreInfo">Upload your resume and enter a complete job description to compare relevant keywords.</p><div class="chips" id="matchChips"></div></div>
  <div class="match-side"><div><b id="matchedCount">0</b><span>skills covered</span></div><div><b id="missingCount">0</b><span>not found</span></div><small>Keyword coverage only—not an official ATS score or hiring prediction.</small></div>
 </section>
+<section id="jobEligibilityReview" class="eligibility-review" aria-live="polite" aria-label="Eligibility review"></section>
 <div class="steps"><span><b>1</b> Job description</span><i></i><span><b>2</b> Saved resume</span><i></i><span><b>3</b> Review edits</span><i></i><span><b>4</b> Download</span></div>
 <div class="cols">
  <div class="editor">
