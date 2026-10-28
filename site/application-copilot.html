@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Application Copilot — Internship Radar</title>
+<link rel="stylesheet" href="./application-copilot.css">
+<script defer src="./jobs.js"></script><script defer src="./job-intelligence.js"></script><script defer src="./application-copilot.js"></script></head>
+<body><a class="skip" href="#main">Skip to content</a>
+<div class="shell"><aside class="side"><a class="brand" href="./index.html">IR↗ <strong>Internship Radar</strong></a><p class="eyebrow">WORKSPACE</p><nav><a href="./index.html#home">Home</a><a href="./index.html#explore">Explore internships</a><a href="./index.html#pipeline">My pipeline</a><a href="./resume-studio.html">Resume Studio</a><a aria-current="page" href="./application-copilot.html">Application Copilot</a><a href="./index.html#insights">Analytics</a></nav><p class="aside">Local-first. Nothing is automatically submitted, emailed, or sent to employers. Review every generated statement.</p></aside>
+<main id="main"><div class="top"><span>WORKSPACE / APPLICATION COPILOT</span><a href="./index.html#explore">← Job feed</a></div>
+<div class="heading"><div class="eyebrow">CAREER OPS-INSPIRED WORKFLOW</div><h1>From listing to a better application.</h1><p>Generate transparent, editable preparation materials from your own evidence—not made-up experience. Real-time company research and AI writing require a connected, secure service.</p></div>
+<div class="layout"><section class="panel">
+<h2>1. Choose the opportunity</h2><label for="jobSelect">Internship</label><select id="jobSelect"><option value="">Custom job description</option></select>
+<div class="fields"><div><label for="company">Company</label><input id="company" maxlength="120" placeholder="Company name"></div><div><label for="role">Role</label><input id="role" maxlength="160" placeholder="Internship title"></div></div>
+<label for="description">Job description / requirements</label><textarea id="description" rows="7" maxlength="18000" placeholder="Paste the official job description for more useful analysis."></textarea>
+<div id="intel" class="intel" role="status"></div>
+<h2>2. Ground the draft in your experience</h2><p class="hint" id="masterStatus">Checking your saved Resume Studio master…</p>
+<label for="evidence">Relevant, verified achievements (edit freely)</label><textarea id="evidence" rows="7" maxlength="9000" placeholder="Paste 2–5 bullets from your resume. These are the ONLY achievements the drafts can reference."></textarea>
+<p class="hint">Master resume content stays in this browser. No draft claims experience outside the evidence field.</p>
+<h2>3. Choose an output</h2><label for="mode">Preparation workflow</label><select id="mode">
+<option value="answer">Why are you interested?</option><option value="letter">Cover letter draft</option>
+<option value="outreach">Recruiter / referral outreach</option><option value="interview">Interview preparation and STAR prompts</option>
+<option value="research">Company research checklist</option><option value="followup">Application follow-up</option>
+<option value="negotiation">Compensation discussion</option></select>
+<div class="fields"><div><label for="contact">Contact name (optional)</label><input id="contact" maxlength="100" placeholder="Hiring team"></div><div><label for="detail">Personal motivation / company detail</label><input id="detail" maxlength="300" placeholder="What genuinely interests you?"></div></div>
+<button class="primary" id="generate">Create editable draft</button>
+</section><section class="panel result"><div class="resulttop"><div><div class="eyebrow">REVIEW BEFORE USING</div><h2>Your draft</h2></div><button id="copy" disabled>Copy</button></div>
+<textarea id="output" rows="24" placeholder="Select a role and create a draft. You can edit everything here." aria-label="Editable draft"></textarea>
+<div class="actions"><button id="download" disabled>Download .txt</button><button id="save" disabled>Save on this device</button><button id="clear">Clear draft</button></div><p class="hint" id="draftStatus" role="status">No draft generated.</p>
+<section class="review"><h3>Pre-submission checklist</h3><label><input type="checkbox" id="checkedFacts"> Every factual claim matches my real experience</label><label><input type="checkbox" id="checkedCompany"> I verified the company's requirements and open role</label><label><input type="checkbox" id="checkedPrivacy"> I removed personal information I don't want to share</label><p class="hint">For actual AI-assisted writing, recruiter discovery, and live research, a secure backend and supported data providers are still required.</p></section>
+</section></div></main></div></body></html>
