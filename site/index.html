@@ -7,6 +7,7 @@
 <script src="jobs.js"></script>
 <script src="progress.js"></script>
 <script src="insights.js"></script>
+<script src="outcome-intelligence.js"></script>
 <script src="daily-queue.js"></script>
 <script src="job-intelligence.js"></script>
 <style>
@@ -374,6 +375,7 @@
  <div class="panel"><h3>My application pipeline</h3><div id="pipelineList"></div></div>
 </section>
 <section id="insights" class="view">
+ <div class="panel"><h3>Application intelligence</h3><p id="outcomeSummary" class="muted">Calculated from your recorded submissions.</p><div id="outcomeRecommendations" class="muted"></div><p class="muted" style="font-size:12px">These are descriptive patterns, not predictions or an explanation of employer decisions.</p></div>
  <header class="intro"><div class="eyebrow">APPLICATION ANALYTICS · PRIVATE TO THIS BROWSER</div><h1>Know your <span>momentum.</span></h1><p>See what you've submitted, which outcomes you've recorded, and what deserves attention next. Every number comes from your actual tracker history.</p></header>
  <div class="insights-toolbar"><label for="insightsRange">Show statistics for <select id="insightsRange" aria-label="Statistics period"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="all">All time</option></select></label><p id="insightsTrend" role="status" aria-live="polite">Analyzing your application history.</p></div>
  <div class="insights-metrics">
@@ -945,7 +947,9 @@ $("dailyNext").onclick=function(){
 };
 
 var insightRange="30",insightStage="all",insightBin=null;
-function renderInsights(){
+function renderInsights(){var outcome=window.InternshipOutcomeIntelligence.analyze(records);
+ $("outcomeSummary").textContent=outcome.total+" submitted applications · "+outcome.responseRate+"% recorded outcomes · "+outcome.interviewRate+"% reached interview/offer · "+outcome.companies+" companies.";
+ $("outcomeRecommendations").innerHTML=outcome.suggestions.map(function(s){return "<p>"+text(s)+"</p>";}).join("")||"<p>Keep your pipeline status and submission dates current.</p>";
  var result=Insights.calculate(records,{goal:goal,range:insightRange});
  var labels={applied:"Applied",oa:"Online assessment",interview:"Interview",offer:"Offer",rejected:"Rejected"};
  $("insightsRange").value=insightRange;
