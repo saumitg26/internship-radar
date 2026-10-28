@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import urlsplit, parse_qsl, urlencode, urlunsplit
 from urllib.request import Request, urlopen
 from urllib.parse import quote
+from job_dedupe import dedupe
 from community_jobs import gather as gather_community
 from extra_jobs import gather as gather_extra
 from nationwide_jobs import gather as gather_nationwide, SOURCES as NATIONWIDE_SOURCES
@@ -384,7 +385,7 @@ def main():
         jobs[job["id"]]=job
     # Keep every distinct, relevant listing our sources return. Front-end pagination
     # renders only a small slice, rather than dropping lower-ranked companies.
-    matches=sorted(jobs.values(),key=lambda j:(-j["_rank"],j.get("community",False),j["company"],j["title"]))
+    matches=sorted(dedupe(list(jobs.values())),key=lambda j:(-j["_rank"],j.get("community",False),j["company"],j["title"]))
     eastern_today=datetime.now(ZoneInfo("America/New_York")).date().isoformat()
     old_jobs={j.get("id"):j for j in prior.get("jobs",[]) if isinstance(j,dict)} if prior else {}
     old_by_url={canonical_url(j["url"]):j for j in prior.get("jobs",[]) if isinstance(j,dict) and j.get("url")} if prior else {}
