@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'none'; connect-src 'self'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Internship Radar — Find your next opportunity</title>
 <script src="jobs.js"></script>
 <script src="progress.js"></script>
@@ -328,6 +328,8 @@
  <p id="exploreFreshHint" class="muted" style="font-size:12px;margin:0 0 12px">Checking when these internships first entered the catalog.</p>
  <div id="exploreFreshList" class="jobs"></div>
  <div class="actions" style="margin-top:13px">
+  <button class="btn btn-primary" type="button" id="checkFeedNow">Check published feed</button>
+  <span class="muted" id="feedCheckResult" role="status" aria-live="polite" style="font-size:11px;align-self:center"></span>
   <a class="btn" href="https://joinhandshake.com/students/whos-hiring/" target="_blank" rel="noopener noreferrer">Browse Handshake ↗</a>
   <a class="btn" href="https://app.joinhandshake.com/" target="_blank" rel="noopener noreferrer">Handshake student login ↗</a>
   <span class="muted" style="font-size:11px;align-self:center">Private Handshake results aren't collected automatically.</span>
@@ -1016,6 +1018,49 @@ $("importJson").onchange=async function(e){var f=e.target.files[0];if(!f)return;
 var checked={};Object.entries(x.records).slice(0,3000).forEach(function(entry){var id=entry[0],r=entry[1];if(!r||!r.job||validStatuses.indexOf(r.status)<0||typeof r.job.title!=="string"||typeof r.job.company!=="string")return;checked[id]={status:r.status,changed_at:String(r.changed_at||""),applied_at:r.applied_at?String(r.applied_at):null,job:{id:id,title:r.job.title.slice(0,180),company:r.job.company.slice(0,150),location:String(r.job.location||"").slice(0,150),url:link(r.job.url)}};});
 if(!confirm("Replace your current browser-local application history with "+Object.keys(checked).length+" imported records?"))return;records=checked;save();render();notify("Backup imported.");}catch(err){notify("Unable to import this backup.");}finally{e.target.value="";}};
 $("clear").onclick=function(){if(confirm("Permanently clear this browser's application history? Export a backup first.")){records={};save();render();notify("Local history cleared.");}};
+// Refresh the already-published snapshot without reloading or losing local pipeline state.
+// This checks GitHub Pages' generated feed; it cannot initiate a new ATS scan.
+var checkFeedButton=$("checkFeedNow");
+if(checkFeedButton)checkFeedButton.onclick=async function(){
+ var output=$("feedCheckResult");
+ checkFeedButton.disabled=true;
+ output.textContent="Checking latest published snapshot…";
+ try{
+  var controller=new AbortController();
+  var timeout=setTimeout(function(){controller.abort();},12000);
+  var response;
+  try{
+   response=await fetch("./jobs.json?fresh="+Date.now(),{cache:"no-store",signal:controller.signal});
+  }finally{clearTimeout(timeout);}
+  if(!response.ok)throw Error("HTTP "+response.status);
+  var latest=await response.json();
+  if(!latest||!Array.isArray(latest.jobs)||!latest.generated_at)throw Error("Invalid or empty feed");
+  if(latest.generated_at===feed.generated_at){
+   output.textContent="Already up to date. Last published "+new Date(latest.generated_at).toLocaleString()+".";
+   return;
+  }
+  feed=latest;window.INTERNSHIP_RADAR_FEED=latest;
+  jobs=latest.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";});
+  // Recreate the company directory from the new feed.
+  companyMap.clear();
+  jobs.forEach(function(j){
+   var name=String(j.company||"").trim();if(!name)return;
+   var entry=companyMap.get(name);
+   if(!entry){entry={name:name,count:0,dmv:false,va:false,md:false,remote:false};companyMap.set(name,entry);}
+   entry.count++;
+   entry.dmv=entry.dmv||!!j.dmv_priority;
+   entry.va=entry.va||virginia(j);
+   entry.md=entry.md||maryland(j);
+   entry.remote=entry.remote||/remote/i.test(j.location||"");
+  });
+  companyEntries=Array.from(companyMap.values()).sort(function(a,b){return Number(b.dmv)-Number(a.dmv)||Number(b.va)-Number(a.va)||b.count-a.count||a.name.localeCompare(b.name);}).map(function(j,i){j.i=i;return j;});
+  employerRegistry=Array.isArray(feed.employer_registry)?feed.employer_registry:[];
+  exploreLimit=25;render();
+  output.textContent="Updated: "+jobs.length+" listings, published "+new Date(feed.generated_at).toLocaleString()+".";
+ }catch(err){
+  output.textContent="Couldn't check the feed. Keeping your existing listings and saved applications.";
+ }finally{checkFeedButton.disabled=false;}
+};
 render();
 const opened=(location.hash||"").slice(1);
 if(["home","daily","discover","recent","explore","companies","pipeline","insights","programs","plan","settings"].includes(opened))setPage(opened,false);
