@@ -426,6 +426,16 @@ var KEY="internship-radar-tracker-v2", SETTINGS="internship-radar-options-v2";
 var feed=window.INTERNSHIP_RADAR_FEED||{jobs:[],generated_at:null,scanned_boards:0,responsive_boards:0,errors:[]};
 var employerRegistry=Array.isArray(feed.employer_registry)?feed.employer_registry:[],registryLimit=60;
 var jobs=Array.isArray(feed.jobs)?feed.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";}):[];
+function cleanFeedDuplicates(rows){
+ var seenUrls=new Set(),seenRoles=new Set();
+ return rows.filter(function(j){
+  var url=String(j.url||"").split("?")[0].replace(/\/$/,"").toLowerCase();
+  var key=[j.company,j.title,j.location].map(function(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,"");}).join("|");
+  if((url&&seenUrls.has(url))||seenRoles.has(key))return false;
+  if(url)seenUrls.add(url);seenRoles.add(key);return true;
+ });
+}
+jobs=cleanFeedDuplicates(jobs);
 var records={}, goal=10, view="home", exploreLimit=25, companyLimit=60, exploreCompany="";
 function setMobileMenu(open){
  var el=$("workspaceNavigation"),btn=$("mobileMenuToggle"),more=$("mobileMore");
@@ -626,7 +636,7 @@ function renderExplore(){
  $("exploreFreshList").innerHTML=newest.length?newest.slice(0,6).map(jobMarkup).join(""):'';
  const locLabel=$("exploreCity").value||$("exploreLocation").options[$("exploreLocation").selectedIndex].textContent;
  $("exploreLabel").textContent=(exploreCompany?"Company: "+exploreCompany+" · ":"")+matches.length+" matching leads · "+locLabel+" · "+$("exploreRole").options[$("exploreRole").selectedIndex].textContent+" · "+($("exploreSort").value==="newest"?"newest first":"ranked by fit")+".";
- $("exploreShowing").textContent="Showing "+Math.min(exploreLimit,matches.length)+" of "+matches.length;
+ $("exploreShowing").textContent="Showing "+Math.min(exploreLimit,matches.length)+" of "+matches.length+" unique listings";
  $("exploreLoadMore").style.display=matches.length>exploreLimit?"inline-block":"none";
  $("exploreJobList").innerHTML=matches.length?matches.slice(0,exploreLimit).map(jobMarkup).join(""):'<div class="empty"><h3>No matches with those filters</h3><p>Try another location, role, or first-seen date. A missing listing does not mean no internships exist there.</p></div>';
 }
@@ -1043,7 +1053,7 @@ if(checkFeedButton)checkFeedButton.onclick=async function(){
    return;
   }
   feed=latest;window.INTERNSHIP_RADAR_FEED=latest;
-  jobs=latest.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";});
+  jobs=cleanFeedDuplicates(latest.jobs.filter(function(j){return j&&typeof j.id==="string"&&typeof j.title==="string"&&typeof j.company==="string";}));
   // Recreate the company directory from the new feed.
   companyMap.clear();
   jobs.forEach(function(j){
