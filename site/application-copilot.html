@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'none'; connect-src https:; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Application Copilot — Internship Radar</title>
 <link rel="stylesheet" href="./application-copilot.css">
 <script defer src="./jobs.js"></script><script defer src="./job-intelligence.js"></script><script defer src="./application-copilot.js"></script></head>
@@ -22,7 +22,7 @@
 <option value="research">Company research checklist</option><option value="followup">Application follow-up</option>
 <option value="negotiation">Compensation discussion</option></select>
 <div class="fields"><div><label for="contact">Contact name (optional)</label><input id="contact" maxlength="100" placeholder="Hiring team"></div><div><label for="detail">Personal motivation / company detail</label><input id="detail" maxlength="300" placeholder="What genuinely interests you?"></div></div>
-<button class="primary" id="generate">Create editable draft</button>
+<div class="fields"><div><label for="aiEndpoint">Private AI gateway URL (optional)</label><input id="aiEndpoint" type="url" placeholder="https://your-worker.workers.dev"></div><div><label for="aiToken">Personal access token</label><input id="aiToken" type="password" autocomplete="off" placeholder="Never saved"></div></div><p class="hint">Leave blank for local drafts. Configure your own Worker separately; your token is held in memory only.</p><button class="primary" id="generate">Create editable draft</button> <button id="generateAI" type="button">Use private AI</button>
 </section><section class="panel result"><div class="resulttop"><div><div class="eyebrow">REVIEW BEFORE USING</div><h2>Your draft</h2></div><button id="copy" disabled>Copy</button></div>
 <textarea id="output" rows="24" placeholder="Select a role and create a draft. You can edit everything here." aria-label="Editable draft"></textarea>
 <div class="actions"><button id="download" disabled>Download .txt</button><button id="save" disabled>Save on this device</button><button id="clear">Clear draft</button></div><p class="hint" id="draftStatus" role="status">No draft generated.</p>
