@@ -15,8 +15,8 @@ test("copilot opens and generates editable evidence-only drafts",async({page})=>
  await page.locator("#evidence").fill("Built a Python dashboard using real project data.");
  await page.locator("#detail").fill("their engineering work");
  await page.locator("#generate").click();
- await expect(page.locator("#output")).toContainText("Example Company");
- await expect(page.locator("#output")).toContainText("Python dashboard");
+ await expect(page.locator("#output")).toHaveValue(/Example Company/);
+ await expect(page.locator("#output")).toHaveValue(/Python dashboard/);
  await expect(page.locator("#copy")).toBeEnabled();
 });
 test("resume studio starts without Javascript errors",async({page})=>{
