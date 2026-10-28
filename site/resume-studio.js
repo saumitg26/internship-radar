@@ -392,7 +392,7 @@ function docxXml(){
   const header=HEADERS.has(line.toUpperCase());
   const bullet=/^[•●▪*-]\s/.test(line);
   const content=xmlEsc(line);
-  const run='<w:r><w:rPr><w:rFonts w:ascii="Liberation Serif" w:hAnsi="Liberation Serif"/>'+(header||i===0||(!bullet&&/ - | \| /.test(line))?'<w:b/>':'')+'<w:sz w:val="'+(i===0?'27':i===1?'17':header?'19':'18')+'"/></w:rPr><w:t xml:space="preserve">'+content+'</w:t></w:r>';
+  const run='<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>'+(header||i===0||(!bullet&&/ - | \| /.test(line))?'<w:b/>':'')+'<w:sz w:val="'+(i===0?'27':i===1?'17':header?'19':'18')+'"/></w:rPr><w:t xml:space="preserve">'+content+'</w:t></w:r>';
   const borders=header?'<w:pBdr><w:bottom w:val="single" w:sz="5" w:space="2" w:color="000000"/></w:pBdr>':'';
   const props='<w:pPr>'+(i<2?'<w:jc w:val="center"/>':'')+borders+'<w:spacing w:before="'+(header?'120':'12')+'" w:after="0" w:line="218" w:lineRule="auto"/>'+(bullet?'<w:ind w:left="200" w:hanging="175"/>':'')+'</w:pPr>';
   return '<w:p>'+props+run+'</w:p>';
