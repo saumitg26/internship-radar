@@ -1,0 +1,6 @@
+name = "internship-radar-ai"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+# Configure OPENAI_API_KEY, RADAR_ACCESS_TOKEN, optional BRAVE_SEARCH_API_KEY
+# with: npx wrangler secret put SECRET_NAME
