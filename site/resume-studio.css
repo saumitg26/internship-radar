@@ -22,3 +22,6 @@ body{font-family:var(--ui);background:radial-gradient(ellipse 65% 30% at 75% -10
 .skip-link:focus{top:0}
 @media(max-width:860px){.rail{position:sticky;top:0;z-index:20;background:rgba(14,28,40,.98);backdrop-filter:blur(15px)}.rail nav a{font-size:12px;min-height:40px}.main{padding-bottom:55px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+/* Lightweight employer-eligibility review shared with job intelligence. */
+.eligibility-review{margin:15px 0;padding:15px 18px;border:1px solid #415469;border-radius:12px;background:rgba(35,55,71,.45);font-size:13px;line-height:1.5}.eligibility-review strong{margin-right:10px}.eligibility-review p{margin:7px 0;color:#b6c6d4}.eligibility-review .eligibility-blocker{color:#ffb4bf}.eligibility-status{font-size:11px;border:1px solid #647d8a;border-radius:20px;padding:3px 8px;color:#b8ece1}
