@@ -38,6 +38,7 @@ jobs:
           node scripts/test_navigation.cjs
           node scripts/test_ui_refinement.cjs
           node scripts/test_job_intelligence.cjs
+          node scripts/test_outcome_intelligence.cjs
           node scripts/test_application_copilot.cjs
           node scripts/test_daily_queue.cjs
       - name: Sync public listings (handles unavailable boards gracefully)
