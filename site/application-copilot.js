@@ -42,6 +42,20 @@
   ["description","role","company"].forEach(id=>$(id).addEventListener("input",showIntel));
   const selected=parseJob();if(selected&&jobs.some(j=>j.id===selected)){select.value=selected;syncJob(jobs.find(j=>j.id===selected))}
   $("generate").onclick=create;
+  $("generateAI").onclick=async()=>{
+    const endpoint=$("aiEndpoint").value.trim(),token=$("aiToken").value;
+    if(!/^https:\/\/[a-z0-9.-]+\/?$/i.test(endpoint)||token.length<24){setStatus("Enter your deployed HTTPS Worker URL and personal access token.");return}
+    const button=$("generateAI");button.disabled=true;setStatus("Requesting private AI draft…");
+    try{
+      const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),30000);
+      let response;
+      try{response=await fetch(endpoint.replace(/\/$/,"")+"/api/assist",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({mode:$("mode").value,job:{company:$("company").value,role:$("role").value,description:$("description").value},evidence:$("evidence").value,detail:$("detail").value,contact:$("contact").value}),signal:controller.signal})}finally{clearTimeout(timeout)}
+      const data=await response.json();if(!response.ok||!data.draft)throw Error(data.error||"Gateway unavailable");
+      $("output").value=data.draft+(data.sources?.length?"\n\nSources to verify:\n"+data.sources.map(s=>s.url).join("\n"):"");
+      $("output").dispatchEvent(new Event("input"));setStatus("Private AI draft ready. Review every claim and citation.");
+    }catch(error){setStatus("Private AI unavailable: "+error.message+". You can still create a local draft.")}
+    finally{button.disabled=false}
+  };
   $("copy").onclick=async()=>{try{await navigator.clipboard.writeText($("output").value);setStatus("Copied. Verify before sending.")}catch(e){$("output").focus();$("output").select();setStatus("Clipboard unavailable; select and copy the draft manually.")}};
   $("download").onclick=download;$("save").onclick=save;
   $("clear").onclick=()=>{$("output").value="";$("copy").disabled=true;$("save").disabled=true;$("download").disabled=true;setStatus("Draft cleared.")};
