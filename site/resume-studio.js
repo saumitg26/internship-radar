@@ -273,6 +273,13 @@ async function importFile(file){
 }
 function analyze(){
  currentJD=normalize($('jobDescription').value);
+ const el=$('jobEligibilityReview');
+ if(el&&window.InternshipIntelligence&&currentJD){
+  const details=window.InternshipIntelligence.evaluate({...job,job_description:currentJD,description:currentJD});
+  const alerts=details.blockers.map(s=>'<p class="eligibility-blocker">Eligibility concern: '+esc(s)+'</p>').join('');
+  const unknown=details.uncertain.map(s=>'<p>Verify: '+esc(s)+'</p>').join('');
+  el.innerHTML='<strong>Eligibility & posting quality</strong><span class="eligibility-status">'+esc(details.verdict)+'</span>'+alerts+unknown+'<p>Assessment uses listed requirements and a default 2028-graduation profile. Confirm your eligibility on the employer application.</p>';
+ }else if(el){el.textContent='Paste the job description to review eligibility and listing quality.';}
  const req=relevant(),cv=renderText();
  const covered=req.filter(([name,re])=>hasKey(cv,re));
  const missing=req.filter(([name,re])=>!hasKey(cv,re));
