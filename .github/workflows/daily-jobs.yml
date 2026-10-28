@@ -25,6 +25,7 @@ jobs:
           python-version: '3.12'
       - name: Test employer description extraction and accepted resume exports
         run: |
+          python scripts/test_job_dedupe.py
           python scripts/test_job_descriptions.py
           python scripts/test_priority_sources.py
           python scripts/test_nationwide_sources.py
